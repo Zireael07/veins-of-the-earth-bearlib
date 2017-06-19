@@ -215,18 +215,19 @@ def game_main_loop():
             fps_counter = 0
             fps_update_time = tm
 
+        # avoid blocking the game with blt.read
+        while not game_quit and blt.has_input():
+            player_action = game_handle_keys()
 
-        player_action = game_handle_keys()
+            map_calculate_fov()
 
-        map_calculate_fov()
+            if player_action == "QUIT":
+                game_quit = True
 
-        if player_action == "QUIT":
-            game_quit = True
-
-        if player_action != "no-action":
-            for ent in ENTITIES:
-                if ent.ai:
-                    ent.ai.take_turn()
+            if player_action != "no-action":
+                for ent in ENTITIES:
+                    if ent.ai:
+                        ent.ai.take_turn()
 
     # quit the game
     blt.close()
