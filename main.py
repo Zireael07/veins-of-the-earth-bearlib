@@ -2,6 +2,7 @@
 
 from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
+from time import time
 
 import constants
 
@@ -190,10 +191,30 @@ def draw_map(map_draw):
 def game_main_loop():
     game_quit = False
 
+    fps_update_time = time()
+    fps_counter = fps_value = 0
+
     while not game_quit:
 
         #clear
         blt.clear()
+
+
+        blt.puts(2,1, "[color=white]FPS: %d" % (fps_value))
+
+        # draw
+        draw_game()
+
+        # refresh term
+        blt.refresh()
+
+        fps_counter += 1
+        tm = time()
+        if tm > fps_update_time + 1:
+            fps_value = fps_counter
+            fps_counter = 0
+            fps_update_time = tm
+
 
         player_action = game_handle_keys()
 
@@ -206,12 +227,6 @@ def game_main_loop():
             for ent in ENTITIES:
                 if ent.ai:
                     ent.ai.take_turn()
-
-        # draw
-        draw_game()
-
-        # refresh term
-        blt.refresh()
 
     # quit the game
     blt.close()
@@ -243,12 +258,16 @@ def game_handle_keys():
 
     return "no-action"
 
+
 def game_initialize():
     global GAME_MAP, PLAYER, ENEMY, ENTITIES, FOV_CALCULATE
 
     blt.open()
     # default terminal size is 80x25
     blt.set("window: size=80x45, cellsize=auto, title='Veins of the Earth'; font: default")
+
+    #vsync
+    blt.set("output.vsync=true")
 
     blt.composition(True)
 
