@@ -1,6 +1,8 @@
 # coding: utf8
 
 from bearlibterminal import terminal as blt
+import libtcodpy as libtcod
+
 import constants
 
 
@@ -10,21 +12,28 @@ class struc_Tile:
         self.block_path = block_path
 
 class obj_Actor:
-    def __init__(self, x, y, char, creature=None):
+    def __init__(self, x, y, char, creature=None, ai=None):
         self.x = x
         self.y = y
         self.char = char
         self.creature = creature
 
+        if creature:
+            creature.owner = self
+
+        self.ai = ai
+        if ai:
+            ai.owner = self
+
     def draw(self):
         blt.put(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, self.char)
 
     def move(self, dx, dy):
-        if self.y + dy >= len(GAME_MAP):
+        if self.y + dy >= len(GAME_MAP) or self.y + dy < 0:
             print("Tried to move out of map")
             return
 
-        if self.x + dx >= len(GAME_MAP[0]):
+        if self.x + dx >= len(GAME_MAP[0]) or self.x + dx < 0:
             print("Tried to move out of map")
             return
 
@@ -50,6 +59,10 @@ class com_Creature:
         self.max_hp = hp
         self.hp = hp
 
+class AI_test:
+    def take_turn(self):
+        self.owner.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1))
+
 
 def map_create():
     new_map = [[struc_Tile(False) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
@@ -65,10 +78,8 @@ def draw_game():
 
     draw_map(GAME_MAP)
 
-    ENEMY.draw()
-    PLAYER.draw()
-
-    # blt.refresh()
+    for ent in ENTITIES:
+        ent.draw()
 
 def draw_map(map_draw):
     for x in range(0, constants.MAP_WIDTH):
@@ -89,19 +100,15 @@ def game_main_loop():
         #clear
         blt.clear()
 
-        key = blt.read()
-        if key in (blt.TK_ESCAPE, blt.TK_CLOSE):
+        player_action = game_handle_keys()
+
+        if player_action == "QUIT":
             game_quit = True
 
-        if key == blt.TK_UP:
-            PLAYER.move(0,-1)
-        if key == blt.TK_DOWN:
-            PLAYER.move(0,1)
-        if key == blt.TK_LEFT:
-            PLAYER.move(-1,0)
-        if key == blt.TK_RIGHT:
-            PLAYER.move(1,0)
-
+        if player_action != "no-action":
+            for ent in ENTITIES:
+                if ent.ai:
+                    ent.ai.take_turn()
 
         # draw
         draw_game()
@@ -112,6 +119,26 @@ def game_main_loop():
     # quit the game
     blt.close()
 
+def game_handle_keys():
+    key = blt.read()
+    if key in (blt.TK_ESCAPE, blt.TK_CLOSE):
+        return "QUIT"
+
+    if key == blt.TK_UP:
+        PLAYER.move(0, -1)
+        return "player-moved"
+    if key == blt.TK_DOWN:
+        PLAYER.move(0, 1)
+        return "player-moved"
+    if key == blt.TK_LEFT:
+        PLAYER.move(-1, 0)
+        return "player-moved"
+    if key == blt.TK_RIGHT:
+        PLAYER.move(1, 0)
+        return "player-moved"
+
+
+    return "no-action"
 
 def game_initialize():
     global GAME_MAP, PLAYER, ENEMY, ENTITIES
@@ -137,7 +164,8 @@ def game_initialize():
     PLAYER = obj_Actor(0,0, "@", creature=creature_com1)
 
     creature_com2 = com_Creature("kobold")
-    ENEMY = obj_Actor(3,3, "k", creature=creature_com2)
+    ai_com = AI_test()
+    ENEMY = obj_Actor(3,3, "k", creature=creature_com2, ai=ai_com)
 
     ENTITIES = [PLAYER, ENEMY]
 
