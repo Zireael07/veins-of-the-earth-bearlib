@@ -26,7 +26,10 @@ class obj_Actor:
             ai.owner = self
 
     def draw(self):
-        blt.put(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, self.char)
+        is_visible = libtcod.map_is_in_fov(FOV_MAP, self.x, self.y)
+
+        if is_visible:
+            blt.put(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, self.char)
 
 
 
@@ -98,7 +101,27 @@ def map_create():
         new_map[0][y].block_path = True
         new_map[constants.MAP_HEIGHT-1][y].block_path = True
 
+    map_make_fov(new_map)
+
     return new_map
+
+def map_make_fov(incoming_map):
+    global FOV_MAP
+
+    FOV_MAP = libtcod.map_new(constants.MAP_WIDTH, constants.MAP_HEIGHT)
+
+    for y in range(constants.MAP_HEIGHT):
+        for x in range(constants.MAP_WIDTH):
+            libtcod.map_set_properties(FOV_MAP, x,y,
+                                       not incoming_map[x][y].block_path, not incoming_map[x][y].block_path)
+
+def map_calculate_fov():
+    global FOV_CALCULATE
+
+    if FOV_CALCULATE:
+        FOV_CALCULATE = False
+        libtcod.map_compute_fov(FOV_MAP, PLAYER.x, PLAYER.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
+                                constants.FOV_ALGO)
 
 def map_check_for_creature(x, y, exclude_entity = None):
 
@@ -137,12 +160,18 @@ def draw_game():
 def draw_map(map_draw):
     for x in range(0, constants.MAP_WIDTH):
         for y in range(0, constants.MAP_HEIGHT):
-            if map_draw[x][y].block_path == True:
-                # draw wall
-                blt.put(x*constants.TILE_WIDTH,y*constants.TILE_HEIGHT, "#")
-            else:
-                # draw floor
-                blt.put(x*constants.TILE_WIDTH,y*constants.TILE_HEIGHT, ".")
+
+            is_visible = libtcod.map_is_in_fov(FOV_MAP, x, y)
+
+            if is_visible:
+                if map_draw[x][y].block_path == True:
+                    # draw wall
+                    blt.put(x*constants.TILE_WIDTH,y*constants.TILE_HEIGHT, "#")
+                else:
+                    # draw floor
+                    blt.put(x*constants.TILE_WIDTH,y*constants.TILE_HEIGHT, ".")
+            # else:
+
 
 
 def game_main_loop():
@@ -154,6 +183,8 @@ def game_main_loop():
         blt.clear()
 
         player_action = game_handle_keys()
+
+        map_calculate_fov()
 
         if player_action == "QUIT":
             game_quit = True
@@ -173,28 +204,34 @@ def game_main_loop():
     blt.close()
 
 def game_handle_keys():
+    global FOV_CALCULATE
+
     key = blt.read()
     if key in (blt.TK_ESCAPE, blt.TK_CLOSE):
         return "QUIT"
 
     if key == blt.TK_UP:
         PLAYER.creature.move(0, -1)
+        FOV_CALCULATE = True
         return "player-moved"
     if key == blt.TK_DOWN:
         PLAYER.creature.move(0, 1)
+        FOV_CALCULATE = True
         return "player-moved"
     if key == blt.TK_LEFT:
         PLAYER.creature.move(-1, 0)
+        FOV_CALCULATE = True
         return "player-moved"
     if key == blt.TK_RIGHT:
         PLAYER.creature.move(1, 0)
+        FOV_CALCULATE = True
         return "player-moved"
 
 
     return "no-action"
 
 def game_initialize():
-    global GAME_MAP, PLAYER, ENEMY, ENTITIES
+    global GAME_MAP, PLAYER, ENEMY, ENTITIES, FOV_CALCULATE
 
     blt.open()
     # default terminal size is 80x25
@@ -212,6 +249,8 @@ def game_initialize():
     blt.set("0x6B: gfx/kobold.png") # "k"
 
     GAME_MAP = map_create()
+
+    FOV_CALCULATE = True
 
     creature_com1 = com_Creature("Player")
     PLAYER = obj_Actor(1,1, "@", creature=creature_com1)
