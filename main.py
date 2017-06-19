@@ -37,6 +37,10 @@ class com_Creature:
         self.hp = hp
         self.death_function = death_function
 
+    def attack(self, target, damage):
+        self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage) + " damage!"
+        target.creature.take_damage(damage)
+
     def take_damage(self, damage):
         self.hp -= damage
         print self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp)
@@ -56,17 +60,10 @@ class com_Creature:
 
         target = None
 
-        for ent in ENTITIES:
-            if (ent is not self.owner
-                and ent.x == self.owner.x + dx
-                and ent.y == self.owner.y + dy
-                and ent.creature):
-                target = ent
-                break
+        target = map_check_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
 
         if target:
-            print self.name_instance + " attacks " + target.creature.name_instance + " for 5 damage!"
-            target.creature.take_damage(5)
+            self.attack(target, 5)
 
         tile_is_wall = (GAME_MAP[self.owner.x+dx][self.owner.y+dy].block_path == True)
 
@@ -102,6 +99,31 @@ def map_create():
         new_map[constants.MAP_HEIGHT-1][y].block_path = True
 
     return new_map
+
+def map_check_for_creature(x, y, exclude_entity = None):
+
+    target = None
+
+    # find entity that isn't excluded
+    if exclude_entity:
+        for ent in ENTITIES:
+            if (ent is not exclude_entity
+                and ent.x == x
+                and ent.y == y
+                and ent.creature):
+                target = ent
+
+            if target:
+                return target
+
+    # find any entity if no exclusions
+    else:
+        for ent in ENTITIES:
+            if (ent.x == x
+                and ent.y == y
+                and ent.creature):
+                target = ent
+
 
 def draw_game():
     global GAME_MAP
