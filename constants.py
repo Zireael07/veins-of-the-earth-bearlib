@@ -6,7 +6,7 @@ MAP_WIDTH = 20
 
 # in number of cells
 TILE_HEIGHT = 2
-TILE_WIDTH = 4
+TILE_WIDTH = 7
 
 #FOV
 FOV_ALGO = libtcod.FOV_BASIC

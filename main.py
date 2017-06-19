@@ -31,7 +31,7 @@ class obj_Actor:
         is_visible = libtcod.map_is_in_fov(FOV_MAP, self.x, self.y)
 
         if is_visible:
-            blt.put(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, self.char)
+            blt.put_ext(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, 10, 10, self.char)
 
 
 
@@ -283,7 +283,7 @@ def game_initialize():
 
     blt.open()
     # default terminal size is 80x25
-    blt.set("window: size=80x45, cellsize=auto, title='Veins of the Earth'; font: default")
+    blt.set("window: size=140x45, cellsize=auto, title='Veins of the Earth'; font: default")
 
     #vsync
     blt.set("output.vsync=true")
