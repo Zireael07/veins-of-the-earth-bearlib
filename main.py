@@ -10,10 +10,11 @@ class struc_Tile:
         self.block_path = block_path
 
 class obj_Actor:
-    def __init__(self, x, y, char):
+    def __init__(self, x, y, char, creature=None):
         self.x = x
         self.y = y
         self.char = char
+        self.creature = creature
 
     def draw(self):
         blt.put(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, self.char)
@@ -31,6 +32,12 @@ class obj_Actor:
             self.x += dx
             self.y += dy
 
+class com_Creature:
+    def __init__(self, name_instance, hp=10):
+        self.name_instance = name_instance
+        self.max_hp = hp
+        self.hp = hp
+
 
 def map_create():
     new_map = [[struc_Tile(False) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
@@ -46,6 +53,7 @@ def draw_game():
 
     draw_map(GAME_MAP)
 
+    ENEMY.draw()
     PLAYER.draw()
 
     # blt.refresh()
@@ -94,7 +102,7 @@ def game_main_loop():
 
 
 def game_initialize():
-    global GAME_MAP, PLAYER
+    global GAME_MAP, PLAYER, ENEMY, ENTITIES
 
     blt.open()
     # default terminal size is 80x25
@@ -109,10 +117,17 @@ def game_initialize():
     blt.set("0x02E: gfx/floor_sand.png") # "."
     blt.set("0x23: gfx/wall_stone.png") # "#"
     blt.set("0x40: gfx/human_m.png") # "@"
+    blt.set("0x6B: gfx/kobold.png") # "k"
 
     GAME_MAP = map_create()
 
-    PLAYER = obj_Actor(0,0, "@")
+    creature_com1 = com_Creature("Player")
+    PLAYER = obj_Actor(0,0, "@", creature=creature_com1)
+
+    creature_com2 = com_Creature("kobold")
+    ENEMY = obj_Actor(3,3, "k", creature=creature_com2)
+
+    ENTITIES = [PLAYER, ENEMY]
 
 if __name__ == '__main__':
     game_initialize()
