@@ -13,6 +13,8 @@ FOV_ALGO = libtcod.FOV_BASIC
 FOV_LIGHT_WALLS = True
 LIGHT_RADIUS = 4
 
+NUM_MESSAGES = 4
+
 
 # Tiles
 blt.set("0x02E: gfx/floor_sand.png")

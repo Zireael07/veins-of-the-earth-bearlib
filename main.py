@@ -43,12 +43,12 @@ class com_Creature:
         self.death_function = death_function
 
     def attack(self, target, damage):
-        self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage) + " damage!"
+        game_message(self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage) + " damage!", "red")
         target.creature.take_damage(damage)
 
     def take_damage(self, damage):
         self.hp -= damage
-        print self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp)
+        game_message(self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp), "white")
 
         if self.hp <= 0:
             if self.death_function is not None:
@@ -81,7 +81,7 @@ class AI_test:
         self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1))
 
 def death_monster(monster):
-    print monster.creature.name_instance + " is dead!"
+    game_message(monster.creature.name_instance + " is dead!", "gray")
     # clean up components
     monster.creature = None
     monster.ai = None
@@ -152,13 +152,14 @@ def map_check_for_creature(x, y, exclude_entity = None):
 
 def draw_game():
     global GAME_MAP
-    # blt.printf(1, 1, 'Hello, world!')
 
     draw_map(GAME_MAP)
 
     blt.color("white")
     for ent in ENTITIES:
         ent.draw()
+
+    draw_messages()
 
 def draw_map(map_draw):
     for x in range(0, constants.MAP_WIDTH):
@@ -187,6 +188,20 @@ def draw_map(map_draw):
                     blt.put(x*constants.TILE_WIDTH,y*constants.TILE_HEIGHT, ".")
 
 
+def draw_messages():
+    if len(GAME_MESSAGES) <= constants.NUM_MESSAGES:
+        to_draw = GAME_MESSAGES
+    else:
+        to_draw = GAME_MESSAGES[-constants.NUM_MESSAGES:]
+
+    start_y = 45 - (constants.NUM_MESSAGES)
+
+    i = 0
+    for message, color in to_draw:
+        string = "[color=" + str(color) + "] " + message
+        blt.puts(2, start_y+i, string)
+
+        i += 1
 
 def game_main_loop():
     game_quit = False
@@ -260,8 +275,11 @@ def game_handle_keys():
     return "no-action"
 
 
+def game_message(msg, msg_color):
+    GAME_MESSAGES.append((msg, msg_color))
+
 def game_initialize():
-    global GAME_MAP, PLAYER, ENEMY, ENTITIES, FOV_CALCULATE
+    global GAME_MAP, PLAYER, ENEMY, ENTITIES, FOV_CALCULATE, GAME_MESSAGES
 
     blt.open()
     # default terminal size is 80x25
@@ -279,9 +297,11 @@ def game_initialize():
     blt.set("0x02E: gfx/floor_sand.png") # "."
     blt.set("0x23: gfx/wall_stone.png") # "#"
     blt.set("0x40: gfx/human_m.png") # "@"
-    blt.set("0x6B: gfx/kobold.png") # "k"
+    blt.set("0xE000: gfx/kobold.png") # ""
 
     GAME_MAP = map_create()
+
+    GAME_MESSAGES = []
 
     FOV_CALCULATE = True
 
@@ -290,7 +310,7 @@ def game_initialize():
 
     creature_com2 = com_Creature("kobold", death_function=death_monster)
     ai_com = AI_test()
-    ENEMY = obj_Actor(3,3, "k", creature=creature_com2, ai=ai_com)
+    ENEMY = obj_Actor(3,3, u"", creature=creature_com2, ai=ai_com)
 
     ENTITIES = [PLAYER, ENEMY]
 
