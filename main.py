@@ -10,6 +10,7 @@ import constants
 class struc_Tile:
     def __init__(self, block_path):
         self.block_path = block_path
+        self.explored = False
 
 class obj_Actor:
     def __init__(self, x, y, char, creature=None, ai=None):
@@ -154,6 +155,7 @@ def draw_game():
 
     draw_map(GAME_MAP)
 
+    blt.color("white")
     for ent in ENTITIES:
         ent.draw()
 
@@ -164,13 +166,24 @@ def draw_map(map_draw):
             is_visible = libtcod.map_is_in_fov(FOV_MAP, x, y)
 
             if is_visible:
+                blt.color("white")
+                map_draw[x][y].explored = True
+
                 if map_draw[x][y].block_path == True:
                     # draw wall
                     blt.put(x*constants.TILE_WIDTH,y*constants.TILE_HEIGHT, "#")
                 else:
                     # draw floor
                     blt.put(x*constants.TILE_WIDTH,y*constants.TILE_HEIGHT, ".")
-            # else:
+
+            elif map_draw[x][y].explored:
+                blt.color("gray")
+                if map_draw[x][y].block_path == True:
+                    # draw wall
+                    blt.put(x*constants.TILE_WIDTH,y*constants.TILE_HEIGHT, "#")
+                else:
+                    # draw floor
+                    blt.put(x*constants.TILE_WIDTH,y*constants.TILE_HEIGHT, ".")
 
 
 
