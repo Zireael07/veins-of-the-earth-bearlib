@@ -28,34 +28,6 @@ class obj_Actor:
     def draw(self):
         blt.put(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, self.char)
 
-    def move(self, dx, dy):
-        if self.y + dy >= len(GAME_MAP) or self.y + dy < 0:
-            print("Tried to move out of map")
-            return
-
-        if self.x + dx >= len(GAME_MAP[0]) or self.x + dx < 0:
-            print("Tried to move out of map")
-            return
-
-        target = None
-
-        for ent in ENTITIES:
-            if (ent is not self
-                and ent.x == self.x + dx
-                and ent.y == self.y + dy
-                and ent.creature):
-                target = ent
-                break
-
-        if target:
-            print self.creature.name_instance + " attacks " + target.creature.name_instance + " for 5 damage!"
-            target.creature.take_damage(5)
-
-        tile_is_wall = (GAME_MAP[self.x+dx][self.y+dy].block_path == True)
-
-        if not tile_is_wall and target is None:
-            self.x += dx
-            self.y += dy
 
 
 class com_Creature:
@@ -73,9 +45,38 @@ class com_Creature:
             if self.death_function is not None:
                 self.death_function(self.owner)
 
+    def move(self, dx, dy):
+        if self.owner.y + dy >= len(GAME_MAP) or self.owner.y + dy < 0:
+            print("Tried to move out of map")
+            return
+
+        if self.owner.x + dx >= len(GAME_MAP[0]) or self.owner.x + dx < 0:
+            print("Tried to move out of map")
+            return
+
+        target = None
+
+        for ent in ENTITIES:
+            if (ent is not self.owner
+                and ent.x == self.owner.x + dx
+                and ent.y == self.owner.y + dy
+                and ent.creature):
+                target = ent
+                break
+
+        if target:
+            print self.name_instance + " attacks " + target.creature.name_instance + " for 5 damage!"
+            target.creature.take_damage(5)
+
+        tile_is_wall = (GAME_MAP[self.owner.x+dx][self.owner.y+dy].block_path == True)
+
+        if not tile_is_wall and target is None:
+            self.owner.x += dx
+            self.owner.y += dy
+
 class AI_test:
     def take_turn(self):
-        self.owner.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1))
+        self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1))
 
 def death_monster(monster):
     print monster.creature.name_instance + " is dead!"
@@ -155,16 +156,16 @@ def game_handle_keys():
         return "QUIT"
 
     if key == blt.TK_UP:
-        PLAYER.move(0, -1)
+        PLAYER.creature.move(0, -1)
         return "player-moved"
     if key == blt.TK_DOWN:
-        PLAYER.move(0, 1)
+        PLAYER.creature.move(0, 1)
         return "player-moved"
     if key == blt.TK_LEFT:
-        PLAYER.move(-1, 0)
+        PLAYER.creature.move(-1, 0)
         return "player-moved"
     if key == blt.TK_RIGHT:
-        PLAYER.move(1, 0)
+        PLAYER.creature.move(1, 0)
         return "player-moved"
 
 
