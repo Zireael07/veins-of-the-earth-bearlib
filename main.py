@@ -28,9 +28,21 @@ class obj_Actor:
             print("Tried to move out of map")
             return
 
-        if GAME_MAP[self.x+dx][self.y+dy].block_path == False:
+        target = None
+
+        for ent in ENTITIES:
+            if (ent is not self
+                and ent.x == self.x + dx
+                and ent.y == self.y + dy):
+                target = ent
+                break
+
+        tile_is_wall = (GAME_MAP[self.x+dx][self.y+dy].block_path == True)
+
+        if not tile_is_wall and target is None:
             self.x += dx
             self.y += dy
+
 
 class com_Creature:
     def __init__(self, name_instance, hp=10):
