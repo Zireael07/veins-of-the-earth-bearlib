@@ -13,6 +13,14 @@ class struc_Tile:
         self.block_path = block_path
         self.explored = False
 
+class obj_Game:
+    def __init__(self):
+        self.current_map = map_create()
+        self.current_entities = []
+
+        self.message_history = []
+
+
 class obj_Actor:
     def __init__(self, x, y, char, creature=None, ai=None):
         self.x = x
@@ -59,11 +67,11 @@ class com_Creature:
                 self.death_function(self.owner)
 
     def move(self, dx, dy):
-        if self.owner.y + dy >= len(GAME_MAP) or self.owner.y + dy < 0:
+        if self.owner.y + dy >= len(GAME.current_map) or self.owner.y + dy < 0:
             print("Tried to move out of map")
             return
 
-        if self.owner.x + dx >= len(GAME_MAP[0]) or self.owner.x + dx < 0:
+        if self.owner.x + dx >= len(GAME.current_map[0]) or self.owner.x + dx < 0:
             print("Tried to move out of map")
             return
 
@@ -74,7 +82,7 @@ class com_Creature:
         if target:
             self.attack(target, 5)
 
-        tile_is_wall = (GAME_MAP[self.owner.x+dx][self.owner.y+dy].block_path == True)
+        tile_is_wall = (GAME.current_map[self.owner.x+dx][self.owner.y+dy].block_path == True)
 
         if not tile_is_wall and target is None:
             self.owner.x += dx
@@ -90,7 +98,7 @@ def death_monster(monster):
     monster.creature = None
     monster.ai = None
     # remove from map
-    ENTITIES.remove(monster)
+    GAME.current_entities.remove(monster)
 
 def map_create():
     new_map = [[struc_Tile(False) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
@@ -135,7 +143,7 @@ def map_check_for_creature(x, y, exclude_entity = None):
 
     # find entity that isn't excluded
     if exclude_entity:
-        for ent in ENTITIES:
+        for ent in GAME.current_entities:
             if (ent is not exclude_entity
                 and ent.x == x
                 and ent.y == y
@@ -147,7 +155,7 @@ def map_check_for_creature(x, y, exclude_entity = None):
 
     # find any entity if no exclusions
     else:
-        for ent in ENTITIES:
+        for ent in GAME.current_entities:
             if (ent.x == x
                 and ent.y == y
                 and ent.creature):
@@ -155,12 +163,10 @@ def map_check_for_creature(x, y, exclude_entity = None):
 
 
 def draw_game():
-    global GAME_MAP
-
-    draw_map(GAME_MAP)
+    draw_map(GAME.current_map)
 
     blt.color("white")
-    for ent in ENTITIES:
+    for ent in GAME.current_entities:
         ent.draw()
 
     draw_messages()
@@ -211,10 +217,10 @@ def draw_map(map_draw):
 
 
 def draw_messages():
-    if len(GAME_MESSAGES) <= constants.NUM_MESSAGES:
-        to_draw = GAME_MESSAGES
+    if len(GAME.message_history) <= constants.NUM_MESSAGES:
+        to_draw = GAME.message_history
     else:
-        to_draw = GAME_MESSAGES[-constants.NUM_MESSAGES:]
+        to_draw = GAME.message_history[-constants.NUM_MESSAGES:]
 
     start_y = 45 - (constants.NUM_MESSAGES)
 
@@ -262,7 +268,7 @@ def game_main_loop():
                 game_quit = True
 
             if player_action != "no-action":
-                for ent in ENTITIES:
+                for ent in GAME.current_entities:
                     if ent.ai:
                         ent.ai.take_turn()
 
@@ -298,10 +304,10 @@ def game_handle_keys():
 
 
 def game_message(msg, msg_color):
-    GAME_MESSAGES.append((msg, msg_color))
+    GAME.message_history.append((msg, msg_color))
 
 def game_initialize():
-    global GAME_MAP, PLAYER, ENEMY, ENTITIES, FOV_CALCULATE, GAME_MESSAGES
+    global GAME, PLAYER, ENEMY, FOV_CALCULATE
 
     blt.open()
     # default terminal size is 80x25
@@ -321,9 +327,7 @@ def game_initialize():
     blt.set("0x40: gfx/human_m.png") # "@"
     blt.set("0xE000: gfx/kobold.png") # ""
 
-    GAME_MAP = map_create()
-
-    GAME_MESSAGES = []
+    GAME = obj_Game()
 
     FOV_CALCULATE = True
 
@@ -334,7 +338,7 @@ def game_initialize():
     ai_com = AI_test()
     ENEMY = obj_Actor(3,3, u"", creature=creature_com2, ai=ai_com)
 
-    ENTITIES = [PLAYER, ENEMY]
+    GAME.current_entities = [PLAYER, ENEMY]
 
 if __name__ == '__main__':
     game_initialize()
