@@ -170,22 +170,39 @@ def draw_map(map_draw):
             if is_visible:
                 blt.color("white")
                 map_draw[x][y].explored = True
+                # cartesian
+                # tile_x = x*constants.TILE_WIDTH
+                # tile_y = y*constants.TILE_HEIGHT
+
+                #isometric
+                offset_x = constants.MAP_WIDTH*4 # + constants.MAP_WIDTH/2
+                tile_x = (x-y)*constants.TILE_WIDTH/2 + offset_x
+                tile_y = (x+y)* constants.TILE_HEIGHT/2
 
                 if map_draw[x][y].block_path == True:
                     # draw wall
-                    blt.put(x*constants.TILE_WIDTH,y*constants.TILE_HEIGHT, "#")
+                    blt.put(tile_x, tile_y, "#")
                 else:
                     # draw floor
-                    blt.put(x*constants.TILE_WIDTH,y*constants.TILE_HEIGHT, ".")
+                    blt.put(tile_x,tile_y, ".")
 
             elif map_draw[x][y].explored:
                 blt.color("gray")
+                # cartesian
+                # tile_x = x * constants.TILE_WIDTH
+                # tile_y = y * constants.TILE_HEIGHT
+
+                # isometric
+                offset_x = constants.MAP_WIDTH*4 #+ constants.MAP_WIDTH/2
+                tile_x = (x - y) * constants.TILE_WIDTH / 2 + offset_x
+                tile_y = (x + y) * constants.TILE_HEIGHT / 2
+
                 if map_draw[x][y].block_path == True:
                     # draw wall
-                    blt.put(x*constants.TILE_WIDTH,y*constants.TILE_HEIGHT, "#")
+                    blt.put(tile_x,tile_y, "#")
                 else:
                     # draw floor
-                    blt.put(x*constants.TILE_WIDTH,y*constants.TILE_HEIGHT, ".")
+                    blt.put(tile_x,tile_y, ".")
 
 
 def draw_messages():
@@ -283,7 +300,7 @@ def game_initialize():
 
     blt.open()
     # default terminal size is 80x25
-    blt.set("window: size=140x45, cellsize=auto, title='Veins of the Earth'; font: default")
+    blt.set("window: size=160x45, cellsize=auto, title='Veins of the Earth'; font: default")
 
     #vsync
     blt.set("output.vsync=true")
