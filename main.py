@@ -248,9 +248,43 @@ def game_main_loop():
         # draw
         draw_game()
 
+        # debug
+        blt.puts(2,2, "[color=red] player pos in cells: %d %d" % (draw_iso(PLAYER.x, PLAYER.y)))
+
+
+        # mouse test
+        blt.puts(
+            3, 4,
+            "Cursor: [color=orange]%d:%d[/color] [color=dark gray]cells[/color]"
+            ", [color=orange]%d:%d[/color] [color=dark gray]pixels[/color]" % (
+                blt.state(blt.TK_MOUSE_X),
+                blt.state(blt.TK_MOUSE_Y),
+                blt.state(blt.TK_MOUSE_PIXEL_X),
+                blt.state(blt.TK_MOUSE_PIXEL_Y)))
+
+
+        # mouse picking test
+        x = blt.state(blt.TK_MOUSE_X)
+        y = blt.state(blt.TK_MOUSE_Y)
+
+        n = 0
+        while True:
+             code = blt.pick(x, y, n)
+
+             if code == 0: break
+
+             blt.puts(2 + n * 2, 5, u"%c" % (code))
+             n += 1
+        #
+             if n == 0:
+                 blt.puts(3, 5, "Empty cell")
+
+
+
         # refresh term
         blt.refresh()
 
+        # fps
         fps_counter += 1
         tm = time()
         if tm > fps_update_time + 1:
@@ -315,6 +349,10 @@ def game_initialize():
 
     #vsync
     blt.set("output.vsync=true")
+
+    # mouse
+    blt.set("input.filter={keyboard, mouse+}")
+    blt.set("input: precise-mouse=true, mouse-cursor=true")
 
     blt.composition(True)
 
