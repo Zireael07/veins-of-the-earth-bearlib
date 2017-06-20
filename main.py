@@ -31,7 +31,11 @@ class obj_Actor:
         is_visible = libtcod.map_is_in_fov(FOV_MAP, self.x, self.y)
 
         if is_visible:
-            blt.put_ext(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, 10, 10, self.char)
+            tile_x, tile_y = draw_iso(self.x,self.y)
+            blt.put_ext(tile_x, tile_y, 10, 10, self.char)
+
+            #cartesian
+            #blt.put_ext(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, 10, 10, self.char)
 
 
 
@@ -161,6 +165,13 @@ def draw_game():
 
     draw_messages()
 
+def draw_iso(x,y):
+    # isometric
+    offset_x = constants.MAP_WIDTH * 4  # + constants.MAP_WIDTH/2
+    tile_x = (x - y) * constants.TILE_WIDTH / 2 + offset_x
+    tile_y = (x + y) * constants.TILE_HEIGHT / 2
+    return tile_x, tile_y
+
 def draw_map(map_draw):
     for x in range(0, constants.MAP_WIDTH):
         for y in range(0, constants.MAP_HEIGHT):
@@ -174,10 +185,7 @@ def draw_map(map_draw):
                 # tile_x = x*constants.TILE_WIDTH
                 # tile_y = y*constants.TILE_HEIGHT
 
-                #isometric
-                offset_x = constants.MAP_WIDTH*4 # + constants.MAP_WIDTH/2
-                tile_x = (x-y)*constants.TILE_WIDTH/2 + offset_x
-                tile_y = (x+y)* constants.TILE_HEIGHT/2
+                tile_x, tile_y = draw_iso(x,y)
 
                 if map_draw[x][y].block_path == True:
                     # draw wall
@@ -192,10 +200,7 @@ def draw_map(map_draw):
                 # tile_x = x * constants.TILE_WIDTH
                 # tile_y = y * constants.TILE_HEIGHT
 
-                # isometric
-                offset_x = constants.MAP_WIDTH*4 #+ constants.MAP_WIDTH/2
-                tile_x = (x - y) * constants.TILE_WIDTH / 2 + offset_x
-                tile_y = (x + y) * constants.TILE_HEIGHT / 2
+                tile_x, tile_y = draw_iso(x,y)
 
                 if map_draw[x][y].block_path == True:
                     # draw wall
