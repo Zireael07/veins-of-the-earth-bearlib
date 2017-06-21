@@ -174,12 +174,37 @@ def draw_game():
 
     draw_messages()
 
+# based on STI library for LOVE2D
 def draw_iso(x,y):
     # isometric
     offset_x = constants.MAP_WIDTH * 4
     tile_x = (x - y) * constants.TILE_WIDTH / 2 + offset_x
     tile_y = (x + y) * constants.TILE_HEIGHT / 2
     return tile_x, tile_y
+
+def cell_to_iso(x,y):
+    offset_x = constants.MAP_WIDTH * 4
+    iso_x = y / constants.TILE_HEIGHT + (x - offset_x) / constants.TILE_WIDTH
+    iso_y = y / constants.TILE_HEIGHT - (x - offset_x) / constants.TILE_WIDTH
+    return iso_x, iso_y
+
+
+def cell_to_pix(val, width):
+    if width:
+        #print("Cell width is " + str(blt.state(blt.TK_CELL_WIDTH)))
+        res = val * blt.state(blt.TK_CELL_WIDTH)
+    else:
+        #print("Cell height is " + str(blt.state(blt.TK_CELL_HEIGHT)))
+        res = val * blt.state(blt.TK_CELL_HEIGHT)
+    #print("Result is " + str(res))
+    return res
+
+def pix_to_iso(x,y):
+    offset_x = cell_to_pix(constants.MAP_WIDTH * 4, True)
+    iso_x = y / cell_to_pix(constants.TILE_HEIGHT, False) + (x - offset_x) / cell_to_pix(constants.TILE_WIDTH, True)
+    iso_y = y / cell_to_pix(constants.TILE_HEIGHT, False) - (x - offset_x) / cell_to_pix(constants.TILE_WIDTH, True)
+    return iso_x, iso_y
+
 
 def draw_map(map_draw):
     for x in range(0, constants.MAP_WIDTH):
@@ -259,7 +284,7 @@ def game_main_loop():
         draw_game()
 
         # debug
-        blt.puts(2,2, "[color=red] player pos in cells: %d %d" % (draw_iso(PLAYER.x, PLAYER.y)))
+        # blt.puts(2,2, "[color=red] player pos in cells: %d %d" % (draw_iso(PLAYER.x, PLAYER.y)))
 
 
         # mouse test
@@ -272,6 +297,15 @@ def game_main_loop():
                 blt.state(blt.TK_MOUSE_PIXEL_X),
                 blt.state(blt.TK_MOUSE_PIXEL_Y)))
 
+        # map tile picking test
+        cell_x = blt.state(blt.TK_MOUSE_X)
+        cell_y = blt.state(blt.TK_MOUSE_Y)
+
+        pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
+        pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
+
+        blt.puts(2,2, "[color=red] iso coords based on cells: %d %d" % (cell_to_iso(cell_x,cell_y)))
+        blt.puts(2,3, "[color=red] iso coords based on pixels: %d %d" % (pix_to_iso(pix_x, pix_y)))
 
         # mouse picking test
         x = blt.state(blt.TK_MOUSE_X)
