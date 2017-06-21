@@ -39,8 +39,10 @@ class obj_Actor:
         is_visible = libtcod.map_is_in_fov(FOV_MAP, self.x, self.y)
 
         if is_visible:
-            tile_x, tile_y = draw_iso(self.x,self.y)
-            blt.put_ext(tile_x, tile_y, 10, 10, self.char)
+            tile_x, tile_y = draw_iso(self.x,self.y) #this is the left corner of our tile
+
+
+            blt.put_ext(tile_x, tile_y, blt.state(blt.TK_CELL_WIDTH)*4, 0, self.char)
 
             #cartesian
             #blt.put_ext(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, 10, 10, self.char)
@@ -173,7 +175,7 @@ def draw_game():
 
 def draw_iso(x,y):
     # isometric
-    offset_x = constants.MAP_WIDTH * 4  # + constants.MAP_WIDTH/2
+    offset_x = constants.MAP_WIDTH * 4
     tile_x = (x - y) * constants.TILE_WIDTH / 2 + offset_x
     tile_y = (x + y) * constants.TILE_HEIGHT / 2
     return tile_x, tile_y
@@ -196,6 +198,7 @@ def draw_map(map_draw):
                 if map_draw[x][y].block_path == True:
                     # draw wall
                     blt.put(tile_x, tile_y, "#")
+
                 else:
                     # draw floor
                     blt.put(tile_x,tile_y, ".")
@@ -360,10 +363,10 @@ def game_initialize():
     blt.refresh()
 
     #tiles
-    blt.set("0x02E: gfx/floor_sand.png") # "."
-    blt.set("0x23: gfx/wall_stone.png") # "#"
-    blt.set("0x40: gfx/human_m.png") # "@"
-    blt.set("0xE000: gfx/kobold.png") # ""
+    # blt.set("0x02E: gfx/floor_sand.png") # "."
+    # blt.set("0x23: gfx/wall_stone.png") # "#"
+    # blt.set("0x40: gfx/human_m.png") # "@"
+    # blt.set("0xE000: gfx/kobold.png") # ""
 
     GAME = obj_Game()
 
@@ -374,7 +377,8 @@ def game_initialize():
 
     creature_com2 = com_Creature("kobold", death_function=death_monster)
     ai_com = AI_test()
-    ENEMY = obj_Actor(3,3, u"", creature=creature_com2, ai=ai_com)
+    ENEMY = obj_Actor(3,3, "k", creature=creature_com2, ai=ai_com)
+    # ENEMY = obj_Actor(3,3, u"", creature=creature_com2, ai=ai_com)
 
     GAME.current_entities = [PLAYER, ENEMY]
 
