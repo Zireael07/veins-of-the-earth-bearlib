@@ -39,10 +39,11 @@ class obj_Actor:
         is_visible = libtcod.map_is_in_fov(FOV_MAP, self.x, self.y)
 
         if is_visible:
-            tile_x, tile_y = draw_iso(self.x,self.y) #this is the left corner of our tile
+            tile_x, tile_y = draw_iso(self.x,self.y) #this is the top(?) corner of our tile
+            # this works for ASCII mode
+            #blt.put_ext(tile_x, tile_y, 0, blt.state(blt.TK_CELL_HEIGHT), self.char)
 
-
-            blt.put_ext(tile_x, tile_y, blt.state(blt.TK_CELL_WIDTH)*4, 0, self.char)
+            blt.put_ext(tile_x, tile_y, 0, 2, self.char)
 
             #cartesian
             #blt.put_ext(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, 10, 10, self.char)
@@ -201,7 +202,11 @@ def draw_map(map_draw):
 
                 else:
                     # draw floor
+                    blt.put(tile_x, tile_y, 0x3002)
+
                     blt.put(tile_x,tile_y, ".")
+
+
 
             elif map_draw[x][y].explored:
                 blt.color("gray")
@@ -216,7 +221,9 @@ def draw_map(map_draw):
                     blt.put(tile_x,tile_y, "#")
                 else:
                     # draw floor
+                    blt.put(tile_x, tile_y, 0x3002)
                     blt.put(tile_x,tile_y, ".")
+
 
 
 def draw_messages():
@@ -362,11 +369,11 @@ def game_initialize():
     # needed to avoid insta-close
     blt.refresh()
 
-    #tiles
-    # blt.set("0x02E: gfx/floor_sand.png") # "."
-    # blt.set("0x23: gfx/wall_stone.png") # "#"
-    # blt.set("0x40: gfx/human_m.png") # "@"
-    # blt.set("0xE000: gfx/kobold.png") # ""
+    # tiles
+    blt.set("0x3002: gfx/floor_sand.png, align=center") # "."
+    blt.set("0x23: gfx/wall_stone.png, align=center") # "#"
+    blt.set("0x40: gfx/human_m.png, align=center") # "@"
+    blt.set("0xE000: gfx/kobold.png,  align=center") # ""
 
     GAME = obj_Game()
 
@@ -377,8 +384,8 @@ def game_initialize():
 
     creature_com2 = com_Creature("kobold", death_function=death_monster)
     ai_com = AI_test()
-    ENEMY = obj_Actor(3,3, "k", creature=creature_com2, ai=ai_com)
-    # ENEMY = obj_Actor(3,3, u"", creature=creature_com2, ai=ai_com)
+    # ENEMY = obj_Actor(3,3, "k", creature=creature_com2, ai=ai_com)
+    ENEMY = obj_Actor(3,3, u"", creature=creature_com2, ai=ai_com)
 
     GAME.current_entities = [PLAYER, ENEMY]
 
