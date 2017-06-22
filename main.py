@@ -178,7 +178,7 @@ def draw_game(x,y):
 
 
 def draw_mouseover(x,y):
-    tile_x, tile_y = cell_to_iso(x, y)
+    tile_x, tile_y = pix_to_iso(x, y)
     draw_x, draw_y = draw_iso(tile_x, tile_y)
 
     blt.color("light yellow")
@@ -211,10 +211,15 @@ def cell_to_pix(val, width):
     return res
 
 def pix_to_iso(x,y):
+    x = float(x)
+    y = float(y)
     offset_x = cell_to_pix(constants.MAP_WIDTH * 4, True)
     iso_x = y / cell_to_pix(constants.TILE_HEIGHT, False) + (x - offset_x) / cell_to_pix(constants.TILE_WIDTH, True)
     iso_y = y / cell_to_pix(constants.TILE_HEIGHT, False) - (x - offset_x) / cell_to_pix(constants.TILE_WIDTH, True)
-    return iso_x, iso_y
+    # iso_x = y / 27 + (x - offset_x) / 54
+    # iso_y = y / 27 - (x - offset_x) / 54
+    # print("Iso_x " + str(int(iso_x)) + "iso_y " + str(int(iso_y)))
+    return int(iso_x), int(iso_y)
 
 
 def draw_map(map_draw):
@@ -302,13 +307,13 @@ def game_main_loop():
                 blt.state(blt.TK_MOUSE_PIXEL_Y)))
 
         # map tile picking test
-        cell_x = blt.state(blt.TK_MOUSE_X)
-        cell_y = blt.state(blt.TK_MOUSE_Y)
+        # cell_x = blt.state(blt.TK_MOUSE_X)
+        # cell_y = blt.state(blt.TK_MOUSE_Y)
 
         pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
         pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
 
-        blt.puts(2,2, "[color=red] iso coords based on cells: %d %d" % (cell_to_iso(cell_x,cell_y)))
+        #blt.puts(2,2, "[color=red] iso coords based on cells: %d %d" % (cell_to_iso(cell_x,cell_y)))
         blt.puts(2,3, "[color=red] iso coords based on pixels: %d %d" % (pix_to_iso(pix_x, pix_y)))
 
         # mouse picking test
@@ -330,7 +335,7 @@ def game_main_loop():
 
 
         # draw
-        draw_game(cell_x, cell_y)
+        draw_game(pix_x, pix_y)
 
         # debug
         # blt.puts(2,2, "[color=red] player pos in cells: %d %d" % (draw_iso(PLAYER.x, PLAYER.y)))
