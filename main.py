@@ -165,14 +165,25 @@ def map_check_for_creature(x, y, exclude_entity = None):
                 target = ent
 
 
-def draw_game():
+def draw_game(x,y):
     draw_map(GAME.current_map)
+
+    draw_mouseover(x,y)
 
     blt.color("white")
     for ent in GAME.current_entities:
         ent.draw()
 
     draw_messages()
+
+
+def draw_mouseover(x,y):
+    tile_x, tile_y = cell_to_iso(x, y)
+    draw_x, draw_y = draw_iso(tile_x, tile_y)
+
+    blt.color("light yellow")
+    blt.put(draw_x, draw_y, 0x2317)
+
 
 # based on STI library for LOVE2D
 def draw_iso(x,y):
@@ -280,13 +291,6 @@ def game_main_loop():
 
         blt.puts(2,1, "[color=white]FPS: %d" % (fps_value))
 
-        # draw
-        draw_game()
-
-        # debug
-        # blt.puts(2,2, "[color=red] player pos in cells: %d %d" % (draw_iso(PLAYER.x, PLAYER.y)))
-
-
         # mouse test
         blt.puts(
             3, 4,
@@ -323,6 +327,13 @@ def game_main_loop():
              if n == 0:
                  blt.puts(3, 5, "Empty cell")
 
+
+
+        # draw
+        draw_game(cell_x, cell_y)
+
+        # debug
+        # blt.puts(2,2, "[color=red] player pos in cells: %d %d" % (draw_iso(PLAYER.x, PLAYER.y)))
 
 
         # refresh term
@@ -408,6 +419,7 @@ def game_initialize():
     blt.set("0x23: gfx/wall_stone.png, align=center") # "#"
     blt.set("0x40: gfx/human_m.png, align=center") # "@"
     blt.set("0xE000: gfx/kobold.png,  align=center") # ""
+    blt.set("0x2317: gfx/mouseover.png, align=center") # "⌗"
 
     GAME = obj_Game()
 
