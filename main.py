@@ -3,6 +3,7 @@
 from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 from time import time
+import math
 
 import constants
 
@@ -90,6 +91,18 @@ class com_Creature:
         if not tile_is_wall and target is None:
             self.owner.x += dx
             self.owner.y += dy
+
+    def move_towards(self, target_x, target_y):
+        # vector from this object to the target, and distance
+        dx = target_x - self.owner.x
+        dy = target_y - self.owner.y
+        distance = math.sqrt(dx ** 2 + dy ** 2)
+
+        # normalize it to length 1 (preserving direction), then round it and
+        # convert to integer so the movement is restricted to the map grid
+        dx = int(round(dx / distance))
+        dy = int(round(dy / distance))
+        self.move(dx, dy)
 
 class AI_test:
     def take_turn(self):
@@ -354,6 +367,8 @@ def game_main_loop():
 
         # avoid blocking the game with blt.read
         while not game_quit and blt.has_input():
+
+
             player_action = game_handle_keys()
 
             map_calculate_fov()
@@ -361,7 +376,12 @@ def game_main_loop():
             if player_action == "QUIT":
                 game_quit = True
 
-            if player_action != "no-action":
+
+            if player_action == "mouse_click":
+                print "Click"
+
+
+            if player_action != "no-action" and player_action != "mouse_click":
                 for ent in GAME.current_entities:
                     if ent.ai:
                         ent.ai.take_turn()
@@ -392,6 +412,29 @@ def game_handle_keys():
         PLAYER.creature.move(1, 0)
         FOV_CALCULATE = True
         return "player-moved"
+
+    # mouse
+
+    if key == blt.TK_MOUSE_LEFT:
+        pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
+        pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
+
+        click_x, click_y = pix_to_iso(pix_x, pix_y)
+
+        print "Clicked on tile " + str(click_x) + " " + str(click_y)
+
+        if click_x != PLAYER.x or click_y != PLAYER.y:
+            PLAYER.creature.move_towards(click_x, click_y)
+            FOV_CALCULATE = True
+
+        return "player-moved"
+
+    if  key == blt.TK_MOUSE_RIGHT:
+        pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
+        pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
+        print "Right clicked on tile " + str(pix_to_iso(pix_x, pix_y))
+
+        return "mouse_click"
 
 
     return "no-action"
