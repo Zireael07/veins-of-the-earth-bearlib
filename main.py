@@ -23,18 +23,26 @@ class obj_Game:
 
 
 class obj_Actor:
-    def __init__(self, x, y, char, creature=None, ai=None):
+    def __init__(self, x, y, char, creature=None, ai=None, container=None, item=None):
         self.x = x
         self.y = y
         self.char = char
         self.creature = creature
 
-        if creature:
+        if self.creature:
             creature.owner = self
 
         self.ai = ai
-        if ai:
+        if self.ai:
             ai.owner = self
+
+        self.container = container
+        if self.container:
+            container.owner = self
+
+        self.item = item
+        if self.item:
+            item.owner = self
 
     def draw(self):
         is_visible = libtcod.map_is_in_fov(FOV_MAP, self.x, self.y)
@@ -48,7 +56,6 @@ class obj_Actor:
 
             #cartesian
             #blt.put_ext(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, 10, 10, self.char)
-
 
 
 class com_Creature:
@@ -103,6 +110,30 @@ class com_Creature:
         dx = int(round(dx / distance))
         dy = int(round(dy / distance))
         self.move(dx, dy)
+
+
+class com_Container:
+    def __init__(self, inventory = []):
+        self.inventory = inventory
+
+
+class com_Item:
+    def __init__(self, weight=0.0):
+        self.weight = weight
+
+    def pick_up(self, actor):
+        if actor.container:
+            game_message("Picking up", "white")
+            actor.container.inventory.append(self.owner)
+            self.current_container = actor.container
+            GAME.current_entities.remove(self.owner)
+
+    def drop(self, new_x, new_y):
+        game_message("Item dropped", "white")
+        self.current_container.inventory.remove(self.owner)
+        GAME.current_entities.append(self.owner)
+        self.owner.x = new_x
+        self.owner.y = new_y
 
 class AI_test:
     def take_turn(self):
@@ -176,6 +207,19 @@ def map_check_for_creature(x, y, exclude_entity = None):
                 and ent.y == y
                 and ent.creature):
                 target = ent
+
+
+def map_check_for_item(x,y):
+    target = None
+
+    for ent in GAME.current_entities:
+        if (ent.x == x
+            and ent.y == y
+            and ent.item):
+            target = ent
+
+        if target:
+            return target
 
 
 def draw_game(x,y):
@@ -413,6 +457,18 @@ def game_handle_keys():
         FOV_CALCULATE = True
         return "player-moved"
 
+    # items
+    if key == blt.TK_G:
+        object = map_check_for_item(PLAYER.x, PLAYER.y)
+        #for obj in objects:
+        object.item.pick_up(PLAYER)
+
+    if key == blt.TK_D:
+        if len(PLAYER.container.inventory) > 0:
+            #drop the last item
+            PLAYER.container.inventory[-1].item.drop(PLAYER.x, PLAYER.y)
+
+
     # mouse
 
     if key == blt.TK_MOUSE_LEFT:
@@ -444,7 +500,7 @@ def game_message(msg, msg_color):
     GAME.message_history.append((msg, msg_color))
 
 def game_initialize():
-    global GAME, PLAYER, ENEMY, FOV_CALCULATE
+    global GAME, FOV_CALCULATE, PLAYER, ENEMY, ITEM
 
     blt.open()
     # default terminal size is 80x25
@@ -473,15 +529,19 @@ def game_initialize():
 
     FOV_CALCULATE = True
 
+    container_com1 = com_Container()
     creature_com1 = com_Creature("Player")
-    PLAYER = obj_Actor(1,1, "@", creature=creature_com1)
+    PLAYER = obj_Actor(1,1, "@", creature=creature_com1, container=container_com1)
 
     creature_com2 = com_Creature("kobold", death_function=death_monster)
     ai_com = AI_test()
     # ENEMY = obj_Actor(3,3, "k", creature=creature_com2, ai=ai_com)
     ENEMY = obj_Actor(3,3, u"", creature=creature_com2, ai=ai_com)
 
-    GAME.current_entities = [PLAYER, ENEMY]
+    item_com1 = com_Item()
+    ITEM = obj_Actor(2,2, "/", item=item_com1)
+
+    GAME.current_entities = [PLAYER, ENEMY, ITEM]
 
 if __name__ == '__main__':
     game_initialize()
