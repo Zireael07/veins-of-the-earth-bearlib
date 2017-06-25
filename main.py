@@ -76,14 +76,38 @@ class obj_Actor:
 
 class com_Creature:
     ''' Name_instance is the name of an individual, e.g. "Agrk"'''
-    def __init__(self, name_instance, hp=10, death_function=None):
+    def __init__(self, name_instance, base_atk = 3, base_def = 0, hp=10, death_function=None):
         self.name_instance = name_instance
         self.max_hp = hp
         self.hp = hp
+        self.base_atk = base_atk
+        self.base_def = base_def
         self.death_function = death_function
 
+    @property
+    def attack_mod(self):
+        total_attack = self.base_atk
+
+        if self.owner.container:
+            object_bonuses = [ obj.equipment.attack_bonus
+                               for obj in self.owner.container.equipped_items]
+
+            for bonus in object_bonuses:
+                total_attack += bonus
+
+        return total_attack
+
+    def defense(self):
+        total_def = self.base_def
+        return total_def
+
     def attack(self, target, damage):
-        game_message(self.name_instance + " attacks " + target.creature.name_instance + " for " + str(damage) + " damage!", "red")
+        damage_dealt = self.attack_mod
+
+        game_message(self.name_instance + " attacks " + target.creature.name_instance + " for " +
+                     str(damage_dealt) +
+                     #str(damage) +
+                     " damage!", "red")
         target.creature.take_damage(damage)
 
     def take_damage(self, damage):
@@ -133,6 +157,12 @@ class com_Container:
     def __init__(self, inventory = []):
         self.inventory = inventory
 
+    @property
+    def equipped_items(self):
+        list_equipped = [obj for obj in self.inventory
+                         if obj.equipment and obj.equipment.equipped]
+
+        return list_equipped
 
 class com_Item:
     def __init__(self, weight=0.0):
@@ -159,9 +189,11 @@ class com_Item:
 
 
 class com_Equipment:
-    def __init__(self, slot):
+    def __init__(self, slot, attack_bonus = 0, defense_bonus = 0):
         self.slot = slot
         self.equipped = False
+        self.attack_bonus = attack_bonus
+        self.defense_bonus = defense_bonus
 
     def toggle_equip(self):
         if self.equipped:
@@ -683,7 +715,7 @@ def game_initialize():
     # ENEMY = obj_Actor(3,3, "k", creature=creature_com2, ai=ai_com)
     ENEMY = obj_Actor(3,3, u"", "kobold", creature=creature_com2, ai=ai_com)
 
-    equipment_com1 = com_Equipment("main_hand")
+    equipment_com1 = com_Equipment("main_hand", attack_bonus=2)
     item_com1 = com_Item()
     ITEM = obj_Actor(2,2, "/", "sword", item=item_com1, equipment=equipment_com1)
 
