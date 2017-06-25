@@ -23,9 +23,10 @@ class obj_Game:
 
 
 class obj_Actor:
-    def __init__(self, x, y, char, creature=None, ai=None, container=None, item=None):
+    def __init__(self, x, y, char, name, creature=None, ai=None, container=None, item=None):
         self.x = x
         self.y = y
+        self.name = name
         self.char = char
         self.creature = creature
 
@@ -339,6 +340,102 @@ def draw_messages():
 
         i += 1
 
+
+# GUI
+# based on https://github.com/FirstAidKitten/Roguelike-Sandbox
+def create_window(x, y, w, h, title=None):
+    #test
+    blt.composition(False)
+
+    last_bg = blt.state(blt.TK_BKCOLOR)
+    blt.bkcolor(blt.color_from_argb(200, 0, 0, 0))
+    blt.clear_area(x - 2, y - 2, w + 2, h + 2)
+    blt.bkcolor(last_bg)
+
+    # upper border
+    border = '┌' + '─' * (w) + '┐'
+    blt.puts(x - 1, y - 1, border)
+    # sides
+    for i in range(h):
+        blt.puts(x - 1, y + i, '│')
+        blt.puts(x + w, y + i, '│')
+    # lower border
+    border = '└' + '─' * (w) + '┘'
+    blt.puts(x - 1, y + h, border)
+
+    if title is not None:
+        leng = len(title)
+        offset = (w + 2 - leng) // 2
+        blt.puts(x + offset, y - 1, title)
+
+
+def menu(header, options, width, title=None):
+    global FOV_CALCULATE
+
+    FOV_CALCULATE = True
+
+    menu_x = int((120 - width) / 2)
+
+    if len(options) > 26:
+        raise ValueError('Cannot have a menu with more than 26 options.')
+
+    header_height = 2
+
+    menu_h = int(header_height + 1 + 26)
+    menu_y = int((50 - menu_h) / 2)
+
+    # create a window
+
+    create_window(menu_x, menu_y, width, menu_h, title)
+
+
+    blt.puts(menu_x, menu_y, header)
+
+    # print all the options
+    y = menu_y + header_height + 1
+    letter_index = ord('a')
+    for option_text in options:
+        text = '(' + chr(letter_index) + ') ' + option_text
+        blt.puts(menu_x, y, text)
+        y += 1
+        letter_index += 1
+
+    blt.refresh()
+    # present the root console to the player and wait for a key-press
+    blt.set('input: filter = [keyboard]')
+    while True:
+        key = blt.read()
+        if blt.check(blt.TK_CHAR):
+            # convert the ASCII code to an index; if it corresponds to an option, return it
+            key = blt.state(blt.TK_CHAR)
+            index = key - ord('a')
+            if 0 <= index < len(options):
+                blt.set('input: filter = [keyboard, mouse+]')
+                blt.composition(True)
+                return index
+        else:
+            blt.set('input: filter = [keyboard, mouse+]')
+            blt.composition(True)
+            return None
+
+
+def inventory_menu(header):
+    # show a menu with each item of the inventory as an option
+    if len(PLAYER.container.inventory) == 0:
+        options = ['Inventory is empty.']
+    else:
+        options = [item.name for item in PLAYER.container.inventory]
+
+    index = menu(header, options, 50, 'INVENTORY')
+
+    # if an item was chosen, return it
+    if index is None or len(PLAYER.container.inventory) == 0:
+        return None
+    return PLAYER.container.inventory[index]
+
+
+
+
 def game_main_loop():
     game_quit = False
 
@@ -468,6 +565,8 @@ def game_handle_keys():
             #drop the last item
             PLAYER.container.inventory[-1].item.drop(PLAYER.x, PLAYER.y)
 
+    if key == blt.TK_I:
+        chosen_item = inventory_menu("Inventory")
 
     # mouse
 
@@ -531,15 +630,15 @@ def game_initialize():
 
     container_com1 = com_Container()
     creature_com1 = com_Creature("Player")
-    PLAYER = obj_Actor(1,1, "@", creature=creature_com1, container=container_com1)
+    PLAYER = obj_Actor(1,1, "@", "Player", creature=creature_com1, container=container_com1)
 
     creature_com2 = com_Creature("kobold", death_function=death_monster)
     ai_com = AI_test()
     # ENEMY = obj_Actor(3,3, "k", creature=creature_com2, ai=ai_com)
-    ENEMY = obj_Actor(3,3, u"", creature=creature_com2, ai=ai_com)
+    ENEMY = obj_Actor(3,3, u"", "kobold", creature=creature_com2, ai=ai_com)
 
     item_com1 = com_Item()
-    ITEM = obj_Actor(2,2, "/", item=item_com1)
+    ITEM = obj_Actor(2,2, "/", "sword", item=item_com1)
 
     GAME.current_entities = [PLAYER, ENEMY, ITEM]
 
