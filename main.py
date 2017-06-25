@@ -23,7 +23,8 @@ class obj_Game:
 
 
 class obj_Actor:
-    def __init__(self, x, y, char, name, creature=None, ai=None, container=None, item=None):
+    ''' Name is the name of the whole class, e.g. "goblin"'''
+    def __init__(self, x, y, char, name, creature=None, ai=None, container=None, item=None, equipment=None):
         self.x = x
         self.y = y
         self.name = name
@@ -45,6 +46,20 @@ class obj_Actor:
         if self.item:
             item.owner = self
 
+        self.equipment = equipment
+        if self.equipment:
+            equipment.owner = self
+
+    def display_name(self):
+        if self.creature:
+            return (self.creature.name_instance + " the " + self.name)
+
+        if self.item:
+            if self.equipment and self.equipment.equipped:
+                return self.name + " (equipped)"
+            else:
+                return self.name
+
     def draw(self):
         is_visible = libtcod.map_is_in_fov(FOV_MAP, self.x, self.y)
 
@@ -60,6 +75,7 @@ class obj_Actor:
 
 
 class com_Creature:
+    ''' Name_instance is the name of an individual, e.g. "Agrk"'''
     def __init__(self, name_instance, hp=10, death_function=None):
         self.name_instance = name_instance
         self.max_hp = hp
@@ -135,6 +151,33 @@ class com_Item:
         GAME.current_entities.append(self.owner)
         self.owner.x = new_x
         self.owner.y = new_y
+
+    def use(self):
+        if self.owner.equipment:
+            self.owner.equipment.toggle_equip()
+            return
+
+
+class com_Equipment:
+    def __init__(self, slot):
+        self.slot = slot
+        self.equipped = False
+
+    def toggle_equip(self):
+        if self.equipped:
+            self.unequip()
+        else:
+            self.equip()
+
+    def equip(self):
+        self.equipped = True
+
+        game_message("Item equipped", "white")
+
+    def unequip(self):
+        self.equipped = False
+        game_message("Took off item", "white")
+
 
 class AI_test:
     def take_turn(self):
@@ -424,7 +467,7 @@ def inventory_menu(header):
     if len(PLAYER.container.inventory) == 0:
         options = ['Inventory is empty.']
     else:
-        options = [item.name for item in PLAYER.container.inventory]
+        options = [item.display_name() for item in PLAYER.container.inventory]
 
     index = menu(header, options, 50, 'INVENTORY')
 
@@ -567,6 +610,9 @@ def game_handle_keys():
 
     if key == blt.TK_I:
         chosen_item = inventory_menu("Inventory")
+        if chosen_item is not None:
+            if chosen_item.item:
+                chosen_item.item.use()
 
     # mouse
 
@@ -637,8 +683,9 @@ def game_initialize():
     # ENEMY = obj_Actor(3,3, "k", creature=creature_com2, ai=ai_com)
     ENEMY = obj_Actor(3,3, u"", "kobold", creature=creature_com2, ai=ai_com)
 
+    equipment_com1 = com_Equipment("main_hand")
     item_com1 = com_Item()
-    ITEM = obj_Actor(2,2, "/", "sword", item=item_com1)
+    ITEM = obj_Actor(2,2, "/", "sword", item=item_com1, equipment=equipment_com1)
 
     GAME.current_entities = [PLAYER, ENEMY, ITEM]
 
