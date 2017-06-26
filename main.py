@@ -76,19 +76,31 @@ class obj_Actor:
 
 class com_Creature:
     ''' Name_instance is the name of an individual, e.g. "Agrk"'''
-    def __init__(self, name_instance, base_atk = 3, base_def = 0, hp=10, death_function=None):
+    def __init__(self, name_instance, num_dice = 1, damage_dice = 6, base_def = 0, hp=10, death_function=None):
         self.name_instance = name_instance
         self.max_hp = hp
         self.hp = hp
-        self.base_atk = base_atk
+        self.num_dice = num_dice
+        self.damage_dice = damage_dice
         self.base_def = base_def
         self.death_function = death_function
 
     @property
     def attack_mod(self):
-        total_attack = self.base_atk
+        total_attack = 0 #self.base_atk
 
         if self.owner.container:
+
+            # get weapon
+            weapon = self.get_weapon()
+
+            # get weapon dice
+            if weapon is not None:
+                total_attack = libtcod.random_get_int(0, weapon.equipment.num_dice, weapon.equipment.damage_dice)
+            else:
+                total_attack = libtcod.random_get_int(0, self.num_dice, self.damage_dice)
+
+            # get bonuses
             object_bonuses = [ obj.equipment.attack_bonus
                                for obj in self.owner.container.equipped_items]
 
@@ -101,12 +113,18 @@ class com_Creature:
         total_def = self.base_def
         return total_def
 
+    def get_weapon(self):
+        for obj in self.owner.container.equipped_items:
+            if obj.equipment.attack_bonus:
+                return obj
+            else:
+                return None
+
     def attack(self, target, damage):
-        damage_dealt = self.attack_mod
 
         game_message(self.name_instance + " attacks " + target.creature.name_instance + " for " +
-                     str(damage_dealt) +
-                     #str(damage) +
+                     #str(damage_dealt) +
+                     str(damage) +
                      " damage!", "red")
         target.creature.take_damage(damage)
 
@@ -132,7 +150,8 @@ class com_Creature:
         target = map_check_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
 
         if target:
-            self.attack(target, 5)
+            damage_dealt = self.attack_mod
+            self.attack(target, damage_dealt)
 
         tile_is_wall = (GAME.current_map[self.owner.x+dx][self.owner.y+dy].block_path == True)
 
@@ -189,9 +208,11 @@ class com_Item:
 
 
 class com_Equipment:
-    def __init__(self, slot, attack_bonus = 0, defense_bonus = 0):
+    def __init__(self, slot, num_dice = 1, damage_dice = 4, attack_bonus = 0, defense_bonus = 0):
         self.slot = slot
         self.equipped = False
+        self.num_dice = num_dice
+        self.damage_dice = damage_dice
         self.attack_bonus = attack_bonus
         self.defense_bonus = defense_bonus
 
