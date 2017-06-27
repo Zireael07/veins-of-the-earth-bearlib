@@ -4,6 +4,7 @@ from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 from time import time
 import math
+import json
 
 import constants
 
@@ -731,18 +732,51 @@ def game_initialize():
     creature_com1 = com_Creature("Player")
     PLAYER = obj_Actor(1,1, "@", "Player", creature=creature_com1, container=container_com1)
 
-    creature_com2 = com_Creature("kobold", death_function=death_monster)
-    ai_com = AI_test()
+    # creature_com2 = com_Creature("kobold", death_function=death_monster)
+    # ai_com = AI_test()
     # ENEMY = obj_Actor(3,3, "k", creature=creature_com2, ai=ai_com)
-    ENEMY = obj_Actor(3,3, u"", "kobold", creature=creature_com2, ai=ai_com)
+    # ENEMY = obj_Actor(3,3, u"", "kobold", creature=creature_com2, ai=ai_com)
 
     equipment_com1 = com_Equipment("main_hand", attack_bonus=2)
     item_com1 = com_Item()
     ITEM = obj_Actor(2,2, "/", "sword", item=item_com1, equipment=equipment_com1)
 
-    GAME.current_entities = [PLAYER, ENEMY, ITEM]
+    GAME.current_entities = [PLAYER, ITEM]
+
+    #test generating monsters
+    GAME.current_entities.append(generate_monster(3,3, "kobold"))
+    GAME.current_entities.append(generate_monster(5,5, "kobold"))
+    GAME.current_entities.append(generate_monster(7,7, "kobold"))
+
+
+def generate_monster(x,y, id):
+    print "Generating monster with id " + id + " at " + str(x) + " " + str(y)
+
+    # Set values
+    mon_name = monster_data[id]['name']
+    mon_hp = monster_data[id]['hit_points']
+    mon_dam_num = monster_data[id]['damage_number']
+    mon_dam_dice = monster_data[id]['damage_dice']
+
+    # Defaults
+    death = death_monster
+    char = u""
+
+    #Create the monster
+    creature_comp = com_Creature(mon_name, death_function=death)
+    ai_comp = AI_test()
+
+    monster = obj_Actor(x,y, char, mon_name, creature=creature_comp, ai=ai_comp)
+
+    return monster
 
 if __name__ == '__main__':
+
+    # Load JSON
+    with open(constants.NPC_JSON_PATH) as json_data:
+        monster_data = json.load(json_data)
+        #print monster_data
+
     game_initialize()
     game_main_loop()
 
