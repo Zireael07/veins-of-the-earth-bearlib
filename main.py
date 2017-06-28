@@ -98,16 +98,23 @@ class com_Creature:
 
             # get weapon dice
             if weapon is not None:
-                total_attack = libtcod.random_get_int(0, weapon.equipment.num_dice, weapon.equipment.damage_dice)
+                total_attack = roll(weapon.equipment.num_dice, weapon.equipment.damage_dice)
             else:
-                total_attack = libtcod.random_get_int(0, self.num_dice, self.damage_dice)
+                total_attack = roll(self.num_dice, self.damage_dice)
 
+            print self.name_instance + ": Total attack after rolling is " + str(total_attack)
             # get bonuses
             object_bonuses = [ obj.equipment.attack_bonus
                                for obj in self.owner.container.equipped_items]
 
             for bonus in object_bonuses:
                 total_attack += bonus
+                # print "Adding bonus of " + str(bonus)
+
+        # if we don't have an inventory (NPC)
+        else:
+            total_attack = roll(self.num_dice, self.damage_dice)
+            print self.name_instance + ": NPC total attack after rolling is " + str(total_attack)
 
         return total_attack
 
@@ -125,7 +132,6 @@ class com_Creature:
     def attack(self, target, damage):
 
         game_message(self.name_instance + " attacks " + target.creature.name_instance + " for " +
-                     #str(damage_dealt) +
                      str(damage) +
                      " damage!", "red")
         target.creature.take_damage(damage)
@@ -378,10 +384,14 @@ def pix_to_iso(x,y):
     return int(iso_x), int(iso_y)
 
 
+def roll(dice, sides):
+    result = 0
+    for i in range(0, dice, 1):
+        roll = libtcod.random_get_int(0, 1, sides)
+        result += roll
 
-
-
-
+    print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
+    return result
 
 def game_main_loop():
     game_quit = False
@@ -587,7 +597,7 @@ def game_initialize():
     # ENEMY = obj_Actor(3,3, "k", creature=creature_com2, ai=ai_com)
     # ENEMY = obj_Actor(3,3, u"", "kobold", creature=creature_com2, ai=ai_com)
 
-    equipment_com1 = com_Equipment("main_hand", attack_bonus=2)
+    equipment_com1 = com_Equipment("main_hand") #, num_dice=1, damage_dice=8)
     item_com1 = com_Item()
     ITEM = obj_Actor(2,2, "/", "sword", item=item_com1, equipment=equipment_com1)
 
