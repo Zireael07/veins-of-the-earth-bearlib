@@ -95,7 +95,7 @@ class obj_Actor:
 
         if self.item:
             if self.equipment and self.equipment.equipped:
-                return self.name + " (equipped)"
+                return self.name + " (equipped in slot: " + self.equipment.slot + ")"
             else:
                 return self.name
 

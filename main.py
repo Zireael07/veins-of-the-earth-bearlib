@@ -368,7 +368,12 @@ def game_initialize():
     blt.set("0x23: gfx/wall_stone.png, align=center") # "#"
     blt.set("0x40: gfx/human_m.png, align=center") # "@"
     blt.set("0xE000: gfx/kobold.png,  align=center") # ""
+    blt.set("0x2215: gfx/longsword.png, align=center") #"∕"
+    blt.set("0x1C0: gfx/dagger.png, align=center") # "ǀ"
+
+    # gfx
     blt.set("0x2317: gfx/mouseover.png, align=center") # "⌗"
+
 
     GAME = obj_Game()
 
@@ -383,21 +388,23 @@ def game_initialize():
 
     equipment_com1 = components.com_Equipment("main_hand") #, num_dice=1, damage_dice=8)
     item_com1 = components.com_Item()
-    ITEM = components.obj_Actor(2,2, "/", "sword", item=item_com1, equipment=equipment_com1)
+    ITEM = components.obj_Actor(2,2, u"∕", "sword", item=item_com1, equipment=equipment_com1)
 
 
     equipment_com2 = components.com_Equipment("main_hand")
     item_com2 = components.com_Item()
-    ITEM2 = components.obj_Actor(3,3, "/", "dagger", item=item_com2, equipment=equipment_com2)
+    ITEM2 = components.obj_Actor(3,3, u"ǀ", "dagger", item=item_com2, equipment=equipment_com2)
 
 
-    GAME.current_entities = [PLAYER, ITEM, ITEM2]
+    GAME.current_entities = [ITEM, ITEM2]
 
     #test generating monsters
     GAME.current_entities.append(generate_monster(3,3, "kobold"))
     GAME.current_entities.append(generate_monster(5,5, "kobold"))
     GAME.current_entities.append(generate_monster(7,7, "kobold"))
 
+    # put player last
+    GAME.current_entities.append(PLAYER)
 
 def generate_monster(x,y, id):
     print "Generating monster with id " + id + " at " + str(x) + " " + str(y)
