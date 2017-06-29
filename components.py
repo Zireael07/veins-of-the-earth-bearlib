@@ -53,6 +53,14 @@ def map_check_for_creature(x, y, exclude_entity = None):
                 and ent.creature):
                 target = ent
 
+# returns the equipment in a slot, or None if it's empty
+def get_equipped_in_slot(actor, slot):
+    for obj in actor.container.inventory:
+        if obj.equipment and obj.equipment.slot == slot and obj.equipment.equipped:
+            return obj.equipment
+    return None
+
+
 class obj_Actor:
     ''' Name is the name of the whole class, e.g. "goblin"'''
     def __init__(self, x, y, char, name, creature=None, ai=None, container=None, item=None, equipment=None):
@@ -238,9 +246,9 @@ class com_Item:
         self.owner.x = new_x
         self.owner.y = new_y
 
-    def use(self):
+    def use(self, actor):
         if self.owner.equipment:
-            self.owner.equipment.toggle_equip()
+            self.owner.equipment.toggle_equip(actor)
             return
 
 
@@ -253,17 +261,22 @@ class com_Equipment:
         self.attack_bonus = attack_bonus
         self.defense_bonus = defense_bonus
 
-    def toggle_equip(self):
+    def toggle_equip(self, actor):
         if self.equipped:
-            self.unequip()
+            self.unequip(actor)
         else:
-            self.equip()
+            self.equip(actor)
 
-    def equip(self):
+    def equip(self, actor):
+        old_equipment = get_equipped_in_slot(actor, self.slot)
+        if old_equipment is not None:
+            #print "Unequipping " + old_equipment.owner.name
+            old_equipment.unequip(actor)
+
         self.equipped = True
-
         GAME.game_message("Item equipped", "white")
 
-    def unequip(self):
+    def unequip(self, actor):
         self.equipped = False
         GAME.game_message("Took off item", "white")
+

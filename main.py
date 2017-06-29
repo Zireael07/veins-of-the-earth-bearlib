@@ -312,7 +312,7 @@ def game_handle_keys():
         chosen_item = renderer.inventory_menu("Inventory", PLAYER)
         if chosen_item is not None:
             if chosen_item.item:
-                chosen_item.item.use()
+                chosen_item.item.use(PLAYER)
 
     # mouse
 
@@ -345,7 +345,7 @@ def game_handle_keys():
 #     GAME.message_history.append((msg, msg_color))
 
 def game_initialize():
-    global GAME, FOV_CALCULATE, PLAYER, ENEMY, ITEM
+    global GAME, FOV_CALCULATE, PLAYER, ENEMY, ITEM, ITEM2
 
     blt.open()
     # default terminal size is 80x25
@@ -385,7 +385,13 @@ def game_initialize():
     item_com1 = components.com_Item()
     ITEM = components.obj_Actor(2,2, "/", "sword", item=item_com1, equipment=equipment_com1)
 
-    GAME.current_entities = [PLAYER, ITEM]
+
+    equipment_com2 = components.com_Equipment("main_hand")
+    item_com2 = components.com_Item()
+    ITEM2 = components.obj_Actor(3,3, "/", "dagger", item=item_com2, equipment=equipment_com2)
+
+
+    GAME.current_entities = [PLAYER, ITEM, ITEM2]
 
     #test generating monsters
     GAME.current_entities.append(generate_monster(3,3, "kobold"))
