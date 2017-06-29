@@ -3,12 +3,11 @@
 from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 from time import time
-import math
 import json
 
 import constants
 import renderer
-
+import components
 
 
 class struc_Tile:
@@ -23,229 +22,16 @@ class obj_Game:
 
         self.message_history = []
 
-
-class obj_Actor:
-    ''' Name is the name of the whole class, e.g. "goblin"'''
-    def __init__(self, x, y, char, name, creature=None, ai=None, container=None, item=None, equipment=None):
-        self.x = x
-        self.y = y
-        self.name = name
-        self.char = char
-        self.creature = creature
-
-        if self.creature:
-            creature.owner = self
-
-        self.ai = ai
-        if self.ai:
-            ai.owner = self
-
-        self.container = container
-        if self.container:
-            container.owner = self
-
-        self.item = item
-        if self.item:
-            item.owner = self
-
-        self.equipment = equipment
-        if self.equipment:
-            equipment.owner = self
-
-    def display_name(self):
-        if self.creature:
-            return (self.creature.name_instance + " the " + self.name)
-
-        if self.item:
-            if self.equipment and self.equipment.equipped:
-                return self.name + " (equipped)"
-            else:
-                return self.name
-
-    def draw(self):
-        is_visible = libtcod.map_is_in_fov(FOV_MAP, self.x, self.y)
-
-        if is_visible:
-            tile_x, tile_y = draw_iso(self.x,self.y) #this is the top(?) corner of our tile
-            # this works for ASCII mode
-            #blt.put_ext(tile_x, tile_y, 0, blt.state(blt.TK_CELL_HEIGHT), self.char)
-
-            blt.put_ext(tile_x, tile_y, 0, 2, self.char)
-
-            #cartesian
-            #blt.put_ext(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, 10, 10, self.char)
-
-
-class com_Creature:
-    ''' Name_instance is the name of an individual, e.g. "Agrk"'''
-    def __init__(self, name_instance, num_dice = 1, damage_dice = 6, base_def = 0, hp=10, death_function=None):
-        self.name_instance = name_instance
-        self.max_hp = hp
-        self.hp = hp
-        self.num_dice = num_dice
-        self.damage_dice = damage_dice
-        self.base_def = base_def
-        self.death_function = death_function
-
-    @property
-    def attack_mod(self):
-        total_attack = 0 #self.base_atk
-
-        if self.owner.container:
-
-            # get weapon
-            weapon = self.get_weapon()
-
-            # get weapon dice
-            if weapon is not None:
-                total_attack = roll(weapon.equipment.num_dice, weapon.equipment.damage_dice)
-            else:
-                total_attack = roll(self.num_dice, self.damage_dice)
-
-            print self.name_instance + ": Total attack after rolling is " + str(total_attack)
-            # get bonuses
-            object_bonuses = [ obj.equipment.attack_bonus
-                               for obj in self.owner.container.equipped_items]
-
-            for bonus in object_bonuses:
-                total_attack += bonus
-                # print "Adding bonus of " + str(bonus)
-
-        # if we don't have an inventory (NPC)
-        else:
-            total_attack = roll(self.num_dice, self.damage_dice)
-            print self.name_instance + ": NPC total attack after rolling is " + str(total_attack)
-
-        return total_attack
-
-    def defense(self):
-        total_def = self.base_def
-        return total_def
-
-    def get_weapon(self):
-        for obj in self.owner.container.equipped_items:
-            if obj.equipment.attack_bonus:
-                return obj
-            else:
-                return None
-
-    def attack(self, target, damage):
-
-        game_message(self.name_instance + " attacks " + target.creature.name_instance + " for " +
-                     str(damage) +
-                     " damage!", "red")
-        target.creature.take_damage(damage)
-
-    def take_damage(self, damage):
-        self.hp -= damage
-        game_message(self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp), "white")
-
-        if self.hp <= 0:
-            if self.death_function is not None:
-                self.death_function(self.owner)
-
-    def move(self, dx, dy):
-        if self.owner.y + dy >= len(GAME.current_map) or self.owner.y + dy < 0:
-            print("Tried to move out of map")
-            return
-
-        if self.owner.x + dx >= len(GAME.current_map[0]) or self.owner.x + dx < 0:
-            print("Tried to move out of map")
-            return
-
-        target = None
-
-        target = map_check_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
-
-        if target:
-            damage_dealt = self.attack_mod
-            self.attack(target, damage_dealt)
-
-        tile_is_wall = (GAME.current_map[self.owner.x+dx][self.owner.y+dy].block_path == True)
-
-        if not tile_is_wall and target is None:
-            self.owner.x += dx
-            self.owner.y += dy
-
-    def move_towards(self, target_x, target_y):
-        # vector from this object to the target, and distance
-        dx = target_x - self.owner.x
-        dy = target_y - self.owner.y
-        distance = math.sqrt(dx ** 2 + dy ** 2)
-
-        # normalize it to length 1 (preserving direction), then round it and
-        # convert to integer so the movement is restricted to the map grid
-        dx = int(round(dx / distance))
-        dy = int(round(dy / distance))
-        self.move(dx, dy)
-
-
-class com_Container:
-    def __init__(self, inventory = []):
-        self.inventory = inventory
-
-    @property
-    def equipped_items(self):
-        list_equipped = [obj for obj in self.inventory
-                         if obj.equipment and obj.equipment.equipped]
-
-        return list_equipped
-
-class com_Item:
-    def __init__(self, weight=0.0):
-        self.weight = weight
-
-    def pick_up(self, actor):
-        if actor.container:
-            game_message("Picking up", "white")
-            actor.container.inventory.append(self.owner)
-            self.current_container = actor.container
-            GAME.current_entities.remove(self.owner)
-
-    def drop(self, new_x, new_y):
-        game_message("Item dropped", "white")
-        self.current_container.inventory.remove(self.owner)
-        GAME.current_entities.append(self.owner)
-        self.owner.x = new_x
-        self.owner.y = new_y
-
-    def use(self):
-        if self.owner.equipment:
-            self.owner.equipment.toggle_equip()
-            return
-
-
-class com_Equipment:
-    def __init__(self, slot, num_dice = 1, damage_dice = 4, attack_bonus = 0, defense_bonus = 0):
-        self.slot = slot
-        self.equipped = False
-        self.num_dice = num_dice
-        self.damage_dice = damage_dice
-        self.attack_bonus = attack_bonus
-        self.defense_bonus = defense_bonus
-
-    def toggle_equip(self):
-        if self.equipped:
-            self.unequip()
-        else:
-            self.equip()
-
-    def equip(self):
-        self.equipped = True
-
-        game_message("Item equipped", "white")
-
-    def unequip(self):
-        self.equipped = False
-        game_message("Took off item", "white")
+    def game_message(self, msg, msg_color):
+        self.message_history.append((msg, msg_color))
 
 
 class AI_test:
     def take_turn(self):
-        self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1))
+        self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), GAME.current_map)
 
 def death_monster(monster):
-    game_message(monster.creature.name_instance + " is dead!", "gray")
+    GAME.game_message(monster.creature.name_instance + " is dead!", "gray")
     # clean up components
     monster.creature = None
     monster.ai = None
@@ -289,29 +75,29 @@ def map_calculate_fov():
         libtcod.map_compute_fov(FOV_MAP, PLAYER.x, PLAYER.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
                                 constants.FOV_ALGO)
 
-def map_check_for_creature(x, y, exclude_entity = None):
-
-    target = None
-
-    # find entity that isn't excluded
-    if exclude_entity:
-        for ent in GAME.current_entities:
-            if (ent is not exclude_entity
-                and ent.x == x
-                and ent.y == y
-                and ent.creature):
-                target = ent
-
-            if target:
-                return target
-
-    # find any entity if no exclusions
-    else:
-        for ent in GAME.current_entities:
-            if (ent.x == x
-                and ent.y == y
-                and ent.creature):
-                target = ent
+# def map_check_for_creature(x, y, exclude_entity = None):
+#
+#     target = None
+#
+#     # find entity that isn't excluded
+#     if exclude_entity:
+#         for ent in GAME.current_entities:
+#             if (ent is not exclude_entity
+#                 and ent.x == x
+#                 and ent.y == y
+#                 and ent.creature):
+#                 target = ent
+#
+#             if target:
+#                 return target
+#
+#     # find any entity if no exclusions
+#     else:
+#         for ent in GAME.current_entities:
+#             if (ent.x == x
+#                 and ent.y == y
+#                 and ent.creature):
+#                 target = ent
 
 
 def map_check_for_item(x,y):
@@ -334,7 +120,7 @@ def draw_game(x,y):
 
     blt.color("white")
     for ent in GAME.current_entities:
-        ent.draw()
+        ent.draw(fov_map=FOV_MAP)
 
     renderer.draw_messages(GAME.message_history)
 
@@ -384,14 +170,14 @@ def pix_to_iso(x,y):
     return int(iso_x), int(iso_y)
 
 
-def roll(dice, sides):
-    result = 0
-    for i in range(0, dice, 1):
-        roll = libtcod.random_get_int(0, 1, sides)
-        result += roll
-
-    print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
-    return result
+# def roll(dice, sides):
+#     result = 0
+#     for i in range(0, dice, 1):
+#         roll = libtcod.random_get_int(0, 1, sides)
+#         result += roll
+#
+#     print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
+#     return result
 
 def game_main_loop():
     game_quit = False
@@ -495,19 +281,19 @@ def game_handle_keys():
         return "QUIT"
 
     if key == blt.TK_UP:
-        PLAYER.creature.move(0, -1)
+        PLAYER.creature.move(0, -1, GAME.current_map)
         FOV_CALCULATE = True
         return "player-moved"
     if key == blt.TK_DOWN:
-        PLAYER.creature.move(0, 1)
+        PLAYER.creature.move(0, 1, GAME.current_map)
         FOV_CALCULATE = True
         return "player-moved"
     if key == blt.TK_LEFT:
-        PLAYER.creature.move(-1, 0)
+        PLAYER.creature.move(-1, 0, GAME.current_map)
         FOV_CALCULATE = True
         return "player-moved"
     if key == blt.TK_RIGHT:
-        PLAYER.creature.move(1, 0)
+        PLAYER.creature.move(1, 0, GAME.current_map)
         FOV_CALCULATE = True
         return "player-moved"
 
@@ -555,8 +341,8 @@ def game_handle_keys():
     return "no-action"
 
 
-def game_message(msg, msg_color):
-    GAME.message_history.append((msg, msg_color))
+# def game_message(msg, msg_color):
+#     GAME.message_history.append((msg, msg_color))
 
 def game_initialize():
     global GAME, FOV_CALCULATE, PLAYER, ENEMY, ITEM
@@ -588,18 +374,16 @@ def game_initialize():
 
     FOV_CALCULATE = True
 
-    container_com1 = com_Container()
-    creature_com1 = com_Creature("Player")
-    PLAYER = obj_Actor(1,1, "@", "Player", creature=creature_com1, container=container_com1)
+    # init game for components module
+    components.initialize_game(GAME)
 
-    # creature_com2 = com_Creature("kobold", death_function=death_monster)
-    # ai_com = AI_test()
-    # ENEMY = obj_Actor(3,3, "k", creature=creature_com2, ai=ai_com)
-    # ENEMY = obj_Actor(3,3, u"", "kobold", creature=creature_com2, ai=ai_com)
+    container_com1 = components.com_Container()
+    creature_com1 = components.com_Creature("Player")
+    PLAYER = components.obj_Actor(1,1, "@", "Player", creature=creature_com1, container=container_com1)
 
-    equipment_com1 = com_Equipment("main_hand") #, num_dice=1, damage_dice=8)
-    item_com1 = com_Item()
-    ITEM = obj_Actor(2,2, "/", "sword", item=item_com1, equipment=equipment_com1)
+    equipment_com1 = components.com_Equipment("main_hand") #, num_dice=1, damage_dice=8)
+    item_com1 = components.com_Item()
+    ITEM = components.obj_Actor(2,2, "/", "sword", item=item_com1, equipment=equipment_com1)
 
     GAME.current_entities = [PLAYER, ITEM]
 
@@ -623,10 +407,10 @@ def generate_monster(x,y, id):
     char = u""
 
     #Create the monster
-    creature_comp = com_Creature(mon_name, death_function=death)
+    creature_comp = components.com_Creature(mon_name, death_function=death)
     ai_comp = AI_test()
 
-    monster = obj_Actor(x,y, char, mon_name, creature=creature_comp, ai=ai_comp)
+    monster = components.obj_Actor(x,y, char, mon_name, creature=creature_comp, ai=ai_comp)
 
     return monster
 
