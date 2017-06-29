@@ -386,17 +386,9 @@ def game_initialize():
     creature_com1 = components.com_Creature("Player")
     PLAYER = components.obj_Actor(1,1, "@", "Player", creature=creature_com1, container=container_com1)
 
-    equipment_com1 = components.com_Equipment("main_hand") #, num_dice=1, damage_dice=8)
-    item_com1 = components.com_Item()
-    ITEM = components.obj_Actor(2,2, u"∕", "sword", item=item_com1, equipment=equipment_com1)
-
-
-    equipment_com2 = components.com_Equipment("main_hand")
-    item_com2 = components.com_Item()
-    ITEM2 = components.obj_Actor(3,3, u"ǀ", "dagger", item=item_com2, equipment=equipment_com2)
-
-
-    GAME.current_entities = [ITEM, ITEM2]
+    #test generating items
+    GAME.current_entities.append(generate_item(2, 2, "longsword"))
+    GAME.current_entities.append(generate_item(3,3, "dagger"))
 
     #test generating monsters
     GAME.current_entities.append(generate_monster(3,3, "kobold"))
@@ -427,12 +419,34 @@ def generate_monster(x,y, id):
 
     return monster
 
+def generate_item(x, y, id):
+    print "Generating item with id " + id + " at " + str(x) + " " + str(y)
+
+    # set values
+    item_name = items_data[id]['name']
+    item_dice = items_data[id]['damage_number']
+    item_sides = items_data[id]['damage_dice']
+    item_slot = items_data[id]['slot']
+    # make it a hex value
+    item_char = int(items_data[id]['char'], 16)
+
+    # Create the item
+    eq_com = components.com_Equipment(item_slot)
+    item_com = components.com_Item()
+    item = components.obj_Actor(x,y, item_char, item_name, item=item_com, equipment=eq_com)
+
+    return item
+
 if __name__ == '__main__':
 
     # Load JSON
     with open(constants.NPC_JSON_PATH) as json_data:
         monster_data = json.load(json_data)
         #print monster_data
+
+    with open(constants.ITEMS_JSON_PATH) as json_data:
+        items_data = json.load(json_data)
+        #print items_data
 
     game_initialize()
     game_main_loop()

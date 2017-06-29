@@ -22,3 +22,4 @@ blt.set("0x23: gfx/wall_stone.png")
 
 # Data
 NPC_JSON_PATH = "data/test.json"
+ITEMS_JSON_PATH = "data/items.json"
