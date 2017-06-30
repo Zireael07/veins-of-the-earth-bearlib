@@ -1,7 +1,7 @@
 {
 
  "kobold": {
-           "sprite": "kobold",
+           "char": "0xE000",
            "name": "kobold",
            "faction": "enemy",
            "hit_points": 4,
@@ -9,7 +9,7 @@
            "damage_number": 1
  },
  "goblin": {
-           "sprite": "goblin",
+           "char": "0xE001",
            "name": "goblin",
            "faction": "enemy",
            "hit_points": 5,
@@ -17,7 +17,7 @@
            "damage_number": 1
  },
  "drow": {
-           "sprite": "drow",
+           "char": "0xE002",
            "name": "drow",
            "faction": "enemy",
            "hit_points": 6,
@@ -25,7 +25,7 @@
            "damage_number": 1
  },
  "human": {
-           "sprite": "human",
+           "char": "0xE003",
            "name": "human",
            "faction": "neutral",
            "hit_points": 8,
@@ -34,8 +34,8 @@
            "text": "Hello traveler"
  },
  "orc": {
-           "sprite": "goblin",
-           "name": "goblin",
+           "char": "0xE001",
+           "name": "orc",
            "faction": "enemy",
            "hit_points": 8,
            "damage_dice": 8,

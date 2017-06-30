@@ -370,7 +370,12 @@ def game_initialize():
     blt.set("0x3002: gfx/floor_sand.png, align=center") # "."
     blt.set("0x23: gfx/wall_stone.png, align=center") # "#"
     blt.set("0x40: gfx/human_m.png, align=center") # "@"
+    #NPCs (we use Unicode private area here)
     blt.set("0xE000: gfx/kobold.png,  align=center") # ""
+    blt.set("0xE001: gfx/goblin.png, align=center")
+    blt.set("0xE002: gfx/drow_fighter.png, align=center")
+    blt.set("0xE003: gfx/human.png, align=center")
+    #items
     blt.set("0x2215: gfx/longsword.png, align=center") #"∕"
     blt.set("0x1C0: gfx/dagger.png, align=center") # "ǀ"
 
@@ -401,6 +406,8 @@ def game_initialize():
     GAME.current_entities.append(generate_monster(3,3, "kobold"))
     GAME.current_entities.append(generate_monster(5,5, "kobold"))
     GAME.current_entities.append(generate_monster(7,7, "kobold"))
+    GAME.current_entities.append(generate_monster(4,4, "drow"))
+    GAME.current_entities.append(generate_monster(8,8, "human"))
 
     # put player last
     GAME.current_entities.append(PLAYER)
@@ -442,10 +449,11 @@ def generate_monster(x,y, id):
     mon_hp = monster_data[id]['hit_points']
     mon_dam_num = monster_data[id]['damage_number']
     mon_dam_dice = monster_data[id]['damage_dice']
+    # make it a hex value
+    char = int(monster_data[id]['char'], 16)
 
     # Defaults
     death = death_monster
-    char = u""
 
     #Create the monster
     mon_array = generate_stats()
