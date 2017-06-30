@@ -115,14 +115,50 @@ class obj_Actor:
 
 class com_Creature:
     ''' Name_instance is the name of an individual, e.g. "Agrk"'''
-    def __init__(self, name_instance, num_dice = 1, damage_dice = 6, base_def = 0, hp=10, death_function=None):
+    def __init__(self, name_instance,
+                 num_dice = 1, damage_dice = 6, base_def = 0, hp=10,
+                 base_str = 8, base_dex = 8, base_con = 8, base_int = 8, base_wis = 8, base_cha = 8,
+                 death_function=None):
         self.name_instance = name_instance
         self.max_hp = hp
         self.hp = hp
         self.num_dice = num_dice
         self.damage_dice = damage_dice
         self.base_def = base_def
+        # the 6 stats
+        self.base_str = base_str
+        self.base_dex = base_dex
+        self.base_con = base_con
+        self.base_int = base_int
+        self.base_wis = base_wis
+        self.base_cha = base_cha
+
         self.death_function = death_function
+
+    @property
+    def strength(self):
+        return self.base_str
+
+    @property
+    def dexterity(self):
+        return self.base_dex
+
+    @property
+    def constitution(self):
+        return self.base_con
+
+    @property
+    def intelligence(self):
+        return self.base_int
+
+    @property
+    def wisdom(self):
+        return self.base_wis
+
+    @property
+    def charisma(self):
+        return self.base_cha
+
 
     @property
     def attack_mod(self):

@@ -166,3 +166,13 @@ def inventory_menu(header, player):
     if index is None or len(player.container.inventory) == 0:
         return None
     return player.container.inventory[index]
+
+def character_sheet_menu(header, player):
+    options = ["STR: " + str(player.creature.strength), "DEX: " + str(player.creature.dexterity), "CON: " + str(player.creature.constitution),
+               "INT: " + str(player.creature.intelligence), "WIS: " + str(player.creature.wisdom), "CHA: " + str(player.creature.charisma)]
+
+    index = menu(header, options, 50, 'CHARACTER SHEET')
+
+    if index is None:
+        return None
+

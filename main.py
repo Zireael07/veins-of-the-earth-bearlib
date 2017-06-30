@@ -314,6 +314,9 @@ def game_handle_keys():
             if chosen_item.item:
                 chosen_item.item.use(PLAYER)
 
+    if key == blt.TK_C:
+        renderer.character_sheet_menu("Character sheet", PLAYER)
+
     # mouse
 
     if key == blt.TK_MOUSE_LEFT:
@@ -383,7 +386,11 @@ def game_initialize():
     components.initialize_game(GAME)
 
     container_com1 = components.com_Container()
-    creature_com1 = components.com_Creature("Player")
+    player_array = generate_stats("heroic")
+    creature_com1 = components.com_Creature("Player",
+                                            base_str=player_array[0], base_dex=player_array[1], base_con=player_array[2],
+                                            base_int=player_array[3], base_wis=player_array[4], base_cha=player_array[5])
+
     PLAYER = components.obj_Actor(1,1, "@", "Player", creature=creature_com1, container=container_com1)
 
     #test generating items
@@ -397,6 +404,35 @@ def game_initialize():
 
     # put player last
     GAME.current_entities.append(PLAYER)
+
+def generate_stats(array, kind="melee"):
+    if array == "heroic":
+        array = [ 15, 14, 13, 12, 10, 8]
+    else:
+        array = [ 13, 12, 11, 10, 9, 8]
+
+    if kind == "ranged":
+        # STR DEX CON INT WIS CHA
+        temp = []
+        temp.insert(0, array[2])
+        temp.insert(1, array[0])
+        temp.insert(2, array[1])
+        temp.insert(3, array[3])
+        temp.insert(4, array[4])
+        temp.insert(5, array[5])
+    else:
+        print "Using default array"
+        # STR DEX CON INT WIS CHA
+        temp = []
+        temp.insert(0, array[0])
+        temp.insert(1, array[2])
+        temp.insert(2, array[1])
+        temp.insert(3, array[4])
+        temp.insert(4, array[3])
+        temp.insert(5, array[5])
+
+
+    return temp
 
 def generate_monster(x,y, id):
     print "Generating monster with id " + id + " at " + str(x) + " " + str(y)
