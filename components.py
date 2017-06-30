@@ -240,7 +240,7 @@ class com_Creature:
             self.owner.x += dx
             self.owner.y += dy
 
-    def move_towards(self, target_x, target_y):
+    def move_towards(self, target_x, target_y, map):
         # vector from this object to the target, and distance
         dx = target_x - self.owner.x
         dy = target_y - self.owner.y
@@ -250,7 +250,7 @@ class com_Creature:
         # convert to integer so the movement is restricted to the map grid
         dx = int(round(dx / distance))
         dy = int(round(dy / distance))
-        self.move(dx, dy)
+        self.move(dx, dy, map)
 
 
 class com_Container:

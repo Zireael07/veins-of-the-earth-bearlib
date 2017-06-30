@@ -328,7 +328,7 @@ def game_handle_keys():
         print "Clicked on tile " + str(click_x) + " " + str(click_y)
 
         if click_x != PLAYER.x or click_y != PLAYER.y:
-            PLAYER.creature.move_towards(click_x, click_y)
+            PLAYER.creature.move_towards(click_x, click_y, GAME.current_map)
             FOV_CALCULATE = True
 
         return "player-moved"
