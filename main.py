@@ -405,7 +405,7 @@ def game_initialize():
     # put player last
     GAME.current_entities.append(PLAYER)
 
-def generate_stats(array, kind="melee"):
+def generate_stats(array="standard", kind="melee"):
     if array == "heroic":
         array = [ 15, 14, 13, 12, 10, 8]
     else:
@@ -448,7 +448,11 @@ def generate_monster(x,y, id):
     char = u""
 
     #Create the monster
-    creature_comp = components.com_Creature(mon_name, death_function=death)
+    mon_array = generate_stats()
+    creature_comp = components.com_Creature(mon_name,
+                                            base_str=mon_array[0], base_dex=mon_array[1], base_con=mon_array[2],
+                                            base_int=mon_array[3], base_wis=mon_array[4], base_cha=mon_array[5],
+                                            death_function=death)
     ai_comp = AI_test()
 
     monster = components.obj_Actor(x,y, char, mon_name, creature=creature_comp, ai=ai_comp)
