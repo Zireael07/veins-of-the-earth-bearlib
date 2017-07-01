@@ -4,6 +4,7 @@ from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 from time import time
 import json
+import bisect
 
 import constants
 import renderer
@@ -170,14 +171,14 @@ def pix_to_iso(x,y):
     return int(iso_x), int(iso_y)
 
 
-# def roll(dice, sides):
-#     result = 0
-#     for i in range(0, dice, 1):
-#         roll = libtcod.random_get_int(0, 1, sides)
-#         result += roll
-#
-#     print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
-#     return result
+def roll(dice, sides):
+     result = 0
+     for i in range(0, dice, 1):
+         roll = libtcod.random_get_int(0, 1, sides)
+         result += roll
+
+     print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
+     return result
 
 def game_main_loop():
     game_quit = False
@@ -409,8 +410,56 @@ def game_initialize():
     GAME.current_entities.append(generate_monster(4,4, "drow"))
     GAME.current_entities.append(generate_monster(8,8, "human"))
 
+    generate_random_mon()
+
     # put player last
     GAME.current_entities.append(PLAYER)
+
+
+# Generating stuff
+def get_monster_chances():
+    chances = []
+    for data_id in monster_data:
+        if monster_data[data_id]['rarity']:
+            chances.append((monster_data[data_id]['name'], monster_data[data_id]['rarity']))
+
+    print chances
+
+    num = 0
+    chance_roll = []
+    for chance in chances:
+        old_num = num+1
+        num += 1+chance[1]
+        chance_roll.append((chance[0], old_num, num))
+
+    #pad out to 100
+    print "Last number is " + str(num)
+    chance_roll.append(("None", num, 100))
+
+    print chance_roll
+
+
+    return chance_roll
+
+
+def generate_random_mon():
+    mon_chances = get_monster_chances()
+
+    d100 = roll(1, 100)
+
+    print "Rolled " + str(d100) + " on random monster gen table"
+
+    breakpoints = [k[2] for k in mon_chances]
+    breakpoints.sort()
+
+    print breakpoints
+
+
+    i = bisect.bisect(breakpoints, d100)
+    res = mon_chances[i][0]
+    print "Random monster is " + res
+
+
 
 def generate_stats(array="standard", kind="melee"):
     if array == "heroic":
