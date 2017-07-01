@@ -26,6 +26,10 @@ class obj_Game:
     def game_message(self, msg, msg_color):
         self.message_history.append((msg, msg_color))
 
+    def add_entity(self, entity):
+        if entity is not None:
+            self.current_entities.append(entity)
+
 
 class AI_test:
     def take_turn(self):
@@ -404,13 +408,13 @@ def game_initialize():
     GAME.current_entities.append(generate_item(3,3, "dagger"))
 
     #test generating monsters
-    GAME.current_entities.append(generate_monster(3,3, "kobold"))
-    GAME.current_entities.append(generate_monster(5,5, "kobold"))
-    GAME.current_entities.append(generate_monster(7,7, "kobold"))
-    GAME.current_entities.append(generate_monster(4,4, "drow"))
-    GAME.current_entities.append(generate_monster(8,8, "human"))
-
-    generate_random_mon()
+    GAME.add_entity(generate_monster(3, 3, generate_random_mon()))
+    GAME.add_entity(generate_monster(5, 5, generate_random_mon()))
+    GAME.add_entity(generate_monster(7, 7, generate_random_mon()))
+    GAME.add_entity(generate_monster(4, 4, generate_random_mon()))
+    GAME.add_entity(generate_monster(8, 8, generate_random_mon()))
+    GAME.add_entity(generate_monster(10, 10, generate_random_mon()))
+    GAME.add_entity(generate_monster(15, 15, generate_random_mon()))
 
     # put player last
     GAME.current_entities.append(PLAYER)
@@ -447,7 +451,7 @@ def generate_random_mon():
 
     d100 = roll(1, 100)
 
-    print "Rolled " + str(d100) + " on random monster gen table"
+    #print "Rolled " + str(d100) + " on random monster gen table"
 
     breakpoints = [k[2] for k in mon_chances]
     breakpoints.sort()
@@ -458,7 +462,7 @@ def generate_random_mon():
     i = bisect.bisect(breakpoints, d100)
     res = mon_chances[i][0]
     print "Random monster is " + res
-
+    return res
 
 
 def generate_stats(array="standard", kind="melee"):
@@ -491,6 +495,10 @@ def generate_stats(array="standard", kind="melee"):
     return temp
 
 def generate_monster(x,y, id):
+    if id == 'None' or id == None:
+        print "Wanted id of None, aborting"
+        return
+
     print "Generating monster with id " + id + " at " + str(x) + " " + str(y)
 
     # Set values
