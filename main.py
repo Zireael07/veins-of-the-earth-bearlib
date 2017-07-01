@@ -419,8 +419,48 @@ def game_initialize():
     # put player last
     GAME.current_entities.append(PLAYER)
 
+    #test
+    get_random_item()
 
 # Generating stuff
+def generate_item_rarity():
+    chances = []
+    chances.append(("Mundane", 5))
+    chances.append(("Magical", 30))
+    chances.append(("Good", 20))
+    chances.append(("Rare", 15))
+    chances.append(("Excellent", 10))
+    chances.append(("Great", 10))
+    chances.append(("Unique", 5))
+
+    num = 0
+    chance_roll = []
+    for chance in chances:
+        old_num = num + 1
+        num += 1 + chance[1]
+        # clip top number to 100
+        if num > 100:
+            num = 100
+        chance_roll.append((chance[0], old_num, num))
+
+    #print chance_roll
+    return chance_roll
+
+def get_random_item():
+    item_rarity = generate_item_rarity()
+
+    d100 = roll(1, 100)
+
+    breakpoints = [k[2] for k in item_rarity]
+    breakpoints.sort()
+
+    print breakpoints
+
+    i = bisect.bisect(breakpoints, d100)
+    res = item_rarity[i][0]
+    print "Random item rarity is " + res
+    return res
+
 def get_monster_chances():
     chances = []
     for data_id in monster_data:
