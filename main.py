@@ -484,7 +484,6 @@ def get_monster_chances():
 
     print chance_roll
 
-
     return chance_roll
 
 
@@ -602,6 +601,26 @@ if __name__ == '__main__':
     with open(constants.ITEMS_JSON_PATH) as json_data:
         items_data = json.load(json_data)
         #print items_data
+
+    with open("data/armor_materials.json") as json_data:
+        arm_mat_data = json.load(json_data)
+        print arm_mat_data
+
+    with open("data/armor_bonuses.json") as json_data:
+        arm_bonus_data = json.load(json_data)
+        print arm_bonus_data
+
+    with open("data/armor_properties.json") as json_data:
+        arm_prop_data = json.load(json_data)
+        print arm_prop_data
+
+    with open("data/weapons_bonuses.json") as json_data:
+        weap_bonus_data = json.load(json_data)
+        print weap_bonus_data
+
+    with open("data/weapons_properties.json") as json_data:
+        weap_prop_data = json.load(json_data)
+        print weap_prop_data
 
     game_initialize()
     game_main_loop()

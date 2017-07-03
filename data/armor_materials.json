@@ -1,0 +1,18 @@
+{
+
+ "mithril": {
+           "name": "mithril ",
+           "rarity": 5,
+           "prefix": true
+ },
+ "adamantine": {
+           "name": "adamantine ",
+           "rarity": 5,
+           "prefix": true
+ },
+ "dragonhide": {
+           "name": "dragonhide ",
+           "rarity": 2,
+           "prefix": true
+ }
+}

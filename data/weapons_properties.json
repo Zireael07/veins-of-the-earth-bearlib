@@ -1,0 +1,18 @@
+{
+
+ "flaming": {
+           "name": "flaming ",
+           "prefix": true,
+           "damage_type": "fire"
+ },
+ "frost": {
+           "name": "frost ",
+           "prefix": true,
+           "damage_type": "cold"
+ },
+ "shock": {
+           "name": "shock ",
+           "prefix": true,
+           "damage_type": "electric"
+ }
+}

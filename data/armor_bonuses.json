@@ -1,0 +1,15 @@
+{
+
+ "masterwork": {
+           "name": "masterwork ",
+           "prefix": true
+ },
+ "+1": {
+           "name": " +1",
+           "prefix": false
+ },
+ "+2": {
+           "name": " +2",
+           "prefix": false
+ }
+}

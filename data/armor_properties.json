@@ -1,0 +1,27 @@
+{
+
+ "shadow": {
+           "name": " of shadow",
+           "prefix": false
+ },
+ "silent moves": {
+           "name": " of silent moves",
+           "prefix": false
+ },
+ "fire resistance": {
+           "name": " of fire resistance",
+           "prefix": false
+ },
+ "acid resistance": {
+           "name": " of acid resistance",
+           "prefix": false
+ },
+ "feather light": {
+           "name": "feather-light ",
+           "prefix": true
+ },
+ "graceful": {
+           "name": "graceful",
+           "prefix": true
+ }
+}
