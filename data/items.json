@@ -4,6 +4,7 @@
            "char": "0x2215",
            "name": "longsword",
            "slot": "main_hand",
+           "type": "weapon",
            "damage_dice": 8,
            "damage_number": 1
  },
@@ -11,7 +12,15 @@
            "char": "0x1C0",
            "name": "dagger",
            "slot": "main_hand",
+           "type": "weapon",
            "damage_dice": 4,
            "damage_number": 1
+ },
+ "chainmail": {
+           "char": "0xFF3B",
+           "name": "chainmail",
+           "slot": "body",
+           "type": "armor",
+           "combat_armor": 5
  }
 }

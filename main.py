@@ -383,6 +383,7 @@ def game_initialize():
     #items
     blt.set("0x2215: gfx/longsword.png, align=center") #"∕"
     blt.set("0x1C0: gfx/dagger.png, align=center") # "ǀ"
+    blt.set("0xFF3B: gfx/chain_armor.png, align=center") # "［"
 
     # gfx
     blt.set("0x2317: gfx/mouseover.png, align=center") # "⌗"
@@ -406,6 +407,7 @@ def game_initialize():
     #test generating items
     GAME.current_entities.append(generate_item(2, 2, "longsword"))
     GAME.current_entities.append(generate_item(3,3, "dagger"))
+    GAME.current_entities.append(generate_item(1,1, "chainmail"))
 
     #test generating monsters
     GAME.add_entity(generate_monster(3, 3, generate_random_mon()))
@@ -569,11 +571,19 @@ def generate_item(x, y, id):
 
     # set values
     item_name = items_data[id]['name']
-    item_dice = items_data[id]['damage_number']
-    item_sides = items_data[id]['damage_dice']
     item_slot = items_data[id]['slot']
     # make it a hex value
     item_char = int(items_data[id]['char'], 16)
+    item_type = items_data[id]['type']
+
+    # optional parameters depending on type
+    if item_type == "weapon":
+        item_dice = items_data[id]['damage_number']
+        item_sides = items_data[id]['damage_dice']
+
+    if item_type == "armor":
+        item_armor = items_data[id]['combat_armor']
+
 
     # Create the item
     eq_com = components.com_Equipment(item_slot)
