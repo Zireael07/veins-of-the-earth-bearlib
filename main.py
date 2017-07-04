@@ -36,10 +36,15 @@ class obj_Game:
         self.factions.append((faction_data[1], faction_data[0], faction_data[2]))
         print "Added reverse faction " + str((faction_data[1], faction_data[0], faction_data[2]))
 
-    def get_faction_reaction(self, faction, target_faction):
+    def get_faction_reaction(self, faction, target_faction, log):
+        if faction == target_faction:
+            return 100
+
+
         for fact in self.factions:
             if fact[0] == faction and fact[1] == target_faction:
-                print("Faction reaction of " + fact[0] + " to " + fact[1] + " is " + str(fact[2]))
+                if log:
+                    print("Faction reaction of " + fact[0] + " to " + fact[1] + " is " + str(fact[2]))
                 return fact[2]
 
 
@@ -372,7 +377,7 @@ def game_initialize():
 
     # gfx
     blt.set("0x2317: gfx/mouseover.png, align=center") # "⌗"
-
+    blt.set("0x2017: gfx/unit_marker.png, align=center") # "̳"
 
     GAME = obj_Game()
 

@@ -5,7 +5,6 @@ import math
 import constants
 
 # need a reference to global GAME %^$@
-
 def initialize_game(game):
     global GAME
 
@@ -107,6 +106,13 @@ class obj_Actor:
             # this works for ASCII mode
             #blt.put_ext(tile_x, tile_y, 0, blt.state(blt.TK_CELL_HEIGHT), self.char)
 
+            # draw the marker
+            if self.creature and self.creature.faction:
+                blt.color(self.creature.get_marker_color())
+                blt.put_ext(tile_x, tile_y, 0, 0, 0x2017)
+                blt.color("white")
+
+            #draw our tile
             blt.put_ext(tile_x, tile_y, 0, 2, self.char)
 
             #cartesian
@@ -204,6 +210,19 @@ class com_Creature:
             else:
                 return None
 
+    def get_marker_color(self):
+        react = GAME.get_faction_reaction(self.faction, "player", False)
+        if react < -50:
+            return "red"
+        elif react < 0:
+            return "orange"
+        elif react == 0:
+            return "yellow"
+        elif react > 50:
+            return "cyan"
+        elif react > 0:
+            return "blue"
+
     def attack(self, target, damage):
 
         GAME.game_message(self.name_instance + " attacks " + target.creature.name_instance + " for " +
@@ -235,7 +254,7 @@ class com_Creature:
 
         if target and target.creature.faction != self.faction:
 
-            is_enemy_faction = GAME.get_faction_reaction(self.faction, target.creature.faction) < 0
+            is_enemy_faction = GAME.get_faction_reaction(self.faction, target.creature.faction, True) < 0
 
             if is_enemy_faction:
                 print "Target faction " + target.creature.faction + " is enemy!"
