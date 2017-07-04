@@ -18,6 +18,7 @@ class obj_Game:
     def __init__(self):
         self.current_map = map_create()
         self.current_entities = []
+        self.factions = []
 
         self.message_history = []
 
@@ -27,6 +28,19 @@ class obj_Game:
     def add_entity(self, entity):
         if entity is not None:
             self.current_entities.append(entity)
+
+    def add_faction(self, faction_data):
+        self.factions.append(faction_data)
+        print "Added faction " + str(faction_data)
+        # add the reverse mapping, too
+        self.factions.append((faction_data[1], faction_data[0], faction_data[2]))
+        print "Added reverse faction " + str((faction_data[1], faction_data[0], faction_data[2]))
+
+    def get_faction_reaction(self, faction, target_faction):
+        for fact in self.factions:
+            if fact[0] == faction and fact[1] == target_faction:
+                print("Faction reaction of " + fact[0] + " to " + fact[1] + " is " + str(fact[2]))
+                return fact[2]
 
 
 class AI_test:
@@ -368,11 +382,16 @@ def game_initialize():
     components.initialize_game(GAME)
     generators.initialize_game(GAME)
 
+    # init factions
+    GAME.add_faction(("player", "enemy", -100))
+    GAME.add_faction(("player", "neutral", 0))
+
     container_com1 = components.com_Container()
     player_array = generators.generate_stats("heroic")
     creature_com1 = components.com_Creature("Player",
                                             base_str=player_array[0], base_dex=player_array[1], base_con=player_array[2],
-                                            base_int=player_array[3], base_wis=player_array[4], base_cha=player_array[5])
+                                            base_int=player_array[3], base_wis=player_array[4], base_cha=player_array[5],
+                                            faction="player")
 
     PLAYER = components.obj_Actor(1,1, "@", "Player", creature=creature_com1, container=container_com1)
 
@@ -381,6 +400,7 @@ def game_initialize():
     GAME.current_entities.append(generators.generate_item(3,3, "dagger"))
     GAME.current_entities.append(generators.generate_item(1,1, "chainmail"))
 
+    GAME.add_entity(generators.generate_monster(2,2, "human"))
     #test generating monsters
     GAME.add_entity(generators.generate_monster(3, 3, generators.generate_random_mon()))
     GAME.add_entity(generators.generate_monster(5, 5, generators.generate_random_mon()))

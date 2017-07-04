@@ -118,6 +118,7 @@ class com_Creature:
     def __init__(self, name_instance,
                  num_dice = 1, damage_dice = 6, base_def = 0, hp=10,
                  base_str = 8, base_dex = 8, base_con = 8, base_int = 8, base_wis = 8, base_cha = 8,
+                 faction = "enemy",
                  death_function=None):
         self.name_instance = name_instance
         self.max_hp = hp
@@ -133,6 +134,7 @@ class com_Creature:
         self.base_wis = base_wis
         self.base_cha = base_cha
 
+        self.faction = faction
         self.death_function = death_function
 
     @property
@@ -175,7 +177,7 @@ class com_Creature:
             else:
                 total_attack = roll(self.num_dice, self.damage_dice)
 
-            print self.name_instance + ": Total attack after rolling is " + str(total_attack)
+            #print self.name_instance + ": Total attack after rolling is " + str(total_attack)
             # get bonuses
             object_bonuses = [ obj.equipment.attack_bonus
                                for obj in self.owner.container.equipped_items]
@@ -187,7 +189,7 @@ class com_Creature:
         # if we don't have an inventory (NPC)
         else:
             total_attack = roll(self.num_dice, self.damage_dice)
-            print self.name_instance + ": NPC total attack after rolling is " + str(total_attack)
+            # print self.name_instance + ": NPC total attack after rolling is " + str(total_attack)
 
         return total_attack
 
@@ -230,9 +232,15 @@ class com_Creature:
 
         target = map_check_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
 
-        if target:
-            damage_dealt = self.attack_mod
-            self.attack(target, damage_dealt)
+
+        if target and target.creature.faction != self.faction:
+
+            is_enemy_faction = GAME.get_faction_reaction(self.faction, target.creature.faction) < 0
+
+            if is_enemy_faction:
+                print "Target faction " + target.creature.faction + " is enemy!"
+                damage_dealt = self.attack_mod
+                self.attack(target, damage_dealt)
 
         tile_is_wall = (map[self.owner.x+dx][self.owner.y+dy].block_path == True)
 

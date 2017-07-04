@@ -39,6 +39,7 @@ def death_monster(monster):
 
 
 # Generating stuff
+# Item generation
 def generate_item_rarity():
     chances = []
     chances.append(("Mundane", 5))
@@ -190,6 +191,34 @@ def get_random_item():
 
     # return res
 
+
+def generate_item(x, y, id):
+    print "Generating item with id " + id + " at " + str(x) + " " + str(y)
+
+    # set values
+    item_name = items_data[id]['name']
+    item_slot = items_data[id]['slot']
+    # make it a hex value
+    item_char = int(items_data[id]['char'], 16)
+    item_type = items_data[id]['type']
+
+    # optional parameters depending on type
+    if item_type == "weapon":
+        item_dice = items_data[id]['damage_number']
+        item_sides = items_data[id]['damage_dice']
+
+    if item_type == "armor":
+        item_armor = items_data[id]['combat_armor']
+
+
+    # Create the item
+    eq_com = components.com_Equipment(item_slot)
+    item_com = components.com_Item()
+    item = components.obj_Actor(x,y, item_char, item_name, item=item_com, equipment=eq_com)
+
+    return item
+
+# Monster generation
 def get_monster_chances():
     chances = []
     for data_id in monster_data:
@@ -274,6 +303,7 @@ def generate_monster(x,y, id):
     mon_hp = monster_data[id]['hit_points']
     mon_dam_num = monster_data[id]['damage_number']
     mon_dam_dice = monster_data[id]['damage_dice']
+    mon_faction = monster_data[id]['faction']
     # make it a hex value
     char = int(monster_data[id]['char'], 16)
 
@@ -285,6 +315,7 @@ def generate_monster(x,y, id):
     creature_comp = components.com_Creature(mon_name,
                                             base_str=mon_array[0], base_dex=mon_array[1], base_con=mon_array[2],
                                             base_int=mon_array[3], base_wis=mon_array[4], base_cha=mon_array[5],
+                                            faction=mon_faction,
                                             death_function=death)
     ai_comp = AI_test()
 
@@ -292,36 +323,8 @@ def generate_monster(x,y, id):
 
     return monster
 
-def generate_item(x, y, id):
-    print "Generating item with id " + id + " at " + str(x) + " " + str(y)
-
-    # set values
-    item_name = items_data[id]['name']
-    item_slot = items_data[id]['slot']
-    # make it a hex value
-    item_char = int(items_data[id]['char'], 16)
-    item_type = items_data[id]['type']
-
-    # optional parameters depending on type
-    if item_type == "weapon":
-        item_dice = items_data[id]['damage_number']
-        item_sides = items_data[id]['damage_dice']
-
-    if item_type == "armor":
-        item_armor = items_data[id]['combat_armor']
-
-
-    # Create the item
-    eq_com = components.com_Equipment(item_slot)
-    item_com = components.com_Item()
-    item = components.obj_Actor(x,y, item_char, item_name, item=item_com, equipment=eq_com)
-
-    return item
-
 
 # Execute
-#if __name__ == '__main__':
-
 # Load JSON
 with open(constants.NPC_JSON_PATH) as json_data:
      monster_data = json.load(json_data)
@@ -351,6 +354,7 @@ with open("data/weapons_properties.json") as json_data:
      weap_prop_data = json.load(json_data)
      print weap_prop_data
 
+# if __name__ == '__main__':
 # generate_item(2, 2, "longsword")
 # generate_item(3, 3, "dagger")
 # generate_item(1,1, "chainmail")
