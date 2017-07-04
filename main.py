@@ -80,30 +80,6 @@ def map_calculate_fov():
         libtcod.map_compute_fov(FOV_MAP, PLAYER.x, PLAYER.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
                                 constants.FOV_ALGO)
 
-# def map_check_for_creature(x, y, exclude_entity = None):
-#
-#     target = None
-#
-#     # find entity that isn't excluded
-#     if exclude_entity:
-#         for ent in GAME.current_entities:
-#             if (ent is not exclude_entity
-#                 and ent.x == x
-#                 and ent.y == y
-#                 and ent.creature):
-#                 target = ent
-#
-#             if target:
-#                 return target
-#
-#     # find any entity if no exclusions
-#     else:
-#         for ent in GAME.current_entities:
-#             if (ent.x == x
-#                 and ent.y == y
-#                 and ent.creature):
-#                 target = ent
-
 
 def map_check_for_item(x,y):
     target = None
@@ -348,9 +324,6 @@ def game_handle_keys():
 
     return "no-action"
 
-
-# def game_message(msg, msg_color):
-#     GAME.message_history.append((msg, msg_color))
 
 def game_initialize():
     global GAME, FOV_CALCULATE, PLAYER, ENEMY, ITEM, ITEM2
