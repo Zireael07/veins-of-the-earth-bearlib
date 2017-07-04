@@ -364,8 +364,9 @@ def game_initialize():
 
     FOV_CALCULATE = True
 
-    # init game for components module
+    # init game for submodules
     components.initialize_game(GAME)
+    generators.initialize_game(GAME)
 
     container_com1 = components.com_Container()
     player_array = generators.generate_stats("heroic")
@@ -381,13 +382,13 @@ def game_initialize():
     GAME.current_entities.append(generators.generate_item(1,1, "chainmail"))
 
     #test generating monsters
-    # GAME.add_entity(generators.generate_monster(3, 3, generators.generate_random_mon()))
-    # GAME.add_entity(generators.generate_monster(5, 5, generators.generate_random_mon()))
-    # GAME.add_entity(generators.generate_monster(7, 7, generators.generate_random_mon()))
-    # GAME.add_entity(generators.generate_monster(4, 4, generators.generate_random_mon()))
-    # GAME.add_entity(generators.generate_monster(8, 8, generators.generate_random_mon()))
-    # GAME.add_entity(generators.generate_monster(10, 10, generators.generate_random_mon()))
-    # GAME.add_entity(generators.generate_monster(15, 15, generators.generate_random_mon()))
+    GAME.add_entity(generators.generate_monster(3, 3, generators.generate_random_mon()))
+    GAME.add_entity(generators.generate_monster(5, 5, generators.generate_random_mon()))
+    GAME.add_entity(generators.generate_monster(7, 7, generators.generate_random_mon()))
+    GAME.add_entity(generators.generate_monster(4, 4, generators.generate_random_mon()))
+    GAME.add_entity(generators.generate_monster(8, 8, generators.generate_random_mon()))
+    GAME.add_entity(generators.generate_monster(10, 10, generators.generate_random_mon()))
+    GAME.add_entity(generators.generate_monster(15, 15, generators.generate_random_mon()))
 
     # put player last
     GAME.current_entities.append(PLAYER)

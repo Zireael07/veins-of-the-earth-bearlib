@@ -6,6 +6,13 @@ import json
 import components
 import constants
 
+# need a reference to global GAME %^$@
+def initialize_game(game):
+    global GAME
+
+    GAME = game
+
+
 def roll(dice, sides):
     result = 0
     for i in range(0, dice, 1):
@@ -14,6 +21,22 @@ def roll(dice, sides):
 
     print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
     return result
+
+
+
+# AI
+class AI_test:
+    def take_turn(self):
+        self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), GAME.current_map)
+
+def death_monster(monster):
+    GAME.game_message(monster.creature.name_instance + " is dead!", "gray")
+    # clean up components
+    monster.creature = None
+    monster.ai = None
+    # remove from map
+    GAME.current_entities.remove(monster)
+
 
 # Generating stuff
 def generate_item_rarity():
