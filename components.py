@@ -125,6 +125,7 @@ class com_Creature:
                  num_dice = 1, damage_dice = 6, base_def = 0, hp=10,
                  base_str = 8, base_dex = 8, base_con = 8, base_int = 8, base_wis = 8, base_cha = 8,
                  faction = "enemy",
+                 text = None,
                  death_function=None):
         self.name_instance = name_instance
         self.max_hp = hp
@@ -141,6 +142,7 @@ class com_Creature:
         self.base_cha = base_cha
 
         self.faction = faction
+        self.text = text
         self.death_function = death_function
 
     @property
@@ -260,6 +262,9 @@ class com_Creature:
                 print "Target faction " + target.creature.faction + " is enemy!"
                 damage_dealt = self.attack_mod
                 self.attack(target, damage_dealt)
+            else:
+                if self.text is not None:
+                    GAME.game_message(self.name_instance + " says: " + self.text, "yellow")
 
         tile_is_wall = (map[self.owner.x+dx][self.owner.y+dy].block_path == True)
 

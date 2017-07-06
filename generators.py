@@ -307,6 +307,11 @@ def generate_monster(x,y, id):
     # make it a hex value
     char = int(monster_data[id]['char'], 16)
 
+    if 'text' in monster_data[id]:
+        mon_text = monster_data[id]['text']
+    else:
+        mon_text = None
+
     # Defaults
     death = death_monster
 
@@ -316,6 +321,7 @@ def generate_monster(x,y, id):
                                             base_str=mon_array[0], base_dex=mon_array[1], base_con=mon_array[2],
                                             base_int=mon_array[3], base_wis=mon_array[4], base_cha=mon_array[5],
                                             faction=mon_faction,
+                                            text = mon_text,
                                             death_function=death)
     ai_comp = AI_test()
 
