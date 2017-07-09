@@ -52,6 +52,56 @@ class AI_test:
     def take_turn(self):
         self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), GAME.current_map)
 
+
+class Rect():
+    """
+    A rectangle on the map. used to characterize a room.
+    """
+    def __init__(self, x, y, w, h):
+        self.x1 = x
+        self.y1 = y
+        self.x2 = x + max(0, w)
+        self.y2 = y + max(0, h)
+
+    def __eq__(self, other):
+        return (self.x1 == other.x1 and
+                self.x2 == other.x2 and
+                self.y1 == other.y1 and
+                self.y2 == other.y2)
+
+    def center(self):
+        return (self.x1 + self.x2) / 2, (self.y1 + self.y2) / 2
+
+    def intersect(self, other):
+        """
+        Returns true if two rectangles intersect.
+        """
+        return (self.x1 <= other.x2 and self.x2 >= other.x1 and
+                self.y1 <= other.y2 and self.y2 >= other.y1)
+
+    def contains(self, location):
+        return (location[0] > self.x1 and location[0] <= self.x2 and
+                self.y1 < location[1] <= self.y2)
+
+
+class obj_Camera:
+    def __init__(self):
+        self.width = 80 # blt.state(blt.TK_CELL_WIDTH)*80
+        self.height = 25 # blt.state(blt.TK_CELL_HEIGHT)*25
+        self.x, self.y = (0,0)
+        self.top_x, self.top_y = (0,0)
+    
+    def update(self):
+        # this calculates cells
+        self.x, self.y = draw_iso(PLAYER.x, PLAYER.y)
+        self.top_x, self.top_y = self.x - self.width/2, self.y - self.height/2
+
+    @property
+    def rectangle(self):
+        cam_rect = Rect(self.top_x, self.top_y, self.width, self.height)
+        return cam_rect
+
+
 def death_monster(monster):
     GAME.game_message(monster.creature.name_instance + " is dead!", "gray")
     # clean up components
@@ -112,7 +162,7 @@ def map_check_for_item(x,y):
 
 # the core drawing function
 def draw_game(x,y):
-    renderer.draw_map(GAME.current_map, FOV_MAP)
+    renderer.draw_map(GAME.current_map, FOV_MAP, CAMERA)
 
     draw_mouseover(x,y)
 
@@ -228,12 +278,15 @@ def game_main_loop():
                  blt.puts(3, 5, "Empty cell")
 
 
+        # camera
+        CAMERA.update()
 
         # draw
         draw_game(pix_x, pix_y)
 
         # debug
-        # blt.puts(2,2, "[color=red] player pos in cells: %d %d" % (draw_iso(PLAYER.x, PLAYER.y)))
+        blt.puts(2,2, "[color=red] player pos in cells: %d %d" % (draw_iso(PLAYER.x, PLAYER.y)))
+        blt.puts(2,6, "[color=orange] camera pos in cells: %d %d" % (CAMERA.x, CAMERA.y))
 
 
         # refresh term
@@ -343,7 +396,7 @@ def game_handle_keys():
 
 
 def game_initialize():
-    global GAME, FOV_CALCULATE, PLAYER, ENEMY, ITEM, ITEM2
+    global GAME, FOV_CALCULATE, PLAYER, ENEMY, ITEM, ITEM2, CAMERA
 
     blt.open()
     # default terminal size is 80x25
@@ -399,6 +452,9 @@ def game_initialize():
                                             faction="player")
 
     PLAYER = components.obj_Actor(1,1, "@", "Player", creature=creature_com1, container=container_com1)
+    
+    CAMERA = obj_Camera()
+    
 
     #test generating items
     GAME.current_entities.append(generators.generate_item(2, 2, "longsword"))

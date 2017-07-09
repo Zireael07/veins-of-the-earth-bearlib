@@ -14,48 +14,52 @@ def draw_iso(x,y):
     tile_y = (x + y) * constants.TILE_HEIGHT / 2
     return tile_x, tile_y
 
-def draw_map(map_draw, fov_map):
+def draw_map(map_draw, fov_map, camera):
     for x in range(0, constants.MAP_WIDTH):
         for y in range(0, constants.MAP_HEIGHT):
+            tile_x, tile_y = draw_iso(x, y)
+            is_in_map_range = camera.rectangle.contains((tile_x,tile_y))
+            #print("Is in map range " + str(tile_x) + " " + str(tile_y) + ": " + str(is_in_map_range))
 
-            is_visible = libtcod.map_is_in_fov(fov_map, x, y)
+            if is_in_map_range:
+                is_visible = libtcod.map_is_in_fov(fov_map, x, y)
 
-            if is_visible:
-                blt.color("white")
-                map_draw[x][y].explored = True
-                # cartesian
-                # tile_x = x*constants.TILE_WIDTH
-                # tile_y = y*constants.TILE_HEIGHT
+                if is_visible:
+                    blt.color("white")
+                    map_draw[x][y].explored = True
+                    # cartesian
+                    # tile_x = x*constants.TILE_WIDTH
+                    # tile_y = y*constants.TILE_HEIGHT
 
-                tile_x, tile_y = draw_iso(x,y)
+                    #tile_x, tile_y = draw_iso(x,y)
 
-                if map_draw[x][y].block_path == True:
-                    # draw wall
-                    blt.put(tile_x, tile_y, "#")
+                    if map_draw[x][y].block_path == True:
+                        # draw wall
+                        blt.put(tile_x, tile_y, "#")
 
-                else:
-                    # draw floor
-                    blt.put(tile_x, tile_y, 0x3002)
+                    else:
+                        # draw floor
+                        blt.put(tile_x, tile_y, 0x3002)
 
-                    blt.put(tile_x,tile_y, ".")
+                        blt.put(tile_x,tile_y, ".")
 
 
 
-            elif map_draw[x][y].explored:
-                blt.color("gray")
-                # cartesian
-                # tile_x = x * constants.TILE_WIDTH
-                # tile_y = y * constants.TILE_HEIGHT
+                elif map_draw[x][y].explored:
+                    blt.color("gray")
+                    # cartesian
+                    # tile_x = x * constants.TILE_WIDTH
+                    # tile_y = y * constants.TILE_HEIGHT
 
-                tile_x, tile_y = draw_iso(x,y)
+                    tile_x, tile_y = draw_iso(x,y)
 
-                if map_draw[x][y].block_path == True:
-                    # draw wall
-                    blt.put(tile_x,tile_y, "#")
-                else:
-                    # draw floor
-                    blt.put(tile_x, tile_y, 0x3002)
-                    blt.put(tile_x,tile_y, ".")
+                    if map_draw[x][y].block_path == True:
+                        # draw wall
+                        blt.put(tile_x,tile_y, "#")
+                    else:
+                        # draw floor
+                        blt.put(tile_x, tile_y, 0x3002)
+                        blt.put(tile_x,tile_y, ".")
 
 
 
