@@ -2,22 +2,14 @@ from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 import math
 
+from renderer import draw_iso
+
 import constants
 
 # need a reference to global GAME %^$@
 def initialize_game(game):
     global GAME
-
     GAME = game
-
-
-# based on STI library for LOVE2D
-def draw_iso(x,y):
-    # isometric
-    offset_x = constants.MAP_WIDTH * 4
-    tile_x = (x - y) * constants.TILE_WIDTH / 2 + offset_x
-    tile_y = (x + y) * constants.TILE_HEIGHT / 2
-    return tile_x, tile_y
 
 def roll(dice, sides):
     result = 0
