@@ -17,7 +17,7 @@ def draw_iso(x,y):
     offset_x = constants.MAP_WIDTH * 4
     tile_x = (x - y) * constants.TILE_WIDTH / 2 + offset_x
     tile_y = (x + y) * constants.TILE_HEIGHT / 2
-    return tile_x, tile_y + CAMERA.offset[1]
+    return tile_x + CAMERA.offset[0], tile_y + CAMERA.offset[1]
 
 def draw_map(map_draw, fov_map):
     for x in range(0, constants.MAP_WIDTH):

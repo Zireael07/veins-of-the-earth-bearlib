@@ -97,6 +97,26 @@ class obj_Camera:
         self.x, self.y = renderer.draw_iso(PLAYER.x, PLAYER.y)
         self.top_x, self.top_y = self.x - self.width/2, self.y - self.height/2
 
+    def move(self, dx, dy):
+        print("Moving the camera by " + str(dx) + ", " + str(dy))
+        # if we increase map x by 1, draw coordinates increase by 1/2 tile width, 1/2 tile height
+        # reverse that since we want the camera to stay in same place
+        x_change = (-constants.TILE_WIDTH/2, -constants.TILE_HEIGHT/2)
+        # if we increase map y by 1, draw coordinates change by -1/2 tile_width, 1/2 tile height
+        # reverse that since we want the camera to stay in one place
+        y_change = (constants.TILE_WIDTH/2, -constants.TILE_HEIGHT/2)
+        #print("Offset change for 1 x is " + str(x_change) + " for 1 y is " + str(y_change))
+        #print("offset change for -1x is" + str((x_change[0]*-1, x_change[1]*-1)) + " for -1 y is" + str((y_change[0]*-1, y_change[1]*-1)))
+
+        #print("Offset calculations x: " + str(self.offset[0]) + " " + str(x_change[0]*dx) + " " + str(y_change[0]*dy))
+        #print("Offset calculations y: " + str(self.offset[1]) + " " + str(x_change[1]*dx) + " " + str(y_change[1]*dy))
+        new_x = self.offset[0] + x_change[0]*dx + y_change[0]*dy
+        new_y = self.offset[1] + x_change[1]*dx + y_change[1]*dy
+
+        self.offset = (new_x, new_y)
+
+
+
     @property
     def rectangle(self):
         cam_rect = Rect(self.top_x, self.top_y, self.width, self.height)
@@ -249,7 +269,8 @@ def game_main_loop():
         # cell_y = blt.state(blt.TK_MOUSE_Y)
 
         pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
-
+        # fake an offset of camera offset * cell width
+        pix_x = pix_x - CAMERA.offset[0]*blt.state(blt.TK_CELL_WIDTH)
         pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
         # fake an offset of camera offset * cell height
         pix_y = pix_y - CAMERA.offset[1]*blt.state(blt.TK_CELL_HEIGHT)
@@ -282,7 +303,8 @@ def game_main_loop():
 
         # debug
         blt.puts(2,2, "[color=red] player pos in cells: %d %d" % (renderer.draw_iso(PLAYER.x, PLAYER.y)))
-        blt.puts(2,6, "[color=orange] camera pos in cells: %d %d" % (CAMERA.x, CAMERA.y))
+        #blt.puts(2,6, "[color=orange] camera pos in cells: %d %d" % (CAMERA.x, CAMERA.y))
+        blt.puts(2,7, "[color=orange] camera offset: %d %d" % (CAMERA.offset[0], CAMERA.offset[1]))
 
 
         # refresh term
@@ -328,20 +350,24 @@ def game_handle_keys():
         return "QUIT"
 
     if key == blt.TK_UP:
-        PLAYER.creature.move(0, -1, GAME.current_map)
-        FOV_CALCULATE = True
+        if PLAYER.creature.move(0, -1, GAME.current_map):
+            CAMERA.move(0, -1)
+            FOV_CALCULATE = True
         return "player-moved"
     if key == blt.TK_DOWN:
-        PLAYER.creature.move(0, 1, GAME.current_map)
-        FOV_CALCULATE = True
+        if PLAYER.creature.move(0, 1, GAME.current_map):
+            CAMERA.move(0,1)
+            FOV_CALCULATE = True
         return "player-moved"
     if key == blt.TK_LEFT:
-        PLAYER.creature.move(-1, 0, GAME.current_map)
-        FOV_CALCULATE = True
+        if PLAYER.creature.move(-1, 0, GAME.current_map):
+            CAMERA.move(-1,0)
+            FOV_CALCULATE = True
         return "player-moved"
     if key == blt.TK_RIGHT:
-        PLAYER.creature.move(1, 0, GAME.current_map)
-        FOV_CALCULATE = True
+        if PLAYER.creature.move(1, 0, GAME.current_map):
+            CAMERA.move(1,0)
+            FOV_CALCULATE = True
         return "player-moved"
 
     # items
@@ -368,6 +394,10 @@ def game_handle_keys():
 
     if key == blt.TK_MOUSE_LEFT:
         pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
+
+        # fake an offset of camera offset * cell width
+        pix_x = pix_x - CAMERA.offset[0] * blt.state(blt.TK_CELL_WIDTH)
+
         pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
 
         # fake an offset of camera offset * cell height
@@ -378,8 +408,10 @@ def game_handle_keys():
         print "Clicked on tile " + str(click_x) + " " + str(click_y)
 
         if click_x != PLAYER.x or click_y != PLAYER.y:
-            PLAYER.creature.move_towards(click_x, click_y, GAME.current_map)
-            FOV_CALCULATE = True
+            moved = PLAYER.creature.move_towards(click_x, click_y, GAME.current_map)
+            if (moved[0]):
+                CAMERA.move(moved[1], moved[2])
+                FOV_CALCULATE = True
 
         return "player-moved"
 
