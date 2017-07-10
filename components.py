@@ -264,6 +264,9 @@ class com_Creature:
             self.owner.x += dx
             self.owner.y += dy
 
+            #flag so that we don't recalculate FOV/camera needlessly
+            return True
+
     def move_towards(self, target_x, target_y, map):
         # vector from this object to the target, and distance
         dx = target_x - self.owner.x
@@ -274,7 +277,7 @@ class com_Creature:
         # convert to integer so the movement is restricted to the map grid
         dx = int(round(dx / distance))
         dy = int(round(dy / distance))
-        self.move(dx, dy, map)
+        return self.move(dx, dy, map), dx, dy
 
 
 class com_Container:
