@@ -90,10 +90,11 @@ class obj_Camera:
         self.height = 25 # blt.state(blt.TK_CELL_HEIGHT)*25
         self.x, self.y = (0,0)
         self.top_x, self.top_y = (0,0)
+        self.offset = (0,10) #default offset is 10 along y axis
     
     def update(self):
         # this calculates cells
-        self.x, self.y = draw_iso(PLAYER.x, PLAYER.y)
+        self.x, self.y = renderer.draw_iso(PLAYER.x, PLAYER.y)
         self.top_x, self.top_y = self.x - self.width/2, self.y - self.height/2
 
     @property
@@ -162,7 +163,7 @@ def map_check_for_item(x,y):
 
 # the core drawing function
 def draw_game(x,y):
-    renderer.draw_map(GAME.current_map, FOV_MAP, CAMERA)
+    renderer.draw_map(GAME.current_map, FOV_MAP)
 
     draw_mouseover(x,y)
 
@@ -175,24 +176,16 @@ def draw_game(x,y):
 
 def draw_mouseover(x,y):
     tile_x, tile_y = pix_to_iso(x, y)
-    draw_x, draw_y = draw_iso(tile_x, tile_y)
+    draw_x, draw_y = renderer.draw_iso(tile_x, tile_y)
 
     blt.color("light yellow")
     blt.put(draw_x, draw_y, 0x2317)
 
 
-# based on STI library for LOVE2D
-def draw_iso(x,y):
-    # isometric
-    offset_x = constants.MAP_WIDTH * 4
-    tile_x = (x - y) * constants.TILE_WIDTH / 2 + offset_x
-    tile_y = (x + y) * constants.TILE_HEIGHT / 2
-    return tile_x, tile_y
-
 def cell_to_iso(x,y):
     offset_x = constants.MAP_WIDTH * 4
     iso_x = y / constants.TILE_HEIGHT + (x - offset_x) / constants.TILE_WIDTH
-    iso_y = y / constants.TILE_HEIGHT - (x - offset_x) / constants.TILE_WIDTH
+    iso_y = y / constants.TILE_HEIGHT - (x - offset_x) / constants.TILE_WIDTH - CAMERA.offset[1]
     return iso_x, iso_y
 
 
@@ -256,7 +249,10 @@ def game_main_loop():
         # cell_y = blt.state(blt.TK_MOUSE_Y)
 
         pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
+
         pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
+        # fake an offset of camera offset * cell height
+        pix_y = pix_y - CAMERA.offset[1]*blt.state(blt.TK_CELL_HEIGHT)
 
         #blt.puts(2,2, "[color=red] iso coords based on cells: %d %d" % (cell_to_iso(cell_x,cell_y)))
         blt.puts(2,3, "[color=red] iso coords based on pixels: %d %d" % (pix_to_iso(pix_x, pix_y)))
@@ -285,7 +281,7 @@ def game_main_loop():
         draw_game(pix_x, pix_y)
 
         # debug
-        blt.puts(2,2, "[color=red] player pos in cells: %d %d" % (draw_iso(PLAYER.x, PLAYER.y)))
+        blt.puts(2,2, "[color=red] player pos in cells: %d %d" % (renderer.draw_iso(PLAYER.x, PLAYER.y)))
         blt.puts(2,6, "[color=orange] camera pos in cells: %d %d" % (CAMERA.x, CAMERA.y))
 
 
@@ -374,6 +370,9 @@ def game_handle_keys():
         pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
         pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
 
+        # fake an offset of camera offset * cell height
+        pix_y = pix_y - CAMERA.offset[1] * blt.state(blt.TK_CELL_HEIGHT)
+
         click_x, click_y = pix_to_iso(pix_x, pix_y)
 
         print "Clicked on tile " + str(click_x) + " " + str(click_y)
@@ -396,7 +395,7 @@ def game_handle_keys():
 
 
 def game_initialize():
-    global GAME, FOV_CALCULATE, PLAYER, ENEMY, ITEM, ITEM2, CAMERA
+    global GAME, FOV_CALCULATE, PLAYER, CAMERA
 
     blt.open()
     # default terminal size is 80x25
@@ -454,6 +453,9 @@ def game_initialize():
     PLAYER = components.obj_Actor(1,1, "@", "Player", creature=creature_com1, container=container_com1)
     
     CAMERA = obj_Camera()
+
+    #init camera for renderer
+    renderer.initialize_camera(CAMERA)
     
 
     #test generating items

@@ -6,19 +6,24 @@ import libtcodpy as libtcod
 
 import constants
 
+def initialize_camera(camera):
+    global CAMERA
+    CAMERA = camera
+
+
 # based on STI library for LOVE2D
 def draw_iso(x,y):
     # isometric
     offset_x = constants.MAP_WIDTH * 4
     tile_x = (x - y) * constants.TILE_WIDTH / 2 + offset_x
     tile_y = (x + y) * constants.TILE_HEIGHT / 2
-    return tile_x, tile_y
+    return tile_x, tile_y + CAMERA.offset[1]
 
-def draw_map(map_draw, fov_map, camera):
+def draw_map(map_draw, fov_map):
     for x in range(0, constants.MAP_WIDTH):
         for y in range(0, constants.MAP_HEIGHT):
             tile_x, tile_y = draw_iso(x, y)
-            is_in_map_range = camera.rectangle.contains((tile_x,tile_y))
+            is_in_map_range = CAMERA.rectangle.contains((tile_x,tile_y))
             #print("Is in map range " + str(tile_x) + " " + str(tile_y) + ": " + str(is_in_map_range))
 
             if is_in_map_range:
