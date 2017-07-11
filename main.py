@@ -9,11 +9,14 @@ import renderer
 import components
 import generators
 from map_common import struc_Tile, map_make_fov
-
+from bspmap import BspMapGenerator
 
 class obj_Game:
     def __init__(self):
-        self.current_map = map_create()
+        #self.current_map = map_create()
+        map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
+                                  constants.FULL_ROOMS)
+        self.current_map, self.player_start_x, self.player_start_y = map_gen.generate_map()
 
         global FOV_MAP
         FOV_MAP = map_make_fov(self.current_map)
@@ -471,7 +474,7 @@ def game_initialize():
                                             base_int=player_array[3], base_wis=player_array[4], base_cha=player_array[5],
                                             faction="player")
 
-    PLAYER = components.obj_Actor(1,1, "@", "Player", creature=creature_com1, container=container_com1)
+    PLAYER = components.obj_Actor(GAME.player_start_x,GAME.player_start_y, "@", "Player", creature=creature_com1, container=container_com1)
     
     CAMERA = obj_Camera()
 

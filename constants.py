@@ -4,6 +4,11 @@ import libtcodpy as libtcod
 MAP_HEIGHT = 20
 MAP_WIDTH = 20
 
+#BSP settings
+DEPTH = 10
+ROOM_MIN_SIZE = 5
+FULL_ROOMS = False
+
 # in number of cells
 TILE_HEIGHT = 2
 TILE_WIDTH = 8
