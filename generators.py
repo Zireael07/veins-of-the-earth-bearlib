@@ -143,7 +143,7 @@ def get_random_armor_material():
 
     d100 = roll(1, 100)
 
-    breakpoints = [k[2] for k in material_rarity]
+    breakpoints = [k[2] for k in material_rarity if k[2] < 100]
     breakpoints.sort()
 
     print breakpoints
@@ -159,7 +159,7 @@ def get_random_item():
 
     d100 = roll(1, 100)
 
-    breakpoints = [k[2] for k in item_rarity]
+    breakpoints = [k[2] for k in item_rarity if k[2] < 100]
     breakpoints.sort()
 
     print breakpoints
@@ -172,7 +172,7 @@ def get_random_item():
     item_types = generate_item_type()
     d100 = roll(1, 100)
 
-    breakpoints = [k[2] for k in item_types]
+    breakpoints = [k[2] for k in item_types if k[2] < 100]
     breakpoints.sort()
 
     print breakpoints
