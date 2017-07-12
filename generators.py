@@ -250,7 +250,7 @@ def generate_random_mon():
 
     #print "Rolled " + str(d100) + " on random monster gen table"
 
-    breakpoints = [k[2] for k in mon_chances]
+    breakpoints = [k[2] for k in mon_chances if k[2] != 100]
     breakpoints.sort()
 
     print breakpoints
@@ -261,6 +261,21 @@ def generate_random_mon():
     print "Random monster is " + res
     return res
 
+def test_force_roll(force):
+    print("Test forcing a roll of " + str(force))
+    mon_chances = get_monster_chances()
+
+    d100 = force
+
+    breakpoints = [k[2] for k in mon_chances if k[2] != 100]
+    breakpoints.sort()
+
+    print breakpoints
+
+    i = bisect.bisect(breakpoints, d100)
+    res = mon_chances[i][0]
+    print "Random monster is " + res
+    return res
 
 def generate_stats(array="standard", kind="melee"):
     if array == "heroic":
@@ -361,7 +376,6 @@ with open("data/weapons_properties.json") as json_data:
      weap_prop_data = json.load(json_data)
      print weap_prop_data
 
-# if __name__ == '__main__':
-# generate_item(2, 2, "longsword")
-# generate_item(3, 3, "dagger")
-# generate_item(1,1, "chainmail")
+if __name__ == '__main__':
+    test_force_roll(100)
+
