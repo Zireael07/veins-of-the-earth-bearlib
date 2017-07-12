@@ -191,8 +191,8 @@ def get_random_item():
 
     # return res
 
-
-def generate_item(x, y, id):
+# X,Y need to come after id so that we can use tuple unpacking here (Python 2.7.x)
+def generate_item(id, x,y):
     print "Generating item with id " + id + " at " + str(x) + " " + str(y)
 
     # set values
@@ -291,7 +291,8 @@ def generate_stats(array="standard", kind="melee"):
 
     return temp
 
-def generate_monster(x,y, id):
+# X,Y need to come after ID because we want to use tuple unpacking
+def generate_monster(id, x,y):
     if id == 'None' or id == None:
         print "Wanted id of None, aborting"
         return

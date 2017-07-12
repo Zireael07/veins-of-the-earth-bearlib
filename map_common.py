@@ -20,3 +20,20 @@ def map_make_fov(incoming_map):
                                        not incoming_map[x][y].block_path, not incoming_map[x][y].block_path)
 
     return fov_map
+
+def get_free_tiles(inc_map):
+    free_tiles = []
+    for y in range(len(inc_map)):
+        for x in range(len(inc_map[0])):
+            if not inc_map[x][y].block_path:
+                free_tiles.append((x,y))
+    return free_tiles
+
+def random_free_tile(inc_map):
+    free_tiles = get_free_tiles(inc_map)
+    index = libtcod.random_get_int(0, 0, len(free_tiles))
+    #print("Index is " + str(index))
+    x = free_tiles[index][0]
+    y = free_tiles[index][1]
+    print("Coordinates are " + str(x) + " " + str(y))
+    return x, y

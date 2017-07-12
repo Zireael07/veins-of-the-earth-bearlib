@@ -8,7 +8,7 @@ import constants
 import renderer
 import components
 import generators
-from map_common import struc_Tile, map_make_fov
+from map_common import struc_Tile, map_make_fov, random_free_tile
 from bspmap import BspMapGenerator
 
 class obj_Game:
@@ -483,19 +483,19 @@ def game_initialize():
     
 
     #test generating items
-    GAME.current_entities.append(generators.generate_item(2, 2, "longsword"))
-    GAME.current_entities.append(generators.generate_item(3,3, "dagger"))
-    GAME.current_entities.append(generators.generate_item(1,1, "chainmail"))
+    GAME.current_entities.append(generators.generate_item("longsword", *random_free_tile(GAME.current_map)))
+    GAME.current_entities.append(generators.generate_item("dagger",*random_free_tile(GAME.current_map)))
+    GAME.current_entities.append(generators.generate_item("chainmail", *random_free_tile(GAME.current_map)))
 
-    GAME.add_entity(generators.generate_monster(2,2, "human"))
+    GAME.add_entity(generators.generate_monster("human", *random_free_tile(GAME.current_map)))
     #test generating monsters
-    GAME.add_entity(generators.generate_monster(3, 3, generators.generate_random_mon()))
-    GAME.add_entity(generators.generate_monster(5, 5, generators.generate_random_mon()))
-    GAME.add_entity(generators.generate_monster(7, 7, generators.generate_random_mon()))
-    GAME.add_entity(generators.generate_monster(4, 4, generators.generate_random_mon()))
-    GAME.add_entity(generators.generate_monster(8, 8, generators.generate_random_mon()))
-    GAME.add_entity(generators.generate_monster(10, 10, generators.generate_random_mon()))
-    GAME.add_entity(generators.generate_monster(15, 15, generators.generate_random_mon()))
+    GAME.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(GAME.current_map)))
+    GAME.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(GAME.current_map)))
+    GAME.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(GAME.current_map)))
+    GAME.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(GAME.current_map)))
+    GAME.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(GAME.current_map)))
+    GAME.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(GAME.current_map)))
+    GAME.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(GAME.current_map)))
 
     # put player last
     GAME.current_entities.append(PLAYER)
