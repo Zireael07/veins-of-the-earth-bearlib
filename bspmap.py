@@ -18,11 +18,17 @@ class BspMapGenerator:
             self._map[x][y].block_path = False
 
     def _vline_up(self, x, y):
+        if x > self.map_width -1:
+            return
+
         while y >= 0 and self._map[x][y].block_path == True:
             self._map[x][y].block_path = False
             y -= 1
 
     def _vline_down(self, x, y):
+        if x > self.map_width -1:
+            return
+
         while y < self.map_height and self._map[x][y].block_path == True:
             self._map[x][y].block_path = False
             y += 1
@@ -34,11 +40,16 @@ class BspMapGenerator:
             self._map[x][y].block_path = False
 
     def _hline_left(self, x, y):
+        if y > self.map_height - 1:
+            return
+
         while x >= 0 and self._map[x][y].block_path == True:
             self._map[x][y].block_path = False
             x -= 1
 
     def _hline_right(self, x, y):
+        if y > self.map_height - 1:
+            return
         while x < self.map_width and self._map[x][y].block_path == True:
             self._map[x][y].block_path = False
             x += 1

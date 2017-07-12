@@ -31,7 +31,7 @@ def get_free_tiles(inc_map):
 
 def random_free_tile(inc_map):
     free_tiles = get_free_tiles(inc_map)
-    index = libtcod.random_get_int(0, 0, len(free_tiles))
+    index = libtcod.random_get_int(0, 0, len(free_tiles)-1)
     #print("Index is " + str(index))
     x = free_tiles[index][0]
     y = free_tiles[index][1]
