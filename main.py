@@ -95,6 +95,11 @@ class obj_Camera:
         self.x, self.y = (0,0)
         self.top_x, self.top_y = (0,0)
         self.offset = (0,10) #default offset is 10 along y axis
+
+    def start_update(self):
+        target_pos = (80,20)
+        cur_pos_x, cur_pos_y = renderer.draw_iso(PLAYER.x, PLAYER.y)
+        self.offset = (target_pos[0] - cur_pos_x, target_pos[1] - cur_pos_y)
     
     def update(self):
         # this calculates cells
@@ -294,7 +299,8 @@ def game_main_loop():
         draw_game(pix_x, pix_y)
 
         # debug
-        blt.puts(2,2, "[color=red] player pos in cells: %d %d" % (renderer.draw_iso(PLAYER.x, PLAYER.y)))
+        blt.puts(2,2, "[color=red] player position: %d %d" % (PLAYER.x, PLAYER.y))
+        #blt.puts(2,2, "[color=red] player pos in cells: %d %d" % (renderer.draw_iso(PLAYER.x, PLAYER.y)))
         #blt.puts(2,6, "[color=orange] camera pos in cells: %d %d" % (CAMERA.x, CAMERA.y))
         blt.puts(2,7, "[color=orange] camera offset: %d %d" % (CAMERA.offset[0], CAMERA.offset[1]))
 
@@ -480,7 +486,9 @@ def game_initialize():
 
     #init camera for renderer
     renderer.initialize_camera(CAMERA)
-    
+
+    # adjust camera position so that player is centered
+    CAMERA.start_update()
 
     #test generating items
     GAME.current_entities.append(generators.generate_item("longsword", *random_free_tile(GAME.current_map)))
