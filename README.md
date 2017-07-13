@@ -1,8 +1,6 @@
 # Veins of the Earth
 
-.. image:: https://landscape.io/github/landscapeio/prospector/master/landscape.png?style=flat
-   :target: https://landscape.io/github/landscapeio/prospector/master
-   :alt: Code Health
+[![Code Health](https://landscape.io/github/Zireael07/veins-of-the-earth-bearlib/master/landscape.svg?style=flat)](https://landscape.io/github/Zireael07/veins-of-the-earth-bearlib/master)
 
 This is a Python version of Veins of the Earth.
 
