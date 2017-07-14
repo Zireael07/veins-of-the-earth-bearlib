@@ -4,7 +4,7 @@ import math
 
 from renderer import draw_iso
 
-import constants
+# import constants
 
 # need a reference to global GAME %^$@
 def initialize_game(game):
@@ -232,12 +232,12 @@ class com_Creature:
             if self.death_function is not None:
                 self.death_function(self.owner)
 
-    def move(self, dx, dy, map):
-        if self.owner.y + dy >= len(map) or self.owner.y + dy < 0:
+    def move(self, dx, dy, game_map):
+        if self.owner.y + dy >= len(game_map) or self.owner.y + dy < 0:
             print("Tried to move out of map")
             return
 
-        if self.owner.x + dx >= len(map[0]) or self.owner.x + dx < 0:
+        if self.owner.x + dx >= len(game_map[0]) or self.owner.x + dx < 0:
             print("Tried to move out of map")
             return
 
@@ -258,7 +258,7 @@ class com_Creature:
                 if self.text is not None:
                     GAME.game_message(self.name_instance + " says: " + self.text, "yellow")
 
-        tile_is_wall = (map[self.owner.x+dx][self.owner.y+dy].block_path == True)
+        tile_is_wall = (game_map[self.owner.x+dx][self.owner.y+dy].block_path == True)
 
         if not tile_is_wall and target is None:
             self.owner.x += dx
@@ -267,7 +267,7 @@ class com_Creature:
             #flag so that we don't recalculate FOV/camera needlessly
             return True
 
-    def move_towards(self, target_x, target_y, map):
+    def move_towards(self, target_x, target_y, game_map):
         # vector from this object to the target, and distance
         dx = target_x - self.owner.x
         dy = target_y - self.owner.y
@@ -277,7 +277,7 @@ class com_Creature:
         # convert to integer so the movement is restricted to the map grid
         dx = int(round(dx / distance))
         dy = int(round(dy / distance))
-        return self.move(dx, dy, map), dx, dy
+        return self.move(dx, dy, game_map), dx, dy
 
 
 class com_Container:
