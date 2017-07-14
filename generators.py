@@ -192,23 +192,23 @@ def get_random_item():
     # return res
 
 # X,Y need to come after id so that we can use tuple unpacking here (Python 2.7.x)
-def generate_item(id, x,y):
-    print "Generating item with id " + id + " at " + str(x) + " " + str(y)
+def generate_item(i_id, x,y):
+    print "Generating item with id " + i_id + " at " + str(x) + " " + str(y)
 
     # set values
-    item_name = items_data[id]['name']
-    item_slot = items_data[id]['slot']
+    item_name = items_data[i_id]['name']
+    item_slot = items_data[i_id]['slot']
     # make it a hex value
-    item_char = int(items_data[id]['char'], 16)
-    item_type = items_data[id]['type']
+    item_char = int(items_data[i_id]['char'], 16)
+    item_type = items_data[i_id]['type']
 
     # optional parameters depending on type
     if item_type == "weapon":
-        item_dice = items_data[id]['damage_number']
-        item_sides = items_data[id]['damage_dice']
+        item_dice = items_data[i_id]['damage_number']
+        item_sides = items_data[i_id]['damage_dice']
 
     if item_type == "armor":
-        item_armor = items_data[id]['combat_armor']
+        item_armor = items_data[i_id]['combat_armor']
 
 
     # Create the item
@@ -307,24 +307,24 @@ def generate_stats(array="standard", kind="melee"):
     return temp
 
 # X,Y need to come after ID because we want to use tuple unpacking
-def generate_monster(id, x,y):
-    if id == 'None' or id == None:
+def generate_monster(m_id, x,y):
+    if m_id == 'None' or m_id == None:
         print "Wanted id of None, aborting"
         return
 
-    print "Generating monster with id " + id + " at " + str(x) + " " + str(y)
+    print "Generating monster with id " + m_id + " at " + str(x) + " " + str(y)
 
     # Set values
-    mon_name = monster_data[id]['name']
-    mon_hp = monster_data[id]['hit_points']
-    mon_dam_num = monster_data[id]['damage_number']
-    mon_dam_dice = monster_data[id]['damage_dice']
-    mon_faction = monster_data[id]['faction']
+    mon_name = monster_data[m_id]['name']
+    mon_hp = monster_data[m_id]['hit_points']
+    mon_dam_num = monster_data[m_id]['damage_number']
+    mon_dam_dice = monster_data[m_id]['damage_dice']
+    mon_faction = monster_data[m_id]['faction']
     # make it a hex value
-    char = int(monster_data[id]['char'], 16)
+    char = int(monster_data[m_id]['char'], 16)
 
-    if 'text' in monster_data[id]:
-        mon_text = monster_data[id]['text']
+    if 'text' in monster_data[m_id]:
+        mon_text = monster_data[m_id]['text']
     else:
         mon_text = None
 
@@ -349,32 +349,32 @@ def generate_monster(id, x,y):
 # Execute
 # Load JSON
 with open(constants.NPC_JSON_PATH) as json_data:
-     monster_data = json.load(json_data)
-     print monster_data
+    monster_data = json.load(json_data)
+    print monster_data
 
 with open(constants.ITEMS_JSON_PATH) as json_data:
-     items_data = json.load(json_data)
-     print items_data
+    items_data = json.load(json_data)
+    print items_data
 
 with open("data/armor_materials.json") as json_data:
-     arm_mat_data = json.load(json_data)
-     print arm_mat_data
+    arm_mat_data = json.load(json_data)
+    print arm_mat_data
 
 with open("data/armor_bonuses.json") as json_data:
-     arm_bonus_data = json.load(json_data)
-     print arm_bonus_data
+    arm_bonus_data = json.load(json_data)
+    print arm_bonus_data
 
 with open("data/armor_properties.json") as json_data:
-     arm_prop_data = json.load(json_data)
-     print arm_prop_data
+    arm_prop_data = json.load(json_data)
+    print arm_prop_data
 
 with open("data/weapons_bonuses.json") as json_data:
-     weap_bonus_data = json.load(json_data)
-     print weap_bonus_data
+    weap_bonus_data = json.load(json_data)
+    print weap_bonus_data
 
 with open("data/weapons_properties.json") as json_data:
-     weap_prop_data = json.load(json_data)
-     print weap_prop_data
+    weap_prop_data = json.load(json_data)
+    print weap_prop_data
 
 if __name__ == '__main__':
     test_force_roll(100)

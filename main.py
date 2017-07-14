@@ -370,9 +370,9 @@ def game_handle_keys():
 
     # items
     if key == blt.TK_G:
-        object = map_check_for_item(PLAYER.x, PLAYER.y)
-        #for obj in objects:
-        object.item.pick_up(PLAYER)
+        ent = map_check_for_item(PLAYER.x, PLAYER.y)
+        #for ent in objects:
+        ent.item.pick_up(PLAYER)
 
     if key == blt.TK_D:
         if len(PLAYER.container.inventory) > 0:
