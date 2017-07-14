@@ -27,7 +27,10 @@ def draw_map(map_draw, fov_map):
             #print("Is in map range " + str(tile_x) + " " + str(tile_y) + ": " + str(is_in_map_range))
 
             if is_in_map_range:
-                is_visible = libtcod.map_is_in_fov(fov_map, x, y)
+                if constants.DEBUG:
+                    is_visible = True
+                else:
+                    is_visible = libtcod.map_is_in_fov(fov_map, x, y)
 
                 if is_visible:
                     blt.color("white")

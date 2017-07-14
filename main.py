@@ -388,6 +388,10 @@ def game_handle_keys():
     if key == blt.TK_C:
         renderer.character_sheet_menu("Character sheet", PLAYER)
 
+    if key == blt.TK_GRAVE and blt.check(blt.TK_SHIFT):
+        print("Debug mode on")
+        constants.DEBUG = True
+
     # mouse
 
     if key == blt.TK_MOUSE_LEFT:

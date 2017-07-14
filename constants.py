@@ -20,6 +20,7 @@ LIGHT_RADIUS = 4
 
 NUM_MESSAGES = 4
 
+DEBUG = False
 
 # Tiles
 blt.set("0x02E: gfx/floor_sand.png")
