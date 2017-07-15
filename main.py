@@ -206,6 +206,39 @@ def roll(dice, sides):
      print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
      return result
 
+# debugging rooms
+def get_room_index():
+    room_index = -1
+    for r in GAME.rooms:
+
+        if r.contains((PLAYER.x, PLAYER.y)):
+            room_index = GAME.rooms.index(r)
+            break
+
+    return room_index
+
+def room_index_str():
+    index = get_room_index()
+
+    if index != -1:
+        return str(index)
+    else:
+        return "None"
+
+def get_room_from_index(index):
+    if index != -1:
+        return GAME.rooms[index]
+
+def get_room_data():
+    index = get_room_index()
+    if index != -1:
+        room = get_room_from_index(index)
+        return "Center: " + str(room.center()) + " x " + str(room.x1) + " y " + str(room.y1) +\
+               " x2 " + str(room.x2) + " y2 " + str(room.y2) +\
+               " width " + str(room.x2-room.x1) + " height " + str(room.y2-room.y1)
+    else:
+        return "None"
+
 def game_main_loop():
     game_quit = False
 
@@ -268,10 +301,12 @@ def game_main_loop():
         draw_game(pix_x, pix_y)
 
         # debug
+        # debug
         blt.puts(2,2, "[color=red] player position: %d %d" % (PLAYER.x, PLAYER.y))
-        #blt.puts(2,2, "[color=red] player pos in cells: %d %d" % (renderer.draw_iso(PLAYER.x, PLAYER.y)))
-        #blt.puts(2,6, "[color=orange] camera pos in cells: %d %d" % (CAMERA.x, CAMERA.y))
-        blt.puts(2,7, "[color=orange] camera offset: %d %d" % (CAMERA.offset[0], CAMERA.offset[1]))
+        blt.puts(2,5, "[color=red] camera offset: %d %d" % (CAMERA.offset[0], CAMERA.offset[1]))
+        # debugging rooms
+        blt.puts(2,6, "[color=orange] room index: %s" % (room_index_str()))
+        blt.puts(2,7, "[color=orange] room center %s" % (get_room_data()))
 
 
         # refresh term
