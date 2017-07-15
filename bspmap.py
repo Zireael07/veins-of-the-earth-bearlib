@@ -1,6 +1,6 @@
 import libtcodpy as libtcod
 
-from map_common import struc_Tile
+from map_common import struc_Tile, Rect
 
 class BspMapGenerator:
     def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms):
@@ -81,7 +81,12 @@ class BspMapGenerator:
             for x in range(minx, maxx + 1):
                 for y in range(miny, maxy + 1):
                     self._map[x][y].block_path = False
-            self._rooms.append(((minx + maxx) // 2, (miny + maxy) // 2))
+            self._rooms_centers.append(((minx + maxx) // 2, (miny + maxy) // 2))
+
+            new_room = Rect(minx, miny, node.w, node.h)
+            self._rooms.append(new_room)
+
+
         # Create corridor
         else:
             left = libtcod.bsp_left(node)
@@ -126,6 +131,7 @@ class BspMapGenerator:
 
     def generate_map(self):
         self._map = self._generate_empty_map()
+        self._rooms_centers = []
         self._rooms = []
         bsp = libtcod.bsp_new_with_size(0, 0, self.map_width, self.map_height)
         libtcod.bsp_split_recursive(bsp, 0, self.generation_depth, self.min_room_size + 1, self.min_room_size + 1, 1.5,
@@ -135,6 +141,6 @@ class BspMapGenerator:
         # TODO: Generate stairs
 
         # TODO: generate monsters, items, etc.
-        return self._map, self._rooms[0][0], self._rooms[0][1]
+        return self._map, self._rooms_centers[0][0], self._rooms_centers[0][1], self._rooms
 
 

@@ -16,7 +16,7 @@ class obj_Game:
         #self.current_map = map_create()
         map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
                                   constants.FULL_ROOMS)
-        self.current_map, self.player_start_x, self.player_start_y = map_gen.generate_map()
+        self.current_map, self.player_start_x, self.player_start_y, self.rooms = map_gen.generate_map()
 
         global FOV_MAP
         FOV_MAP = map_make_fov(self.current_map)
