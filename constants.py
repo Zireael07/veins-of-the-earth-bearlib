@@ -5,9 +5,9 @@ MAP_HEIGHT = 20
 MAP_WIDTH = 20
 
 #BSP settings
-DEPTH = 5
+DEPTH = 3
 ROOM_MIN_SIZE = 4
-FULL_ROOMS = False
+FULL_ROOMS = True
 
 # in number of cells
 TILE_HEIGHT = 2
