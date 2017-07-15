@@ -6,6 +6,9 @@ import json
 import components
 import constants
 
+import logging
+from logging.config import dictConfig
+
 # need a reference to global GAME %^$@
 def initialize_game(game):
     global GAME
@@ -19,7 +22,8 @@ def roll(dice, sides):
         roll = libtcod.random_get_int(0, 1, sides)
         result += roll
 
-    print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
+    logger.info('Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result))
+    #print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
     return result
 
 
@@ -88,7 +92,8 @@ def get_weapons_bonus_rarity():
         if 'rarity' in weap_bonus_data[data_id]:
             chances.append((weap_bonus_data[data_id]['name'], weap_bonus_data[data_id]['rarity']))
 
-    print chances
+    #print chances
+    logger.debug(chances)
 
     num = 0
     chance_roll = []
@@ -97,7 +102,8 @@ def get_weapons_bonus_rarity():
         num += 1+chance[1]
         chance_roll.append((chance[0], old_num, num))
 
-    print chance_roll
+    #print chance_roll
+    logger.debug(chance_roll)
     return chance_roll
 
 def get_random_weapon_bonus():
@@ -108,7 +114,8 @@ def get_random_weapon_bonus():
     breakpoints = [k[2] for k in bonus_rarity]
     breakpoints.sort()
 
-    print breakpoints
+    #print breakpoints
+    logger.debug(breakpoints)
 
     i = bisect.bisect(breakpoints, d100)
     res = bonus_rarity[i][0]
@@ -121,7 +128,8 @@ def get_armor_material_rarity():
         if 'rarity' in arm_mat_data[data_id]:
             chances.append((arm_mat_data[data_id]['name'], arm_mat_data[data_id]['rarity']))
 
-    print chances
+    #print chances
+    logger.debug(chances)
 
     num = 0
     chance_roll = []
@@ -131,10 +139,12 @@ def get_armor_material_rarity():
         chance_roll.append((chance[0], old_num, num))
 
     #pad out to 100
-    print "Last number is " + str(num)
+    logger.debug("Last number is " + str(num))
+    #print "Last number is " + str(num)
     chance_roll.append(("None", num, 100))
 
-    print chance_roll
+    #print chance_roll
+    logger.debug(chance_roll)
 
     return chance_roll
 
@@ -146,11 +156,13 @@ def get_random_armor_material():
     breakpoints = [k[2] for k in material_rarity if k[2] < 100]
     breakpoints.sort()
 
-    print breakpoints
+    #print breakpoints
+    logger.debug(breakpoints)
 
     i = bisect.bisect(breakpoints, d100)
     res = material_rarity[i][0]
-    print "Random material is " + res
+    logger.info("Random material is " + res)
+    #print "Random material is " + res
     return res
 
 
@@ -162,11 +174,13 @@ def get_random_item():
     breakpoints = [k[2] for k in item_rarity if k[2] < 100]
     breakpoints.sort()
 
-    print breakpoints
+    #print breakpoints
+    logger.debug(breakpoints)
 
     i = bisect.bisect(breakpoints, d100)
     res = item_rarity[i][0]
-    print "Random item rarity is " + res
+    logger.info("Random item rarity is " + res)
+    #print "Random item rarity is " + res
 
     # generate item type
     item_types = generate_item_type()
@@ -175,11 +189,13 @@ def get_random_item():
     breakpoints = [k[2] for k in item_types if k[2] < 100]
     breakpoints.sort()
 
-    print breakpoints
+    logger.debug(breakpoints)
+    #print breakpoints
 
     i = bisect.bisect(breakpoints, d100)
     it_type = item_types[i][0]
-    print "Random item type is " + it_type
+    logger.info("Random item type is " + it_type)
+    #print "Random item type is " + it_type
 
     # if armor, random material
     if it_type == "Armor":
@@ -193,7 +209,8 @@ def get_random_item():
 
 # X,Y need to come after id so that we can use tuple unpacking here (Python 2.7.x)
 def generate_item(i_id, x,y):
-    print "Generating item with id " + i_id + " at " + str(x) + " " + str(y)
+    logger.info("Generating item with id " + i_id + " at " + str(x) + " " + str(y))
+    #print "Generating item with id " + i_id + " at " + str(x) + " " + str(y)
 
     # set values
     item_name = items_data[i_id]['name']
@@ -225,7 +242,8 @@ def get_monster_chances():
         if monster_data[data_id]['rarity']:
             chances.append((monster_data[data_id]['name'], monster_data[data_id]['rarity']))
 
-    print chances
+    #print chances
+    logger.debug(chances)
 
     num = 0
     chance_roll = []
@@ -235,10 +253,11 @@ def get_monster_chances():
         chance_roll.append((chance[0], old_num, num))
 
     #pad out to 100
-    print "Last number is " + str(num)
+    #print "Last number is " + str(num)
+    logger.debug("Last number is " + str(num))
     chance_roll.append(("None", num, 100))
 
-    print chance_roll
+    #print chance_roll
 
     return chance_roll
 
@@ -253,12 +272,13 @@ def generate_random_mon():
     breakpoints = [k[2] for k in mon_chances if k[2] != 100]
     breakpoints.sort()
 
-    print breakpoints
-
+    #print breakpoints
+    logger.debug(breakpoints)
 
     i = bisect.bisect(breakpoints, d100)
     res = mon_chances[i][0]
-    print "Random monster is " + res
+    logger.info("Random monster is " + res)
+    #print "Random monster is " + res
     return res
 
 def test_force_roll(force):
@@ -270,11 +290,13 @@ def test_force_roll(force):
     breakpoints = [k[2] for k in mon_chances if k[2] != 100]
     breakpoints.sort()
 
-    print breakpoints
+    #print breakpoints
+    logger.debug(breakpoints)
 
     i = bisect.bisect(breakpoints, d100)
     res = mon_chances[i][0]
-    print "Random monster is " + res
+    logger.info("Random monster is " + res)
+    #print "Random monster is " + res
     return res
 
 def generate_stats(array="standard", kind="melee"):
@@ -293,7 +315,7 @@ def generate_stats(array="standard", kind="melee"):
         temp.insert(4, array[4])
         temp.insert(5, array[5])
     else:
-        print "Using default array"
+        #print "Using default array"
         # STR DEX CON INT WIS CHA
         temp = []
         temp.insert(0, array[0])
@@ -309,10 +331,12 @@ def generate_stats(array="standard", kind="melee"):
 # X,Y need to come after ID because we want to use tuple unpacking
 def generate_monster(m_id, x,y):
     if m_id == 'None' or m_id == None:
-        print "Wanted id of None, aborting"
+        logger.info("Wanted id of None, aborting")
+        #print "Wanted id of None, aborting"
         return
 
-    print "Generating monster with id " + m_id + " at " + str(x) + " " + str(y)
+    logger.info("Generating monster with id " + m_id + " at " + str(x) + " " + str(y))
+    #print "Generating monster with id " + m_id + " at " + str(x) + " " + str(y)
 
     # Set values
     mon_name = monster_data[m_id]['name']
@@ -347,34 +371,50 @@ def generate_monster(m_id, x,y):
 
 
 # Execute
+# Load logger settings
+with open("logging.json") as js_config_data:
+    config_data = json.load(js_config_data)
+    dictConfig(config_data)
+
+    logger = logging.getLogger()
+
+
 # Load JSON
 with open(constants.NPC_JSON_PATH) as json_data:
     monster_data = json.load(json_data)
-    print monster_data
+    logger.debug(monster_data)
+
+    #print monster_data
 
 with open(constants.ITEMS_JSON_PATH) as json_data:
     items_data = json.load(json_data)
-    print items_data
+    logger.debug(items_data)
+    #print items_data
 
 with open("data/armor_materials.json") as json_data:
     arm_mat_data = json.load(json_data)
-    print arm_mat_data
+    logger.debug(arm_mat_data)
+    #print arm_mat_data
 
 with open("data/armor_bonuses.json") as json_data:
     arm_bonus_data = json.load(json_data)
-    print arm_bonus_data
+    logger.debug(arm_bonus_data)
+    #print arm_bonus_data
 
 with open("data/armor_properties.json") as json_data:
     arm_prop_data = json.load(json_data)
-    print arm_prop_data
+    logger.debug(arm_prop_data)
+    #print arm_prop_data
 
 with open("data/weapons_bonuses.json") as json_data:
     weap_bonus_data = json.load(json_data)
-    print weap_bonus_data
+    logger.debug(weap_bonus_data)
+    #print weap_bonus_data
 
 with open("data/weapons_properties.json") as json_data:
     weap_prop_data = json.load(json_data)
-    print weap_prop_data
+    logger.debug(weap_prop_data)
+    #print weap_prop_data
 
 if __name__ == '__main__':
     test_force_roll(100)
