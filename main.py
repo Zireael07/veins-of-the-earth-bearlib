@@ -8,7 +8,7 @@ import constants
 import renderer
 import components
 import generators
-from map_common import struc_Tile, map_make_fov, random_free_tile
+from map_common import struc_Tile, map_make_fov, random_free_tile, Rect
 from bspmap import BspMapGenerator
 
 class obj_Game:
@@ -57,37 +57,6 @@ class AI_test:
         self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), GAME.current_map)
 
 
-class Rect():
-    """
-    A rectangle on the map. used to characterize a room.
-    """
-    def __init__(self, x, y, w, h):
-        self.x1 = x
-        self.y1 = y
-        self.x2 = x + max(0, w)
-        self.y2 = y + max(0, h)
-
-    def __eq__(self, other):
-        return (self.x1 == other.x1 and
-                self.x2 == other.x2 and
-                self.y1 == other.y1 and
-                self.y2 == other.y2)
-
-    def center(self):
-        return (self.x1 + self.x2) / 2, (self.y1 + self.y2) / 2
-
-    def intersect(self, other):
-        """
-        Returns true if two rectangles intersect.
-        """
-        return (self.x1 <= other.x2 and self.x2 >= other.x1 and
-                self.y1 <= other.y2 and self.y2 >= other.y1)
-
-    def contains(self, location):
-        return (location[0] > self.x1 and location[0] <= self.x2 and
-                self.y1 < location[1] <= self.y2)
-
-
 class obj_Camera:
     def __init__(self):
         self.width = 80 # blt.state(blt.TK_CELL_WIDTH)*80
@@ -107,7 +76,7 @@ class obj_Camera:
         self.top_x, self.top_y = self.x - self.width/2, self.y - self.height/2
 
     def move(self, dx, dy):
-        print("Moving the camera by " + str(dx) + ", " + str(dy))
+        # print("Moving the camera by " + str(dx) + ", " + str(dy))
         # if we increase map x by 1, draw coordinates increase by 1/2 tile width, 1/2 tile height
         # reverse that since we want the camera to stay in same place
         x_change = (-constants.TILE_WIDTH/2, -constants.TILE_HEIGHT/2)

@@ -7,6 +7,38 @@ class struc_Tile:
         self.block_path = block_path
         self.explored = False
 
+class Rect():
+    """
+    A rectangle on the map. used to characterize a room.
+    """
+    def __init__(self, x, y, w, h):
+        self.x1 = x
+        self.y1 = y
+        self.x2 = x + max(0, w)
+        self.y2 = y + max(0, h)
+
+    def __eq__(self, other):
+        return (self.x1 == other.x1 and
+                self.x2 == other.x2 and
+                self.y1 == other.y1 and
+                self.y2 == other.y2)
+
+    def center(self):
+        return (self.x1 + self.x2) / 2, (self.y1 + self.y2) / 2
+
+    def intersect(self, other):
+        """
+        Returns true if two rectangles intersect.
+        """
+        return (self.x1 <= other.x2 and self.x2 >= other.x1 and
+                self.y1 <= other.y2 and self.y2 >= other.y1)
+
+    def contains(self, location):
+        return (location[0] >= self.x1 and location[0] <= self.x2 and
+                self.y1 <= location[1] <= self.y2)
+
+
+
 def map_make_fov(incoming_map):
     #global FOV_MAP
 
