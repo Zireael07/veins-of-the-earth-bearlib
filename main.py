@@ -64,6 +64,7 @@ class obj_Camera:
         self.x, self.y = (0,0)
         self.top_x, self.top_y = (0,0)
         self.offset = (0,10) #default offset is 10 along y axis
+        self.rectangle = Rect(self.top_x, self.top_y, self.width, self.height)
 
     def start_update(self):
         target_pos = (80,20)
@@ -74,6 +75,8 @@ class obj_Camera:
         # this calculates cells
         self.x, self.y = renderer.draw_iso(PLAYER.x, PLAYER.y)
         self.top_x, self.top_y = self.x - self.width/2, self.y - self.height/2
+        # update rect
+        self.rectangle.update(self.top_x, self.top_y, self.width, self.height)
 
     def move(self, dx, dy):
         # print("Moving the camera by " + str(dx) + ", " + str(dy))
@@ -93,12 +96,10 @@ class obj_Camera:
 
         self.offset = (new_x, new_y)
 
-
-
-    @property
-    def rectangle(self):
-        cam_rect = Rect(self.top_x, self.top_y, self.width, self.height)
-        return cam_rect
+    # @property
+    # def rectangle(self):
+    #     cam_rect = Rect(self.top_x, self.top_y, self.width, self.height)
+    #     return cam_rect
 
 
 def death_monster(monster):

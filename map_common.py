@@ -37,7 +37,11 @@ class Rect():
         return (location[0] >= self.x1 and location[0] <= self.x2 and
                 self.y1 <= location[1] <= self.y2)
 
-
+    def update(self, x,y,w,h):
+        self.x1 = x
+        self.y1 = y
+        self.x2 = x + max(0,w)
+        self.y2 = y + max(0,h)
 
 def map_make_fov(incoming_map):
     #global FOV_MAP
