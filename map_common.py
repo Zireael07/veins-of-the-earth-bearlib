@@ -73,3 +73,14 @@ def random_free_tile(inc_map):
     y = free_tiles[index][1]
     print("Coordinates are " + str(x) + " " + str(y))
     return x, y
+
+def print_map_string(inc_map):
+    for y in range(len(inc_map)):
+        for x in range(len(inc_map)[0])):
+            if not inc_map[x][y].block_path:
+                sys.stdout.write(".")
+            else:
+                sys.stdout.write("#")
+        
+        #our row ended, add a line break
+        sys.stdout.write("\n")
