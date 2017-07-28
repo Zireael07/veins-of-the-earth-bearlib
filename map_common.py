@@ -1,4 +1,5 @@
 import libtcodpy as libtcod
+import sys
 
 import constants
 
@@ -76,7 +77,7 @@ def random_free_tile(inc_map):
 
 def print_map_string(inc_map):
     for y in range(len(inc_map)):
-        for x in range(len(inc_map)[0])):
+        for x in range(len(inc_map[0])):
             if not inc_map[x][y].block_path:
                 sys.stdout.write(".")
             else:

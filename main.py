@@ -8,7 +8,7 @@ import constants
 import renderer
 import components
 import generators
-from map_common import struc_Tile, map_make_fov, random_free_tile, Rect
+from map_common import struc_Tile, map_make_fov, random_free_tile, Rect, print_map_string
 from bspmap import BspMapGenerator
 
 class obj_Game:
@@ -17,6 +17,8 @@ class obj_Game:
         map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
                                   constants.FULL_ROOMS)
         self.current_map, self.player_start_x, self.player_start_y, self.rooms = map_gen.generate_map()
+
+        print_map_string(self.current_map)
 
         global FOV_MAP
         FOV_MAP = map_make_fov(self.current_map)
@@ -102,7 +104,7 @@ class obj_Camera:
     #     return cam_rect
 
 # This will be used both by AI and map checking - that's why it's not in components.py
-def move_astar(self, target, inc_map):
+def move_astar(actor, target, inc_map):
         #Create a FOV map that has the dimensions of the map
         fov = libtcod.map_new(constants.MAP_WIDTH, constants.MAP_HEIGHT)
  
@@ -114,17 +116,17 @@ def move_astar(self, target, inc_map):
         #Scan all the entities to see if there are objects that must be navigated around
         #Check also that the entity isn't self or the target (so that the start and the end points are free)
         #The AI class handles the situation if self is next to the target so it will not use this A* function anyway   
-        for ent in objects:
-            if ent.blocks and ent != self and ent != target:
+        for ent in GAME.current_entities:
+            if ent.creature and ent != actor and ent != target:
                 #Set the tile as a wall so it must be navigated around
-                libtcod.map_set_properties(fov, ent.x, obj.y, True, False)
+                libtcod.map_set_properties(fov, ent.x, ent.y, True, False)
  
         #Allocate a A* path
         #The 1.41 is the normal diagonal cost of moving, it can be set as 0.0 if diagonal moves are prohibited
         my_path = libtcod.path_new_using_map(fov, 1.41)
  
         #Compute the path between self's coordinates and the target's coordinates
-        libtcod.path_compute(my_path, self.x, self.y, target.x, target.y)
+        libtcod.path_compute(my_path, actor.x, actor.y, target.x, target.y)
  
         #Check if the path exists, and in this case, also the path is shorter than 25 tiles
         #The path size matters if you want the monster to use alternative longer paths (for example through other rooms) if for example the player is in a corridor
@@ -134,8 +136,8 @@ def move_astar(self, target, inc_map):
             x, y = libtcod.path_walk(my_path, True)
             if x or y:
                 #Set self's coordinates to the next path tile
-                self.x = x
-                self.y = y
+                actor.x = x
+                actor.y = y
         #else:
             #Keep the old move function as a backup so that if there are no paths (for example another monster blocks a corridor)
             #it will still try to move towards the player (closer to the corridor opening)
