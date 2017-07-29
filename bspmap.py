@@ -12,12 +12,14 @@ class BspMapGenerator:
         self._map = []
 
     def _vline(self, x, y1, y2):
+        print("Generating a corridor from " + str(x) + " " + str(y1) + " to " + str(x) + " " + str(y2))
         if y1 > y2:
             y1, y2 = y2, y1
         for y in range(y1, y2 + 1):
             self._map[x][y].block_path = False
 
     def _vline_up(self, x, y):
+        print("Generating a corridor from " + str(x) + " " + str(y) + " upwards")
         if x > self.map_width -1:
             return
 
@@ -26,6 +28,7 @@ class BspMapGenerator:
             y -= 1
 
     def _vline_down(self, x, y):
+        print("Generating a corridor from " + str(x) + " " + str(y) + " downwards")
         if x > self.map_width -1:
             return
 
@@ -34,12 +37,14 @@ class BspMapGenerator:
             y += 1
 
     def _hline(self, x1, y, x2):
+        print("Generating a corridor from " + str(x1) + " " + str(y) + " to " + str(x2) + " " + str(y))
         if x1 > x2:
             x1, x2 = x2, x1
         for x in range(x1, x2 + 1):
             self._map[x][y].block_path = False
 
     def _hline_left(self, x, y):
+        print("Generating a corridor from " + str(x) + " " + str(y) + " left")
         if y > self.map_height - 1:
             return
 
@@ -48,6 +53,7 @@ class BspMapGenerator:
             x -= 1
 
     def _hline_right(self, x, y):
+        print("Generating a corridor from " + str(x) + "  " + str(y) + " right")
         if y > self.map_height - 1:
             return
         while x < self.map_width and self._map[x][y].block_path == True:
@@ -100,6 +106,7 @@ class BspMapGenerator:
                     x1 = libtcod.random_get_int(None, left.x, left.x + left.w - 1)
                     x2 = libtcod.random_get_int(None, right.x, right.x + right.w - 1)
                     y = libtcod.random_get_int(None, left.y + left.h, right.y)
+                    #print("Generating a corridor from " + x1 + " " + y + " to " + x2 + " " + y)
                     self._vline_up(x1, y - 1)
                     self._hline(x1, y, x2)
                     self._vline_down(x2, y + 1)
@@ -107,6 +114,7 @@ class BspMapGenerator:
                     minx = max(left.x, right.x)
                     maxx = min(left.x + left.w - 1, right.x + right.w - 1)
                     x = libtcod.random_get_int(None, minx, maxx)
+                    #print("Generating a corridor from x " + x + " for y " + right.y)
                     self._vline_down(x, right.y)
                     self._vline_up(x, right.y - 1)
             else:
