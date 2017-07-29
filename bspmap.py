@@ -106,7 +106,7 @@ class BspMapGenerator:
                     x1 = libtcod.random_get_int(None, left.x, left.x + left.w - 1)
                     x2 = libtcod.random_get_int(None, right.x, right.x + right.w - 1)
                     y = libtcod.random_get_int(None, left.y + left.h, right.y)
-                    #print("Generating a corridor from " + x1 + " " + y + " to " + x2 + " " + y)
+                    print("Generating corridors for " + str(x1) + " " + str(y) + ", " + str(x2) + " " + str(y))
                     self._vline_up(x1, y - 1)
                     self._hline(x1, y, x2)
                     self._vline_down(x2, y + 1)
@@ -114,7 +114,12 @@ class BspMapGenerator:
                     minx = max(left.x, right.x)
                     maxx = min(left.x + left.w - 1, right.x + right.w - 1)
                     x = libtcod.random_get_int(None, minx, maxx)
-                    #print("Generating a corridor from x " + x + " for y " + right.y)
+                    print("Generating corridors for x " + str(x) + " y " + str(right.y) + " " + str(right.y-1))
+
+                    # catch out-of-bounds attempts
+                    while x > self.map_width - 1:
+                        x -= 1
+
                     self._vline_down(x, right.y)
                     self._vline_up(x, right.y - 1)
             else:
@@ -122,6 +127,7 @@ class BspMapGenerator:
                     y1 = libtcod.random_get_int(None, left.y, left.y + left.h - 1)
                     y2 = libtcod.random_get_int(None, right.y, right.y + right.h - 1)
                     x = libtcod.random_get_int(None, left.x + left.w, right.x)
+                    print("Generating corridors for " + str(x) + " " + str(y1) + ", " + str(x) + str(y2))
                     self._hline_left(x - 1, y1)
                     self._vline(x, y1, y2)
                     self._hline_right(x + 1, y2)
@@ -129,6 +135,12 @@ class BspMapGenerator:
                     miny = max(left.y, right.y)
                     maxy = max(left.y + left.h - 1, right.y + right.h - 1)
                     y = libtcod.random_get_int(None, miny, maxy)
+                    print("Generating corridors for y " + str(y) + " x " + str(right.x) + " " + str(right.x-1))
+
+                    # catch out-of-bounds attempts
+                    while y > self.map_height - 1:
+                        y -= 1
+
                     self._hline_left(right.x - 1, y)
                     self._hline_right(right.x, y)
         return True
