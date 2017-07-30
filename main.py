@@ -61,8 +61,8 @@ class AI_test:
 
 class obj_Camera:
     def __init__(self):
-        self.width = 80 # blt.state(blt.TK_CELL_WIDTH)*80
-        self.height = 25 # blt.state(blt.TK_CELL_HEIGHT)*25
+        self.width = 20  # 80 # blt.state(blt.TK_CELL_WIDTH)*80
+        self.height = 20  # 25 # blt.state(blt.TK_CELL_HEIGHT)*25
         self.x, self.y = (0,0)
         self.top_x, self.top_y = (0,0)
         self.offset = (0,10) #default offset is 10 along y axis
@@ -75,7 +75,7 @@ class obj_Camera:
     
     def update(self):
         # this calculates cells
-        self.x, self.y = renderer.draw_iso(PLAYER.x, PLAYER.y)
+        self.x, self.y = PLAYER.x, PLAYER.y  # renderer.draw_iso(PLAYER.x, PLAYER.y)
         self.top_x, self.top_y = self.x - self.width/2, self.y - self.height/2
         # update rect
         self.rectangle.update(self.top_x, self.top_y, self.width, self.height)

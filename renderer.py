@@ -20,14 +20,18 @@ def draw_iso(x,y):
     return tile_x + CAMERA.offset[0], tile_y + CAMERA.offset[1]
 
 def draw_map(map_draw, fov_map):
-    for x in range(0, constants.MAP_WIDTH):
-        for y in range(0, constants.MAP_HEIGHT):
-            tile_x, tile_y = draw_iso(x, y)
-            is_in_map_range = CAMERA.rectangle.contains((tile_x,tile_y))
+    width = constants.MAP_WIDTH
+    height = constants.MAP_HEIGHT
+    debug = constants.DEBUG
+
+    for x in range(0, width):
+        for y in range(0, height):
+            #tile_x, tile_y = draw_iso(x, y)
+            is_in_map_range = CAMERA.rectangle.contains((x,y))  #((tile_x,tile_y))
             #print("Is in map range " + str(tile_x) + " " + str(tile_y) + ": " + str(is_in_map_range))
 
             if is_in_map_range:
-                if constants.DEBUG:
+                if debug:
                     is_visible = True
                 else:
                     is_visible = libtcod.map_is_in_fov(fov_map, x, y)
@@ -39,7 +43,7 @@ def draw_map(map_draw, fov_map):
                     # tile_x = x*constants.TILE_WIDTH
                     # tile_y = y*constants.TILE_HEIGHT
 
-                    #tile_x, tile_y = draw_iso(x,y)
+                    tile_x, tile_y = draw_iso(x,y)
 
                     if map_draw[x][y].block_path == True:
                         # draw wall
