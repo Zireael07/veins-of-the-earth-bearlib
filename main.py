@@ -544,6 +544,9 @@ def game_initialize():
     # adjust camera position so that player is centered
     CAMERA.start_update()
 
+    # fix issue where the map is black on turn 1
+    map_calculate_fov()
+
     #test generating items
     GAME.current_entities.append(generators.generate_item("longsword", *random_free_tile(GAME.current_map)))
     GAME.current_entities.append(generators.generate_item("dagger",*random_free_tile(GAME.current_map)))
