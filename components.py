@@ -102,7 +102,8 @@ class obj_Actor:
             if self.creature and self.creature.faction:
                 blt.color(self.creature.get_marker_color())
                 blt.put_ext(tile_x, tile_y, 0, 0, 0x2017)
-                blt.color("white")
+                #blt.color("white")
+                blt.color(4294967295)
 
             #draw our tile
             blt.put_ext(tile_x, tile_y, 0, 2, self.char)

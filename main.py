@@ -198,7 +198,8 @@ def draw_game(x,y):
 
     draw_mouseover(x,y)
 
-    blt.color("white")
+    #blt.color("white")
+    blt.color(4294967295)
     for ent in GAME.current_entities:
         ent.draw(fov_map=FOV_MAP)
 

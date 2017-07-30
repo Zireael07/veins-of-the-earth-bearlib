@@ -37,7 +37,8 @@ def draw_map(map_draw, fov_map):
                     is_visible = libtcod.map_is_in_fov(fov_map, x, y)
 
                 if is_visible:
-                    blt.color("white")
+                    #blt.color("white")
+                    blt.color(4294967295)
                     map_draw[x][y].explored = True
                     # cartesian
                     # tile_x = x*constants.TILE_WIDTH
@@ -58,7 +59,8 @@ def draw_map(map_draw, fov_map):
 
 
                 elif map_draw[x][y].explored:
-                    blt.color("gray")
+                    #blt.color("gray")
+                    blt.color(4286545791)
                     # cartesian
                     # tile_x = x * constants.TILE_WIDTH
                     # tile_y = y * constants.TILE_HEIGHT
