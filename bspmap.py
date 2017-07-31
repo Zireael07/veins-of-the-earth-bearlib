@@ -1,6 +1,7 @@
 import libtcodpy as libtcod
 
-from map_common import struc_Tile, Rect
+import constants
+from map_common import struc_Tile, Rect, print_map_string
 
 class BspMapGenerator:
     def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms):
@@ -164,3 +165,13 @@ class BspMapGenerator:
         return self._map, self._rooms_centers[0][0], self._rooms_centers[0][1], self._rooms
 
 
+if __name__ == '__main__':
+
+    #test map generation
+    test_attempts = 3
+    for i in range(test_attempts):
+        map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
+                                  constants.FULL_ROOMS)
+
+        current_map, player_start_x, player_start_y, rooms = map_gen.generate_map()
+        print_map_string(current_map)
