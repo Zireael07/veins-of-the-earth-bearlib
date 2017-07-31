@@ -118,7 +118,7 @@ class BspMapGenerator:
                     print("Generating corridors for x " + str(x) + " y " + str(right.y) + " " + str(right.y-1))
 
                     # catch out-of-bounds attempts
-                    while x > self.map_width - 1:
+                    while x > self.map_width - 2:
                         x -= 1
 
                     self._vline_down(x, right.y)
@@ -139,7 +139,7 @@ class BspMapGenerator:
                     print("Generating corridors for y " + str(y) + " x " + str(right.x) + " " + str(right.x-1))
 
                     # catch out-of-bounds attempts
-                    while y > self.map_height - 1:
+                    while y > self.map_height - 2:
                         y -= 1
 
                     self._hline_left(right.x - 1, y)
