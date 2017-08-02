@@ -52,7 +52,7 @@ def get_equipped_in_slot(actor, slot):
     return None
 
 
-class obj_Actor:
+class obj_Actor(object):
     ''' Name is the name of the whole class, e.g. "goblin"'''
     def __init__(self, x, y, char, name, creature=None, ai=None, container=None, item=None, equipment=None):
         self.x = x
@@ -112,7 +112,7 @@ class obj_Actor:
             #blt.put_ext(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, 10, 10, self.char)
 
 
-class com_Creature:
+class com_Creature(object):
     ''' Name_instance is the name of an individual, e.g. "Agrk"'''
     def __init__(self, name_instance,
                  num_dice = 1, damage_dice = 6, base_def = 0, hp=10,
@@ -281,7 +281,7 @@ class com_Creature:
         return self.move(dx, dy, game_map), dx, dy
 
 
-class com_Container:
+class com_Container(object):
     def __init__(self, inventory = None):
         if inventory is None:
             inventory = []
@@ -294,7 +294,7 @@ class com_Container:
 
         return list_equipped
 
-class com_Item:
+class com_Item(object):
     def __init__(self, weight=0.0):
         self.weight = weight
 
@@ -318,7 +318,7 @@ class com_Item:
             return
 
 
-class com_Equipment:
+class com_Equipment(object):
     def __init__(self, slot, num_dice = 1, damage_dice = 4, attack_bonus = 0, defense_bonus = 0):
         self.slot = slot
         self.equipped = False

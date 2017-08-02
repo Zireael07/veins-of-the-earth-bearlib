@@ -11,7 +11,7 @@ import generators
 from map_common import struc_Tile, map_make_fov, random_free_tile, Rect, print_map_string
 from bspmap import BspMapGenerator
 
-class obj_Game:
+class obj_Game(object):
     def __init__(self):
         #self.current_map = map_create()
         map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
@@ -54,12 +54,12 @@ class obj_Game:
                 return fact[2]
 
 
-class AI_test:
+class AI_test(object):
     def take_turn(self):
         self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), GAME.current_map)
 
 
-class obj_Camera:
+class obj_Camera(object):
     def __init__(self):
         self.width = 20  # 80 # blt.state(blt.TK_CELL_WIDTH)*80
         self.height = 20  # 25 # blt.state(blt.TK_CELL_HEIGHT)*25

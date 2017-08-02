@@ -3,12 +3,12 @@ import sys
 
 import constants
 
-class struc_Tile:
+class struc_Tile(object):
     def __init__(self, block_path):
         self.block_path = block_path
         self.explored = False
 
-class Rect():
+class Rect(object):
     """
     A rectangle on the map. used to characterize a room.
     """
