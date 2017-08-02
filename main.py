@@ -3,6 +3,10 @@
 from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 from time import time
+# save/load
+import jsonpickle
+import json
+import os
 
 import constants
 import renderer
@@ -293,6 +297,32 @@ def get_room_data():
     else:
         return "None"
 
+# save/load
+def save_game():
+    data = {
+        'serialized_player': jsonpickle.encode(PLAYER),
+        'serialized_cam': jsonpickle.encode(CAMERA),
+        'serialized_game': jsonpickle.encode(GAME),
+    }
+
+    #test
+    #print data['serialized_cam']
+
+    # write to file
+    with open('savegame.json', 'w') as save_file:
+        json.dump(data, save_file, indent=4)
+
+def load_game():
+    with open('savegame.json', 'r') as save_file:
+        data = json.load(save_file)
+
+    game = jsonpickle.decode(data['serialized_game'])
+    player = jsonpickle.decode(data['serialized_player'])
+    camera = jsonpickle.decode(data['serialized_cam'])
+
+    return game, player, camera
+
+
 def game_main_loop():
     game_quit = False
 
@@ -394,6 +424,9 @@ def game_main_loop():
                 for ent in GAME.current_entities:
                     if ent.ai:
                         ent.ai.take_turn()
+
+    #save
+    save_game()
 
     # quit the game
     blt.close()
@@ -582,8 +615,37 @@ def game_initialize():
     blt.set("0x2317: gfx/mouseover.png, align=center") # "⌗"
     blt.set("0x2017: gfx/unit_marker.png, align=center") # "̳"
 
+    # if we have a savegame, load it
+    if os.path.isfile('savegame.json'):
+        GAME, PLAYER, CAMERA = load_game()
 
-    GAME, FOV_CALCULATE, PLAYER, CAMERA = start_new_game()
+        # fix player ref
+        # player is always last in the entities list
+        player_id = len(GAME.current_entities)-1
+        GAME.current_entities[player_id] = PLAYER
+
+        # handle FOV
+        FOV_CALCULATE = True
+        # recreate the fov
+        global FOV_MAP
+        FOV_MAP = map_make_fov(GAME.current_map)
+
+        # patch in required stuff
+        # init game for submodules
+        components.initialize_game(GAME)
+        generators.initialize_game(GAME)
+
+        # init camera for renderer
+        renderer.initialize_camera(CAMERA)
+
+        # adjust camera position so that player is centered
+        CAMERA.start_update(PLAYER)
+
+        # fix issue where the map is black on turn 1
+        map_calculate_fov()
+
+    else:
+        GAME, FOV_CALCULATE, PLAYER, CAMERA = start_new_game()
 
 if __name__ == '__main__':
 
