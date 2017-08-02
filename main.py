@@ -68,9 +68,9 @@ class obj_Camera(object):
         self.offset = (0,10) #default offset is 10 along y axis
         self.rectangle = Rect(self.top_x, self.top_y, self.width, self.height)
 
-    def start_update(self):
+    def start_update(self, player):
         target_pos = (80,20)
-        cur_pos_x, cur_pos_y = renderer.draw_iso(PLAYER.x, PLAYER.y)
+        cur_pos_x, cur_pos_y = renderer.draw_iso(player.x, player.y)
         self.offset = (target_pos[0] - cur_pos_x, target_pos[1] - cur_pos_y)
     
     def update(self):
@@ -171,8 +171,16 @@ def map_create():
 
     return new_map
 
-def map_calculate_fov():
-    global FOV_CALCULATE
+def map_calculate_fov(fov=None, player=None):
+    global FOV_CALCULATE, PLAYER
+
+    # kludges to cover the initial call
+    if fov:
+        FOV_CALCULATE = fov
+
+    if player:
+        PLAYER = player
+
 
     if FOV_CALCULATE:
         FOV_CALCULATE = False
@@ -478,6 +486,65 @@ def game_handle_keys():
     return "no-action"
 
 
+def start_new_game():
+    game = obj_Game()
+
+    fov = True
+
+    # init game for submodules
+    components.initialize_game(game)
+    generators.initialize_game(game)
+
+    # init factions
+    game.add_faction(("player", "enemy", -100))
+    game.add_faction(("player", "neutral", 0))
+
+    container_com1 = components.com_Container()
+    player_array = generators.generate_stats("heroic")
+    creature_com1 = components.com_Creature("Player",
+                                            base_str=player_array[0], base_dex=player_array[1],
+                                            base_con=player_array[2],
+                                            base_int=player_array[3], base_wis=player_array[4],
+                                            base_cha=player_array[5],
+                                            faction="player")
+
+    player = components.obj_Actor(game.player_start_x, game.player_start_y, "@", "Player", creature=creature_com1,
+                                  container=container_com1)
+
+    camera = obj_Camera()
+
+    # init camera for renderer
+    renderer.initialize_camera(camera)
+
+    # adjust camera position so that player is centered
+    camera.start_update(player)
+
+    # fix issue where the map is black on turn 1
+    map_calculate_fov(fov, player)
+
+    # test generating items
+    game.current_entities.append(generators.generate_item("longsword", *random_free_tile(game.current_map)))
+    game.current_entities.append(generators.generate_item("dagger", *random_free_tile(game.current_map)))
+    game.current_entities.append(generators.generate_item("chainmail", *random_free_tile(game.current_map)))
+
+    game.add_entity(generators.generate_monster("human", *random_free_tile(game.current_map)))
+    # test generating monsters
+    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+
+    # put player last
+    game.current_entities.append(player)
+
+    # test
+    generators.get_random_item()
+
+    return game, fov, player, camera
+
 def game_initialize():
     global GAME, FOV_CALCULATE, PLAYER, CAMERA
 
@@ -515,58 +582,8 @@ def game_initialize():
     blt.set("0x2317: gfx/mouseover.png, align=center") # "⌗"
     blt.set("0x2017: gfx/unit_marker.png, align=center") # "̳"
 
-    GAME = obj_Game()
 
-    FOV_CALCULATE = True
-
-    # init game for submodules
-    components.initialize_game(GAME)
-    generators.initialize_game(GAME)
-
-    # init factions
-    GAME.add_faction(("player", "enemy", -100))
-    GAME.add_faction(("player", "neutral", 0))
-
-    container_com1 = components.com_Container()
-    player_array = generators.generate_stats("heroic")
-    creature_com1 = components.com_Creature("Player",
-                                            base_str=player_array[0], base_dex=player_array[1], base_con=player_array[2],
-                                            base_int=player_array[3], base_wis=player_array[4], base_cha=player_array[5],
-                                            faction="player")
-
-    PLAYER = components.obj_Actor(GAME.player_start_x,GAME.player_start_y, "@", "Player", creature=creature_com1, container=container_com1)
-    
-    CAMERA = obj_Camera()
-
-    #init camera for renderer
-    renderer.initialize_camera(CAMERA)
-
-    # adjust camera position so that player is centered
-    CAMERA.start_update()
-
-    # fix issue where the map is black on turn 1
-    map_calculate_fov()
-
-    #test generating items
-    GAME.current_entities.append(generators.generate_item("longsword", *random_free_tile(GAME.current_map)))
-    GAME.current_entities.append(generators.generate_item("dagger",*random_free_tile(GAME.current_map)))
-    GAME.current_entities.append(generators.generate_item("chainmail", *random_free_tile(GAME.current_map)))
-
-    GAME.add_entity(generators.generate_monster("human", *random_free_tile(GAME.current_map)))
-    #test generating monsters
-    GAME.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(GAME.current_map)))
-    GAME.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(GAME.current_map)))
-    GAME.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(GAME.current_map)))
-    GAME.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(GAME.current_map)))
-    GAME.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(GAME.current_map)))
-    GAME.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(GAME.current_map)))
-    GAME.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(GAME.current_map)))
-
-    # put player last
-    GAME.current_entities.append(PLAYER)
-
-    #test
-    generators.get_random_item()
+    GAME, FOV_CALCULATE, PLAYER, CAMERA = start_new_game()
 
 if __name__ == '__main__':
 
