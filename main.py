@@ -329,46 +329,8 @@ def game_main_loop():
 
         blt.puts(2,1, "[color=white]FPS: %d" % (fps_value))
 
-        # mouse test
-        blt.puts(
-            3, 4,
-            "Cursor: [color=orange]%d:%d[/color] [color=dark gray]cells[/color]"
-            ", [color=orange]%d:%d[/color] [color=dark gray]pixels[/color]" % (
-                blt.state(blt.TK_MOUSE_X),
-                blt.state(blt.TK_MOUSE_Y),
-                blt.state(blt.TK_MOUSE_PIXEL_X),
-                blt.state(blt.TK_MOUSE_PIXEL_Y)))
-
-        # map tile picking test
-        # cell_x = blt.state(blt.TK_MOUSE_X)
-        # cell_y = blt.state(blt.TK_MOUSE_Y)
-
-        pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
-        # fake an offset of camera offset * cell width
-        pix_x = pix_x - CAMERA.offset[0]*blt.state(blt.TK_CELL_WIDTH)
-        pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
-        # fake an offset of camera offset * cell height
-        pix_y = pix_y - CAMERA.offset[1]*blt.state(blt.TK_CELL_HEIGHT)
-
-        #blt.puts(2,2, "[color=red] iso coords based on cells: %d %d" % (cell_to_iso(cell_x,cell_y)))
-        blt.puts(2,3, "[color=red] iso coords based on pixels: %d %d" % (pix_to_iso(pix_x, pix_y)))
-
-        # mouse picking test
-        x = blt.state(blt.TK_MOUSE_X)
-        y = blt.state(blt.TK_MOUSE_Y)
-
-        n = 0
-        while True:
-             code = blt.pick(x, y, n)
-
-             if code == 0: break
-
-             blt.puts(2 + n * 2, 5, u"%c" % (code))
-             n += 1
-        #
-             if n == 0:
-                 blt.puts(3, 5, "Empty cell")
-
+        #mouse
+        pix_x, pix_y, m_x, m_y = game_handle_mouse()
 
         # camera
         CAMERA.update()
@@ -383,6 +345,22 @@ def game_main_loop():
         # debugging rooms
         blt.puts(2,6, "[color=orange] room index: %s" % (room_index_str()))
         blt.puts(2,7, "[color=orange] room center %s" % (get_room_data()))
+
+        # mouse picking test
+        w = 4
+        h = 9
+
+        n = 0
+        while True:
+            code = blt.pick(m_x, m_y, n)
+
+            if code == 0: break
+
+            blt.puts(w + n * 2, h, u"%c" % (code))
+            n += 1
+            #
+            if n == 0:
+                blt.puts(w, h, "Empty cell")
 
 
         # refresh term
@@ -422,6 +400,39 @@ def game_main_loop():
 
     # quit the game
     blt.close()
+
+
+def game_handle_mouse():
+    # values
+    m_x = blt.state(blt.TK_MOUSE_X)
+    m_y = blt.state(blt.TK_MOUSE_Y)
+    pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
+    pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
+
+    # mouse test
+    blt.puts(
+        3, 4,
+        "Cursor: [color=orange]%d:%d[/color] [color=dark gray]cells[/color]"
+        ", [color=orange]%d:%d[/color] [color=dark gray]pixels[/color]" % (
+            m_x,
+            m_y,
+            pix_x,
+            pix_y))
+
+    # map tile picking test
+    # cell_x = blt.state(blt.TK_MOUSE_X)
+    # cell_y = blt.state(blt.TK_MOUSE_Y)
+
+    # fake an offset of camera offset * cell width
+    pix_x = pix_x - CAMERA.offset[0] * blt.state(blt.TK_CELL_WIDTH)
+
+    # fake an offset of camera offset * cell height
+    pix_y = pix_y - CAMERA.offset[1] * blt.state(blt.TK_CELL_HEIGHT)
+
+    # blt.puts(2,2, "[color=red] iso coords based on cells: %d %d" % (cell_to_iso(cell_x,cell_y)))
+    blt.puts(2, 3, "[color=red] iso coords based on pixels: %d %d" % (pix_to_iso(pix_x, pix_y)))
+
+    return pix_x, pix_y, m_x, m_y
 
 def game_handle_keys():
     global FOV_CALCULATE
