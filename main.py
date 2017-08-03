@@ -175,16 +175,8 @@ def map_create():
 
     return new_map
 
-def map_calculate_fov(fov=None, player=None):
+def map_calculate_fov():
     global FOV_CALCULATE, PLAYER
-
-    # kludges to cover the initial call
-    if fov:
-        FOV_CALCULATE = fov
-
-    if player:
-        PLAYER = player
-
 
     if FOV_CALCULATE:
         FOV_CALCULATE = False
@@ -519,6 +511,23 @@ def game_handle_keys():
     return "no-action"
 
 
+def generate_items_monsters(game):
+    # test generating items
+    game.current_entities.append(generators.generate_item("longsword", *random_free_tile(game.current_map)))
+    game.current_entities.append(generators.generate_item("dagger", *random_free_tile(game.current_map)))
+    game.current_entities.append(generators.generate_item("chainmail", *random_free_tile(game.current_map)))
+
+    game.add_entity(generators.generate_monster("human", *random_free_tile(game.current_map)))
+    # test generating monsters
+    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+
+
 def start_new_game():
     game = obj_Game()
 
@@ -552,23 +561,8 @@ def start_new_game():
     # adjust camera position so that player is centered
     camera.start_update(player)
 
-    # fix issue where the map is black on turn 1
-    map_calculate_fov(fov, player)
-
-    # test generating items
-    game.current_entities.append(generators.generate_item("longsword", *random_free_tile(game.current_map)))
-    game.current_entities.append(generators.generate_item("dagger", *random_free_tile(game.current_map)))
-    game.current_entities.append(generators.generate_item("chainmail", *random_free_tile(game.current_map)))
-
-    game.add_entity(generators.generate_monster("human", *random_free_tile(game.current_map)))
-    # test generating monsters
-    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
-    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
-    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
-    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
-    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
-    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
-    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+    # generate items
+    generate_items_monsters(game)
 
     # put player last
     game.current_entities.append(player)
@@ -646,6 +640,8 @@ def game_initialize():
 
     else:
         GAME, FOV_CALCULATE, PLAYER, CAMERA = start_new_game()
+        # fix issue where the map is black on turn 1
+        map_calculate_fov()
 
 if __name__ == '__main__':
 
