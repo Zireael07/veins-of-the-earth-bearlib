@@ -207,6 +207,8 @@ def draw_game(x,y):
     for ent in GAME.current_entities:
         ent.draw(fov_map=FOV_MAP)
 
+    # on top of map
+    blt.layer(1)
     renderer.draw_messages(GAME.message_history)
 
 
@@ -339,13 +341,15 @@ def game_main_loop():
         draw_game(pix_x, pix_y)
 
         # debug
-        # debug
+        #on top of map
+        blt.layer(1)
         blt.puts(2,2, "[color=red] player position: %d %d" % (PLAYER.x, PLAYER.y))
         blt.puts(2,5, "[color=red] camera offset: %d %d" % (CAMERA.offset[0], CAMERA.offset[1]))
         # debugging rooms
         blt.puts(2,6, "[color=orange] room index: %s" % (room_index_str()))
         blt.puts(2,7, "[color=orange] room center %s" % (get_room_data()))
 
+        blt.layer(0)
         # mouse picking test
         w = 4
         h = 9
