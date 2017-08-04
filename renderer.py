@@ -10,6 +10,9 @@ def initialize_camera(camera):
     global CAMERA
     CAMERA = camera
 
+def initialize_game(game):
+    global GAME
+    GAME = game
 
 # based on STI library for LOVE2D
 def draw_iso(x,y):
@@ -194,3 +197,18 @@ def character_sheet_menu(header, player):
     if index is None:
         return None
 
+def dmg_menu(header):
+    options = ["Damage display"]
+    index = menu(header, options, 30)
+
+    if index is None:
+        return None
+
+
+def display_dmg_window(index):
+    if "damage" in GAME.message_history[index][0]:
+        #print("The line says damage!")
+
+        # extract the dmg number
+        dmg = filter(str.isdigit, str(GAME.message_history[index][0]))
+        dmg_menu(dmg)
