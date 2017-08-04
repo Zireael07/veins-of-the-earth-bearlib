@@ -83,7 +83,7 @@ def draw_messages(msg_history):
     else:
         to_draw = msg_history[-constants.NUM_MESSAGES:]
 
-    start_y = 45 - (constants.NUM_MESSAGES)
+    start_y = blt.state(blt.TK_HEIGHT) - (constants.NUM_MESSAGES)
 
     i = 0
     for message, color in to_draw:

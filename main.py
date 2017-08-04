@@ -175,8 +175,9 @@ def map_create():
 
     return new_map
 
+
 def map_calculate_fov():
-    global FOV_CALCULATE, PLAYER
+    global FOV_CALCULATE
 
     if FOV_CALCULATE:
         FOV_CALCULATE = False
@@ -250,13 +251,13 @@ def pix_to_iso(x,y):
 
 
 def roll(dice, sides):
-     result = 0
-     for i in range(0, dice, 1):
-         roll = libtcod.random_get_int(0, 1, sides)
-         result += roll
+    result = 0
+    for i in range(0, dice, 1):
+        roll = libtcod.random_get_int(0, 1, sides)
+        result += roll
 
-     print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
-     return result
+    print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
+    return result
 
 # debugging rooms
 def get_room_index():
