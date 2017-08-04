@@ -428,12 +428,17 @@ def game_handle_mouse():
     return pix_x, pix_y, m_x, m_y
 
 def mouse_picking(m_x, m_y):
+    # log_h = blt.state(blt.TK_HEIGHT) - (constants.NUM_MESSAGES)
     # mouse picking test
     w = 4
     h = 9
 
     n = 0
     while True:
+        # detect mousing over message log
+        #if m_x < 40 and m_y >= log_h:
+        #    break
+
         code = blt.pick(m_x, m_y, n)
 
         if code == 0: break
@@ -503,26 +508,37 @@ def game_handle_keys():
 
     if key == blt.TK_MOUSE_LEFT:
         pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
+        pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
+
+        m_x = blt.state(blt.TK_MOUSE_X)
+        m_y = blt.state(blt.TK_MOUSE_Y)
+
+        log_h = blt.state(blt.TK_HEIGHT) - (constants.NUM_MESSAGES)
+
+        # did we click over the message log?
+        if m_x < 40 and m_y >= log_h:
+            print("Clicked over message log")
 
         # fake an offset of camera offset * cell width
         pix_x = pix_x - CAMERA.offset[0] * blt.state(blt.TK_CELL_WIDTH)
-
-        pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
 
         # fake an offset of camera offset * cell height
         pix_y = pix_y - CAMERA.offset[1] * blt.state(blt.TK_CELL_HEIGHT)
 
         click_x, click_y = pix_to_iso(pix_x, pix_y)
 
-        print "Clicked on tile " + str(click_x) + " " + str(click_y)
+        if click_x > 0 and click_x < constants.MAP_WIDTH -1:
+            if click_y > 0 and click_y < constants.MAP_HEIGHT - 1:
 
-        if click_x != PLAYER.x or click_y != PLAYER.y:
-            moved = PLAYER.creature.move_towards(click_x, click_y, GAME.current_map)
-            if (moved[0]):
-                CAMERA.move(moved[1], moved[2])
-                FOV_CALCULATE = True
+                print "Clicked on tile " + str(click_x) + " " + str(click_y)
 
-        return "player-moved"
+                if click_x != PLAYER.x or click_y != PLAYER.y:
+                    moved = PLAYER.creature.move_towards(click_x, click_y, GAME.current_map)
+                    if (moved[0]):
+                        CAMERA.move(moved[1], moved[2])
+                        FOV_CALCULATE = True
+
+                return "player-moved"
 
     if  key == blt.TK_MOUSE_RIGHT:
         pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
