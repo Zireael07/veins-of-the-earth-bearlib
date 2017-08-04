@@ -350,23 +350,9 @@ def game_main_loop():
         blt.puts(2,6, "[color=orange] room index: %s" % (room_index_str()))
         blt.puts(2,7, "[color=orange] room center %s" % (get_room_data()))
 
+        # this works on cells
         blt.layer(0)
-        # mouse picking test
-        w = 4
-        h = 9
-
-        n = 0
-        while True:
-            code = blt.pick(m_x, m_y, n)
-
-            if code == 0: break
-
-            blt.puts(w + n * 2, h, u"%c" % (code))
-            n += 1
-            #
-            if n == 0:
-                blt.puts(w, h, "Empty cell")
-
+        mouse_picking(m_x, m_y)
 
         # refresh term
         blt.refresh()
@@ -438,6 +424,24 @@ def game_handle_mouse():
     blt.puts(2, 3, "[color=red] iso coords based on pixels: %d %d" % (pix_to_iso(pix_x, pix_y)))
 
     return pix_x, pix_y, m_x, m_y
+
+def mouse_picking(m_x, m_y):
+    # mouse picking test
+    w = 4
+    h = 9
+
+    n = 0
+    while True:
+        code = blt.pick(m_x, m_y, n)
+
+        if code == 0: break
+
+        blt.puts(w + n * 2, h, u"%c" % (code))
+        n += 1
+        #
+        if n == 0:
+            blt.puts(w, h, "Empty cell")
+
 
 def game_handle_keys():
     global FOV_CALCULATE
