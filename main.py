@@ -329,7 +329,7 @@ def game_main_loop():
         #clear
         blt.clear()
 
-
+        blt.layer(1)
         blt.puts(2,1, "[color=white]FPS: %d" % (fps_value))
 
         #mouse
@@ -401,6 +401,7 @@ def game_handle_mouse():
     pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
 
     # mouse test
+    blt.layer(1)
     blt.puts(
         3, 4,
         "Cursor: [color=orange]%d:%d[/color] [color=dark gray]cells[/color]"
@@ -422,6 +423,7 @@ def game_handle_mouse():
 
     # blt.puts(2,2, "[color=red] iso coords based on cells: %d %d" % (cell_to_iso(cell_x,cell_y)))
     blt.puts(2, 3, "[color=red] iso coords based on pixels: %d %d" % (pix_to_iso(pix_x, pix_y)))
+    blt.layer(0)
 
     return pix_x, pix_y, m_x, m_y
 
@@ -436,7 +438,9 @@ def mouse_picking(m_x, m_y):
 
         if code == 0: break
 
+        blt.layer(1)
         blt.puts(w + n * 2, h, u"%c" % (code))
+        blt.layer(0)
         n += 1
         #
         if n == 0:
