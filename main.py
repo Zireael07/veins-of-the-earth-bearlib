@@ -488,6 +488,77 @@ def mouse_picking(m_x, m_y):
             blt.puts(w, h, "Empty cell")
 
 
+def game_handle_mouse_input(key):
+    global FOV_CALCULATE
+    # mouse
+
+    if key == blt.TK_MOUSE_LEFT:
+        pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
+        pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
+
+        m_x = blt.state(blt.TK_MOUSE_X)
+        m_y = blt.state(blt.TK_MOUSE_Y)
+
+        log_h = blt.state(blt.TK_HEIGHT) - (constants.NUM_MESSAGES)
+
+        # did we click over the message log?
+        if m_x < 40:
+            # which line?
+            if m_y == log_h:
+                # print("Clicked over line #1")
+                check = get_top_log_string_index()
+                if check is not None:
+                    print(GAME.message_history[check])
+                    renderer.display_dmg_window(check)
+
+            elif m_y == log_h + 1:
+                check = get_top_log_string_index()
+                if check is not None:
+                    print(GAME.message_history[check + 1])
+                    renderer.display_dmg_window(check + 1)
+
+            elif m_y == log_h + 2:
+                check = get_top_log_string_index()
+                if check is not None:
+                    print(GAME.message_history[check + 2])
+                    renderer.display_dmg_window(check + 2)
+            elif m_y == log_h + 3:
+                check = get_top_log_string_index()
+                if check is not None:
+                    print(GAME.message_history[check + 3])
+                    renderer.display_dmg_window(check + 3)
+
+        else:
+
+            # fake an offset of camera offset * cell width
+            pix_x = pix_x - CAMERA.offset[0] * blt.state(blt.TK_CELL_WIDTH)
+
+            # fake an offset of camera offset * cell height
+            pix_y = pix_y - CAMERA.offset[1] * blt.state(blt.TK_CELL_HEIGHT)
+
+            click_x, click_y = pix_to_iso(pix_x, pix_y)
+
+            if click_x > 0 and click_x < constants.MAP_WIDTH - 1:
+                if click_y > 0 and click_y < constants.MAP_HEIGHT - 1:
+
+                    print "Clicked on tile " + str(click_x) + " " + str(click_y)
+
+                    if click_x != PLAYER.x or click_y != PLAYER.y:
+                        moved = PLAYER.creature.move_towards(click_x, click_y, GAME.current_map)
+                        if (moved[0]):
+                            CAMERA.move(moved[1], moved[2])
+                            FOV_CALCULATE = True
+
+                    return "player-moved"
+
+    if key == blt.TK_MOUSE_RIGHT:
+        pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
+        pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
+        print "Right clicked on tile " + str(pix_to_iso(pix_x, pix_y))
+
+        return "mouse_click"
+
+
 def game_handle_keys():
     global FOV_CALCULATE
 
@@ -540,73 +611,7 @@ def game_handle_keys():
         print("Debug mode on")
         constants.DEBUG = True
 
-    # mouse
-
-    if key == blt.TK_MOUSE_LEFT:
-        pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
-        pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
-
-        m_x = blt.state(blt.TK_MOUSE_X)
-        m_y = blt.state(blt.TK_MOUSE_Y)
-
-        log_h = blt.state(blt.TK_HEIGHT) - (constants.NUM_MESSAGES)
-
-        # did we click over the message log?
-        if m_x < 40:
-            # which line?
-            if m_y == log_h:
-                #print("Clicked over line #1")
-                check = get_top_log_string_index()
-                if check is not None:
-                    print(GAME.message_history[check])
-                    renderer.display_dmg_window(check)
-
-            elif m_y == log_h+1:
-                check = get_top_log_string_index()
-                if check is not None:
-                    print(GAME.message_history[check + 1])
-                    renderer.display_dmg_window(check+1)
-
-            elif m_y == log_h+2:
-                check = get_top_log_string_index()
-                if check is not None:
-                    print(GAME.message_history[check + 2])
-                    renderer.display_dmg_window(check+2)
-            elif m_y == log_h+3:
-                check = get_top_log_string_index()
-                if check is not None:
-                    print(GAME.message_history[check + 3])
-                    renderer.display_dmg_window(check+3)
-
-        else:
-
-            # fake an offset of camera offset * cell width
-            pix_x = pix_x - CAMERA.offset[0] * blt.state(blt.TK_CELL_WIDTH)
-
-            # fake an offset of camera offset * cell height
-            pix_y = pix_y - CAMERA.offset[1] * blt.state(blt.TK_CELL_HEIGHT)
-
-            click_x, click_y = pix_to_iso(pix_x, pix_y)
-
-            if click_x > 0 and click_x < constants.MAP_WIDTH -1:
-                if click_y > 0 and click_y < constants.MAP_HEIGHT - 1:
-
-                    print "Clicked on tile " + str(click_x) + " " + str(click_y)
-
-                    if click_x != PLAYER.x or click_y != PLAYER.y:
-                        moved = PLAYER.creature.move_towards(click_x, click_y, GAME.current_map)
-                        if (moved[0]):
-                            CAMERA.move(moved[1], moved[2])
-                            FOV_CALCULATE = True
-
-                    return "player-moved"
-
-    if  key == blt.TK_MOUSE_RIGHT:
-        pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
-        pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
-        print "Right clicked on tile " + str(pix_to_iso(pix_x, pix_y))
-
-        return "mouse_click"
+    game_handle_mouse_input(key)
 
 
     return "no-action"
