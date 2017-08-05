@@ -295,33 +295,13 @@ def get_room_data():
 def get_top_log_string_index():
     # msg_num = -constants.NUM_MESSAGES
     check = -4
-    print("Checking " + str(check))
+    #print("Checking " + str(check))
 
     if not GAME.message_history:
         return None
 
-    try:
-        GAME.message_history[check]
-    except IndexError:
-        print("Nothing at index -4")
-
-        try:
-            GAME.message_history[check+1]
-            check = check+1
-        except IndexError:
-            print("Nothing at index " + str(check+1))
-
-            try:
-                GAME.message_history[check+2]
-                check = check+2
-            except IndexError:
-                print("Nothing at index " + str(check+2))
-
-                try:
-                    GAME.message_history[check+3]
-                    check = check+3
-                except IndexError:
-                    print("Nothing at index " + str(check+3))
+    if len(GAME.message_history) < 4:
+        check = -len(GAME.message_history)
 
 
     if GAME.message_history[check]:
