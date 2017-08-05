@@ -69,7 +69,7 @@ class obj_Camera(object):
         self.height = 20  # 25 # blt.state(blt.TK_CELL_HEIGHT)*25
         self.x, self.y = (0,0)
         self.top_x, self.top_y = (0,0)
-        self.offset = (0,10) #default offset is 10 along y axis
+        self.offset = (0,0)
         self.rectangle = Rect(self.top_x, self.top_y, self.width, self.height)
 
     def start_update(self, player):
@@ -740,11 +740,13 @@ def game_initialize():
         # init camera for renderer
         renderer.initialize_camera(CAMERA)
 
-        # adjust camera position so that player is centered
-        CAMERA.start_update(PLAYER)
+        # we don't have to reset camera position because it's loaded from the file
+        #CAMERA.start_update(PLAYER)
 
         # fix issue where the map is black on turn 1
         map_calculate_fov()
+
+        print("Game loaded")
 
     else:
         GAME, FOV_CALCULATE, PLAYER, CAMERA = start_new_game()
