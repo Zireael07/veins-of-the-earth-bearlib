@@ -124,7 +124,7 @@ def create_window(x, y, w, h, title=None):
         blt.puts(x + offset, y - 1, title)
 
 
-def menu(header, options, width, title=None):
+def options_menu(header, options, width, title=None):
     global FOV_CALCULATE
 
     FOV_CALCULATE = True
@@ -173,6 +173,45 @@ def menu(header, options, width, title=None):
             blt.composition(True)
             return None
 
+# this one doesn't show keys and conversely doesn't have the 26 entries limit
+# it takes tuples instead of strings
+def menu_colored(header, options_tuples, width, title=None):
+    global FOV_CALCULATE
+
+    FOV_CALCULATE = True
+
+    menu_x = int((120 - width) / 2)
+
+    header_height = 2
+
+    menu_h = int(header_height + 1 + 26)
+    menu_y = int((50 - menu_h) / 2)
+
+    # create a window
+
+    create_window(menu_x, menu_y, width, menu_h, title)
+
+    blt.puts(menu_x, menu_y, header)
+
+    # print all the options
+    y = menu_y + header_height + 1
+    for option in options_tuples:
+        string = "[color=" + str(option[1]) + "] " + option[0]
+
+        blt.puts(menu_x, y, string)
+        y += 1
+
+    blt.refresh()
+    # present the root console to the player and wait for a key-press
+    blt.set('input: filter = [keyboard]')
+    while True:
+        key = blt.read()
+        blt.set('input: filter = [keyboard, mouse+]')
+        blt.composition(True)
+        return None
+
+
+# individual menus
 
 def inventory_menu(header, player):
     # show a menu with each item of the inventory as an option
@@ -181,7 +220,7 @@ def inventory_menu(header, player):
     else:
         options = [item.display_name() for item in player.container.inventory]
 
-    index = menu(header, options, 50, 'INVENTORY')
+    index = options_menu(header, options, 50, 'INVENTORY')
 
     # if an item was chosen, return it
     if index is None or len(player.container.inventory) == 0:
@@ -189,17 +228,25 @@ def inventory_menu(header, player):
     return player.container.inventory[index]
 
 def character_sheet_menu(header, player):
-    options = ["STR: " + str(player.creature.strength), "DEX: " + str(player.creature.dexterity), "CON: " + str(player.creature.constitution),
-               "INT: " + str(player.creature.intelligence), "WIS: " + str(player.creature.wisdom), "CHA: " + str(player.creature.charisma)]
+    options = [("STR: " + str(player.creature.strength), "white"), ("DEX: " + str(player.creature.dexterity), "white"),
+               ("CON: " + str(player.creature.constitution), "white"), ("INT: " + str(player.creature.intelligence), "white"),
+                ("WIS: " + str(player.creature.wisdom), "white"), ("CHA: " + str(player.creature.charisma), "white")]
 
-    index = menu(header, options, 50, 'CHARACTER SHEET')
+    index = menu_colored(header, options, 50, 'CHARACTER SHEET')
 
     if index is None:
         return None
 
+
+def log_menu(header):
+    options = GAME.message_history
+
+    menu_colored(header, options, 50, 'LOG HISTORY')
+
+
 def dmg_menu(header):
     options = ["Damage display"]
-    index = menu(header, options, 30)
+    index = options_menu(header, options, 30)
 
     if index is None:
         return None
