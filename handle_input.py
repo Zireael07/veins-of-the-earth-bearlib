@@ -32,6 +32,35 @@ def get_top_log_string_index():
     if GAME.message_history[check]:
         return check
 
+
+def click_on_msg_log(m_y):
+    log_h = blt.state(blt.TK_HEIGHT) - (constants.NUM_MESSAGES)
+    # which line?
+    if m_y == log_h:
+        # print("Clicked over line #1")
+        check = get_top_log_string_index()
+        if check is not None:
+            print(GAME.message_history[check])
+            renderer.display_dmg_window(check)
+
+    elif m_y == log_h + 1:
+        check = get_top_log_string_index()
+        if check is not None:
+            print(GAME.message_history[check + 1])
+            renderer.display_dmg_window(check + 1)
+
+    elif m_y == log_h + 2:
+        check = get_top_log_string_index()
+        if check is not None:
+            print(GAME.message_history[check + 2])
+            renderer.display_dmg_window(check + 2)
+    elif m_y == log_h + 3:
+        check = get_top_log_string_index()
+        if check is not None:
+            print(GAME.message_history[check + 3])
+            renderer.display_dmg_window(check + 3)
+
+
 # player input
 def game_handle_mouse_input(key):
     # left key
@@ -42,34 +71,9 @@ def game_handle_mouse_input(key):
         m_x = blt.state(blt.TK_MOUSE_X)
         m_y = blt.state(blt.TK_MOUSE_Y)
 
-        log_h = blt.state(blt.TK_HEIGHT) - (constants.NUM_MESSAGES)
-
         # did we click over the message log?
         if m_x < 40:
-            # which line?
-            if m_y == log_h:
-                # print("Clicked over line #1")
-                check = get_top_log_string_index()
-                if check is not None:
-                    print(GAME.message_history[check])
-                    renderer.display_dmg_window(check)
-
-            elif m_y == log_h + 1:
-                check = get_top_log_string_index()
-                if check is not None:
-                    print(GAME.message_history[check + 1])
-                    renderer.display_dmg_window(check + 1)
-
-            elif m_y == log_h + 2:
-                check = get_top_log_string_index()
-                if check is not None:
-                    print(GAME.message_history[check + 2])
-                    renderer.display_dmg_window(check + 2)
-            elif m_y == log_h + 3:
-                check = get_top_log_string_index()
-                if check is not None:
-                    print(GAME.message_history[check + 3])
-                    renderer.display_dmg_window(check + 3)
+            click_on_msg_log(m_y)
 
         # press over map
         else:
@@ -101,6 +105,17 @@ def game_handle_mouse_input(key):
 
         return "mouse_click"
 
+def game_key_move(key):
+    KEY_TO_DIR = {
+        'UP': (0, -1), 'DOWN': (0, 1), 'LEFT': (-1, 0), 'RIGHT': (1, 0)
+    }
+
+    if PLAYER.creature.move(KEY_TO_DIR[key][0], KEY_TO_DIR[key][1], GAME.current_map):
+        CAMERA.move(KEY_TO_DIR[key][0], KEY_TO_DIR[key][1])
+        GAME.fov_recompute = True
+
+    return "player-moved"
+
 
 def game_handle_keys():
     key = blt.read()
@@ -108,25 +123,13 @@ def game_handle_keys():
         return "QUIT"
 
     if key == blt.TK_UP:
-        if PLAYER.creature.move(0, -1, GAME.current_map):
-            CAMERA.move(0, -1)
-            GAME.fov_recompute = True
-        return "player-moved"
+        game_key_move('UP')
     if key == blt.TK_DOWN:
-        if PLAYER.creature.move(0, 1, GAME.current_map):
-            CAMERA.move(0,1)
-            GAME.fov_recompute = True
-        return "player-moved"
+        game_key_move('DOWN')
     if key == blt.TK_LEFT:
-        if PLAYER.creature.move(-1, 0, GAME.current_map):
-            CAMERA.move(-1,0)
-            GAME.fov_recompute = True
-        return "player-moved"
+        game_key_move('LEFT')
     if key == blt.TK_RIGHT:
-        if PLAYER.creature.move(1, 0, GAME.current_map):
-            CAMERA.move(1,0)
-            GAME.fov_recompute = True
-        return "player-moved"
+        game_key_move('RIGHT')
 
     # items
     if key == blt.TK_G:
