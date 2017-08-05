@@ -300,17 +300,17 @@ class com_Item(object):
 
     def pick_up(self, actor):
         if actor.container:
-            GAME.game_message("Picking up", "white")
+            GAME.game_message(actor.creature.name_instance + " picked up " + self.owner.name, "white")
             actor.container.inventory.append(self.owner)
             self.current_container = actor.container
             GAME.current_entities.remove(self.owner)
 
-    def drop(self, new_x, new_y):
-        GAME.game_message("Item dropped", "white")
+    def drop(self, actor):
+        GAME.game_message(actor.creature.name_instance + " dropped " + self.owner.name, "white")
         self.current_container.inventory.remove(self.owner)
         GAME.current_entities.append(self.owner)
-        self.owner.x = new_x
-        self.owner.y = new_y
+        self.owner.x = actor.x
+        self.owner.y = actor.y
 
     def use(self, actor):
         if self.owner.equipment:
@@ -340,9 +340,9 @@ class com_Equipment(object):
             old_equipment.unequip(actor)
 
         self.equipped = True
-        GAME.game_message("Item equipped", "white")
+        GAME.game_message(actor.creature.name_instance + " equipped " + self.owner.name, "white")
 
     def unequip(self, actor):
         self.equipped = False
-        GAME.game_message("Took off item", "white")
+        GAME.game_message(actor.creature.name_instance + " took off " + self.owner.name, "white")
 

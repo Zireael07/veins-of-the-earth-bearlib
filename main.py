@@ -596,7 +596,7 @@ def game_handle_keys():
     if key == blt.TK_D:
         if len(PLAYER.container.inventory) > 0:
             #drop the last item
-            PLAYER.container.inventory[-1].item.drop(PLAYER.x, PLAYER.y)
+            PLAYER.container.inventory[-1].item.drop(PLAYER)
 
     if key == blt.TK_I:
         chosen_item = renderer.inventory_menu("Inventory", PLAYER)
