@@ -22,6 +22,28 @@ def draw_iso(x,y):
     tile_y = (x + y) * constants.TILE_HEIGHT / 2
     return tile_x + CAMERA.offset[0], tile_y + CAMERA.offset[1]
 
+def cell_to_pix(val, width):
+    if width:
+        #print("Cell width is " + str(blt.state(blt.TK_CELL_WIDTH)))
+        res = val * blt.state(blt.TK_CELL_WIDTH)
+    else:
+        #print("Cell height is " + str(blt.state(blt.TK_CELL_HEIGHT)))
+        res = val * blt.state(blt.TK_CELL_HEIGHT)
+    #print("Result is " + str(res))
+    return res
+
+def pix_to_iso(x,y):
+    x = float(x)
+    y = float(y)
+    offset_x = cell_to_pix(constants.MAP_WIDTH * 4, True)
+    iso_x = y / cell_to_pix(constants.TILE_HEIGHT, False) + (x - offset_x) / cell_to_pix(constants.TILE_WIDTH, True)
+    iso_y = y / cell_to_pix(constants.TILE_HEIGHT, False) - (x - offset_x) / cell_to_pix(constants.TILE_WIDTH, True)
+    # iso_x = y / 27 + (x - offset_x) / 54
+    # iso_y = y / 27 - (x - offset_x) / 54
+    # print("Iso_x " + str(int(iso_x)) + "iso_y " + str(int(iso_y)))
+    return int(iso_x), int(iso_y)
+
+
 def draw_map(map_draw, fov_map):
     width = constants.MAP_WIDTH
     height = constants.MAP_HEIGHT
@@ -78,6 +100,13 @@ def draw_map(map_draw, fov_map):
                         blt.put(tile_x, tile_y, 0x3002)
                         blt.put(tile_x,tile_y, ".")
 
+
+def draw_mouseover(x,y):
+    tile_x, tile_y = pix_to_iso(x, y)
+    draw_x, draw_y = draw_iso(tile_x, tile_y)
+
+    blt.color("light yellow")
+    blt.put(draw_x, draw_y, 0x2317)
 
 
 def draw_messages(msg_history):

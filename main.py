@@ -201,7 +201,7 @@ def map_check_for_item(x,y):
 def draw_game(x,y):
     renderer.draw_map(GAME.current_map, FOV_MAP)
 
-    draw_mouseover(x,y)
+    renderer.draw_mouseover(x,y)
 
     #blt.color("white")
     blt.color(4294967295)
@@ -213,12 +213,7 @@ def draw_game(x,y):
     renderer.draw_messages(GAME.message_history)
 
 
-def draw_mouseover(x,y):
-    tile_x, tile_y = pix_to_iso(x, y)
-    draw_x, draw_y = renderer.draw_iso(tile_x, tile_y)
 
-    blt.color("light yellow")
-    blt.put(draw_x, draw_y, 0x2317)
 
 
 def cell_to_iso(x,y):
@@ -227,27 +222,6 @@ def cell_to_iso(x,y):
     iso_y = y / constants.TILE_HEIGHT - (x - offset_x) / constants.TILE_WIDTH - CAMERA.offset[1]
     return iso_x, iso_y
 
-
-def cell_to_pix(val, width):
-    if width:
-        #print("Cell width is " + str(blt.state(blt.TK_CELL_WIDTH)))
-        res = val * blt.state(blt.TK_CELL_WIDTH)
-    else:
-        #print("Cell height is " + str(blt.state(blt.TK_CELL_HEIGHT)))
-        res = val * blt.state(blt.TK_CELL_HEIGHT)
-    #print("Result is " + str(res))
-    return res
-
-def pix_to_iso(x,y):
-    x = float(x)
-    y = float(y)
-    offset_x = cell_to_pix(constants.MAP_WIDTH * 4, True)
-    iso_x = y / cell_to_pix(constants.TILE_HEIGHT, False) + (x - offset_x) / cell_to_pix(constants.TILE_WIDTH, True)
-    iso_y = y / cell_to_pix(constants.TILE_HEIGHT, False) - (x - offset_x) / cell_to_pix(constants.TILE_WIDTH, True)
-    # iso_x = y / 27 + (x - offset_x) / 54
-    # iso_y = y / 27 - (x - offset_x) / 54
-    # print("Iso_x " + str(int(iso_x)) + "iso_y " + str(int(iso_y)))
-    return int(iso_x), int(iso_y)
 
 
 def roll(dice, sides):
@@ -336,6 +310,7 @@ def load_game():
     return game, player, camera
 
 
+# main loop
 def game_main_loop():
     game_quit = False
 
@@ -411,6 +386,7 @@ def game_main_loop():
     blt.close()
 
 
+# mouse movement
 def game_handle_mouse():
     # values
     m_x = blt.state(blt.TK_MOUSE_X)
@@ -429,18 +405,14 @@ def game_handle_mouse():
             pix_x,
             pix_y))
 
-    # map tile picking test
-    # cell_x = blt.state(blt.TK_MOUSE_X)
-    # cell_y = blt.state(blt.TK_MOUSE_Y)
-
+    # map tile picking
     # fake an offset of camera offset * cell width
     pix_x = pix_x - CAMERA.offset[0] * blt.state(blt.TK_CELL_WIDTH)
 
     # fake an offset of camera offset * cell height
     pix_y = pix_y - CAMERA.offset[1] * blt.state(blt.TK_CELL_HEIGHT)
 
-    # blt.puts(2,2, "[color=red] iso coords based on cells: %d %d" % (cell_to_iso(cell_x,cell_y)))
-    blt.puts(2, 3, "[color=red] iso coords based on pixels: %d %d" % (pix_to_iso(pix_x, pix_y)))
+    blt.puts(2, 3, "[color=red] iso coords based on pixels: %d %d" % (renderer.pix_to_iso(pix_x, pix_y)))
     blt.layer(0)
 
     return pix_x, pix_y, m_x, m_y
@@ -470,6 +442,7 @@ def mouse_picking(m_x, m_y):
             blt.puts(w, h, "Empty cell")
 
 
+# player input
 def game_handle_mouse_input(key):
     global FOV_CALCULATE
     # mouse
@@ -518,7 +491,7 @@ def game_handle_mouse_input(key):
             # fake an offset of camera offset * cell height
             pix_y = pix_y - CAMERA.offset[1] * blt.state(blt.TK_CELL_HEIGHT)
 
-            click_x, click_y = pix_to_iso(pix_x, pix_y)
+            click_x, click_y = renderer.pix_to_iso(pix_x, pix_y)
 
             if click_x > 0 and click_x < constants.MAP_WIDTH - 1:
                 if click_y > 0 and click_y < constants.MAP_HEIGHT - 1:
@@ -536,7 +509,7 @@ def game_handle_mouse_input(key):
     if key == blt.TK_MOUSE_RIGHT:
         pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
         pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
-        print "Right clicked on tile " + str(pix_to_iso(pix_x, pix_y))
+        print "Right clicked on tile " + str(renderer.pix_to_iso(pix_x, pix_y))
 
         return "mouse_click"
 
