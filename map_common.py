@@ -75,6 +75,19 @@ def random_free_tile(inc_map):
     print("Coordinates are " + str(x) + " " + str(y))
     return x, y
 
+# admittedly not ideal here due to the reliance on game... but /shrug
+def map_check_for_item(x,y, game):
+    target = None
+
+    for ent in game.current_entities:
+        if (ent.x == x
+            and ent.y == y
+            and ent.item):
+            target = ent
+
+        if target:
+            return target
+
 def print_map_string(inc_map):
     for y in range(len(inc_map)):
         for x in range(len(inc_map[0])):

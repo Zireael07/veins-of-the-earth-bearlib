@@ -154,9 +154,7 @@ def create_window(x, y, w, h, title=None):
 
 
 def options_menu(header, options, width, title=None):
-    global FOV_CALCULATE
-
-    FOV_CALCULATE = True
+    GAME.fov_recompute = True
 
     menu_x = int((120 - width) / 2)
 
@@ -205,9 +203,7 @@ def options_menu(header, options, width, title=None):
 # this one doesn't show keys and conversely doesn't have the 26 entries limit
 # it takes tuples instead of strings
 def menu_colored(header, options_tuples, width, title=None):
-    global FOV_CALCULATE
-
-    FOV_CALCULATE = True
+    GAME.fov_recompute = True
 
     menu_x = int((120 - width) / 2)
 

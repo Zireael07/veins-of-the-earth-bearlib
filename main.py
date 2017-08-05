@@ -12,7 +12,7 @@ import constants
 import renderer
 import components
 import generators
-from map_common import struc_Tile, map_make_fov, random_free_tile, Rect, print_map_string
+from map_common import struc_Tile, map_make_fov, random_free_tile, Rect, print_map_string, map_check_for_item
 from bspmap import BspMapGenerator
 
 class obj_Game(object):
@@ -31,6 +31,7 @@ class obj_Game(object):
         self.factions = []
 
         self.message_history = []
+        self.fov_recompute = False
 
     def game_message(self, msg, msg_color):
         self.message_history.append((msg, msg_color))
@@ -102,10 +103,6 @@ class obj_Camera(object):
 
         self.offset = (new_x, new_y)
 
-    # @property
-    # def rectangle(self):
-    #     cam_rect = Rect(self.top_x, self.top_y, self.width, self.height)
-    #     return cam_rect
 
 # This will be used both by AI and map checking - that's why it's not in components.py
 def move_astar(actor, target, inc_map):
@@ -177,25 +174,11 @@ def map_create():
 
 
 def map_calculate_fov():
-    global FOV_CALCULATE
-
-    if FOV_CALCULATE:
-        FOV_CALCULATE = False
+    if GAME.fov_recompute:
+        GAME.fov_recompute = False
         libtcod.map_compute_fov(FOV_MAP, PLAYER.x, PLAYER.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
                                 constants.FOV_ALGO)
 
-
-def map_check_for_item(x,y):
-    target = None
-
-    for ent in GAME.current_entities:
-        if (ent.x == x
-            and ent.y == y
-            and ent.item):
-            target = ent
-
-        if target:
-            return target
 
 # the core drawing function
 def draw_game(x,y):
@@ -269,7 +252,7 @@ def get_room_data():
 def get_top_log_string_index():
     # msg_num = -constants.NUM_MESSAGES
     check = -4
-    #print("Checking " + str(check))
+    # print("Checking " + str(check))
 
     if not GAME.message_history:
         return None
@@ -277,10 +260,8 @@ def get_top_log_string_index():
     if len(GAME.message_history) < 4:
         check = -len(GAME.message_history)
 
-
     if GAME.message_history[check]:
         return check
-
 
 # save/load
 def save_game():
@@ -444,9 +425,7 @@ def mouse_picking(m_x, m_y):
 
 # player input
 def game_handle_mouse_input(key):
-    global FOV_CALCULATE
-    # mouse
-
+    # left key
     if key == blt.TK_MOUSE_LEFT:
         pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
         pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
@@ -483,8 +462,8 @@ def game_handle_mouse_input(key):
                     print(GAME.message_history[check + 3])
                     renderer.display_dmg_window(check + 3)
 
+        # press over map
         else:
-
             # fake an offset of camera offset * cell width
             pix_x = pix_x - CAMERA.offset[0] * blt.state(blt.TK_CELL_WIDTH)
 
@@ -495,17 +474,17 @@ def game_handle_mouse_input(key):
 
             if click_x > 0 and click_x < constants.MAP_WIDTH - 1:
                 if click_y > 0 and click_y < constants.MAP_HEIGHT - 1:
-
                     print "Clicked on tile " + str(click_x) + " " + str(click_y)
 
                     if click_x != PLAYER.x or click_y != PLAYER.y:
                         moved = PLAYER.creature.move_towards(click_x, click_y, GAME.current_map)
                         if (moved[0]):
                             CAMERA.move(moved[1], moved[2])
-                            FOV_CALCULATE = True
+                            GAME.fov_recompute = True
 
                     return "player-moved"
 
+    # pressed right mouse button
     if key == blt.TK_MOUSE_RIGHT:
         pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
         pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
@@ -515,8 +494,6 @@ def game_handle_mouse_input(key):
 
 
 def game_handle_keys():
-    global FOV_CALCULATE
-
     key = blt.read()
     if key in (blt.TK_ESCAPE, blt.TK_CLOSE):
         return "QUIT"
@@ -524,27 +501,27 @@ def game_handle_keys():
     if key == blt.TK_UP:
         if PLAYER.creature.move(0, -1, GAME.current_map):
             CAMERA.move(0, -1)
-            FOV_CALCULATE = True
+            GAME.fov_recompute = True
         return "player-moved"
     if key == blt.TK_DOWN:
         if PLAYER.creature.move(0, 1, GAME.current_map):
             CAMERA.move(0,1)
-            FOV_CALCULATE = True
+            GAME.fov_recompute = True
         return "player-moved"
     if key == blt.TK_LEFT:
         if PLAYER.creature.move(-1, 0, GAME.current_map):
             CAMERA.move(-1,0)
-            FOV_CALCULATE = True
+            GAME.fov_recompute = True
         return "player-moved"
     if key == blt.TK_RIGHT:
         if PLAYER.creature.move(1, 0, GAME.current_map):
             CAMERA.move(1,0)
-            FOV_CALCULATE = True
+            GAME.fov_recompute = True
         return "player-moved"
 
     # items
     if key == blt.TK_G:
-        ent = map_check_for_item(PLAYER.x, PLAYER.y)
+        ent = map_check_for_item(PLAYER.x, PLAYER.y, GAME)
         #for ent in objects:
         ent.item.pick_up(PLAYER)
 
@@ -595,8 +572,6 @@ def generate_items_monsters(game):
 def start_new_game():
     game = obj_Game()
 
-    fov = True
-
     # init game for submodules
     components.initialize_game(game)
     generators.initialize_game(game)
@@ -635,10 +610,10 @@ def start_new_game():
     # test
     generators.get_random_item()
 
-    return game, fov, player, camera
+    return game, player, camera
 
 def game_initialize():
-    global GAME, FOV_CALCULATE, PLAYER, CAMERA
+    global GAME, PLAYER, CAMERA
 
     blt.open()
     # default terminal size is 80x25
@@ -686,7 +661,7 @@ def game_initialize():
         #GAME.current_entities[player_id] = PLAYER
 
         # handle FOV
-        FOV_CALCULATE = True
+        GAME.fov_recompute = True
         # recreate the fov
         global FOV_MAP
         FOV_MAP = map_make_fov(GAME.current_map)
@@ -709,7 +684,8 @@ def game_initialize():
         print("Game loaded")
 
     else:
-        GAME, FOV_CALCULATE, PLAYER, CAMERA = start_new_game()
+        GAME, PLAYER, CAMERA = start_new_game()
+        GAME.fov_recompute = True
         # fix issue where the map is black on turn 1
         map_calculate_fov()
 
