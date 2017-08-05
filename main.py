@@ -331,13 +331,13 @@ def get_top_log_string_index():
 # save/load
 def save_game():
     data = {
-        'serialized_player': jsonpickle.encode(PLAYER),
+        'serialized_player_index': jsonpickle.encode(GAME.current_entities.index(PLAYER)),
         'serialized_cam': jsonpickle.encode(CAMERA),
         'serialized_game': jsonpickle.encode(GAME),
     }
 
     #test
-    #print data['serialized_cam']
+    print data['serialized_player_index']
 
     # write to file
     with open('savegame.json', 'w') as save_file:
@@ -348,8 +348,10 @@ def load_game():
         data = json.load(save_file)
 
     game = jsonpickle.decode(data['serialized_game'])
-    player = jsonpickle.decode(data['serialized_player'])
+    player_index = jsonpickle.decode(data['serialized_player_index'])
     camera = jsonpickle.decode(data['serialized_cam'])
+
+    player = game.current_entities[player_index]
 
     return game, player, camera
 
@@ -722,8 +724,10 @@ def game_initialize():
 
         # fix player ref
         # player is always last in the entities list
-        player_id = len(GAME.current_entities)-1
-        GAME.current_entities[player_id] = PLAYER
+        # player_id = len(GAME.current_entities)-1
+        # the assumption isn't true if you pick up and drop some items
+        # so we handle it in load_game()
+        #GAME.current_entities[player_id] = PLAYER
 
         # handle FOV
         FOV_CALCULATE = True
