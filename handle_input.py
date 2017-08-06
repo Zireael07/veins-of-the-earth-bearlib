@@ -123,13 +123,13 @@ def game_handle_keys():
         return "QUIT"
 
     if key == blt.TK_UP:
-        game_key_move('UP')
+        return game_key_move('UP')
     if key == blt.TK_DOWN:
-        game_key_move('DOWN')
+        return game_key_move('DOWN')
     if key == blt.TK_LEFT:
-        game_key_move('LEFT')
+        return game_key_move('LEFT')
     if key == blt.TK_RIGHT:
-        game_key_move('RIGHT')
+        return game_key_move('RIGHT')
 
     # items
     if key == blt.TK_G:

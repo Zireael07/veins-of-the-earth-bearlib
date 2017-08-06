@@ -344,6 +344,7 @@ def game_main_loop():
         while not game_quit and blt.has_input():
 
             player_action = handle_input.game_handle_keys()
+            #print player_action
 
             map_calculate_fov()
 
