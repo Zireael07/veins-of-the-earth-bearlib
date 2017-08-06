@@ -3,6 +3,7 @@
 from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 from time import time
+
 # save/load
 import jsonpickle
 import json
@@ -12,7 +13,7 @@ import constants
 import renderer
 import components
 import generators
-from map_common import struc_Tile, map_make_fov, random_free_tile, Rect, print_map_string, map_check_for_item
+from map_common import struc_Tile, map_make_fov, random_free_tile, Rect, print_map_string
 from bspmap import BspMapGenerator
 import handle_input
 
@@ -59,10 +60,6 @@ class obj_Game(object):
                     print("Faction reaction of " + fact[0] + " to " + fact[1] + " is " + str(fact[2]))
                 return fact[2]
 
-
-class AI_test(object):
-    def take_turn(self):
-        self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), GAME.current_map)
 
 
 class obj_Camera(object):
@@ -155,6 +152,12 @@ def death_monster(monster):
     monster.ai = None
     # remove from map
     GAME.current_entities.remove(monster)
+
+
+def death_player(player):
+    GAME.game_message(player.creature.name_instance + " is dead!", "dark red")
+    # remove from map
+    GAME.current_entities.remove(player)
 
 def map_create():
     new_map = [[struc_Tile(False) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
@@ -359,7 +362,7 @@ def game_main_loop():
             if player_action != "no-action" and player_action != "mouse_click":
                 for ent in GAME.current_entities:
                     if ent.ai:
-                        ent.ai.take_turn()
+                        ent.ai.take_turn(PLAYER)
 
     #save
     save_game()
@@ -456,12 +459,12 @@ def start_new_game():
 
     container_com1 = components.com_Container()
     player_array = generators.generate_stats("heroic")
-    creature_com1 = components.com_Creature("Player",
+    creature_com1 = components.com_Creature("Player", hp=20,
                                             base_str=player_array[0], base_dex=player_array[1],
                                             base_con=player_array[2],
                                             base_int=player_array[3], base_wis=player_array[4],
                                             base_cha=player_array[5],
-                                            faction="player")
+                                            faction="player", death_function=death_player)
 
     player = components.obj_Actor(game.player_start_x, game.player_start_y, "@", "Player", creature=creature_com1,
                                   container=container_com1)
