@@ -1,6 +1,7 @@
 from bearlibterminal import terminal as blt
 
 import constants
+from game_states import GameStates
 import renderer
 from map_common import map_check_for_item
 
@@ -122,34 +123,35 @@ def game_handle_keys():
     if key in (blt.TK_ESCAPE, blt.TK_CLOSE):
         return "QUIT"
 
-    if key == blt.TK_UP:
-        return game_key_move('UP')
-    if key == blt.TK_DOWN:
-        return game_key_move('DOWN')
-    if key == blt.TK_LEFT:
-        return game_key_move('LEFT')
-    if key == blt.TK_RIGHT:
-        return game_key_move('RIGHT')
+    if GAME.game_state == GameStates.PLAYER_TURN:
+        if key == blt.TK_UP:
+            return game_key_move('UP')
+        if key == blt.TK_DOWN:
+            return game_key_move('DOWN')
+        if key == blt.TK_LEFT:
+            return game_key_move('LEFT')
+        if key == blt.TK_RIGHT:
+            return game_key_move('RIGHT')
 
-    # items
-    if key == blt.TK_G:
-        ent = map_check_for_item(PLAYER.x, PLAYER.y, GAME)
-        #for ent in objects:
-        ent.item.pick_up(PLAYER)
+        # items
+        if key == blt.TK_G:
+            ent = map_check_for_item(PLAYER.x, PLAYER.y, GAME)
+            #for ent in objects:
+            ent.item.pick_up(PLAYER)
 
-    if key == blt.TK_D:
-        if len(PLAYER.container.inventory) > 0:
-            #drop the last item
-            PLAYER.container.inventory[-1].item.drop(PLAYER)
+        if key == blt.TK_D:
+            if len(PLAYER.container.inventory) > 0:
+                #drop the last item
+                PLAYER.container.inventory[-1].item.drop(PLAYER)
 
-    if key == blt.TK_I:
-        chosen_item = renderer.inventory_menu("Inventory", PLAYER)
-        if chosen_item is not None:
-            if chosen_item.item:
-                chosen_item.item.use(PLAYER)
+        if key == blt.TK_I:
+            chosen_item = renderer.inventory_menu("Inventory", PLAYER)
+            if chosen_item is not None:
+                if chosen_item.item:
+                    chosen_item.item.use(PLAYER)
 
-    if key == blt.TK_C:
-        renderer.character_sheet_menu("Character sheet", PLAYER)
+        if key == blt.TK_C:
+            renderer.character_sheet_menu("Character sheet", PLAYER)
 
     if key == blt.TK_L:
         renderer.log_menu("Log history")

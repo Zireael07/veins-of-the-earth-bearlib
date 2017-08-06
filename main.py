@@ -16,6 +16,8 @@ import generators
 from map_common import struc_Tile, map_make_fov, random_free_tile, Rect, print_map_string
 from bspmap import BspMapGenerator
 import handle_input
+from game_states import GameStates
+
 
 class obj_Game(object):
     def __init__(self):
@@ -102,6 +104,7 @@ class obj_Camera(object):
         self.offset = (new_x, new_y)
 
 
+
 # This will be used both by AI and map checking - that's why it's not in components.py
 def move_astar(actor, target, inc_map):
     #Create a FOV map that has the dimensions of the map
@@ -158,6 +161,8 @@ def death_player(player):
     GAME.game_message(player.creature.name_instance + " is dead!", "dark red")
     # remove from map
     GAME.current_entities.remove(player)
+    # set game state to player dead
+    GAME.game_state = GameStates.PLAYER_DEAD
 
 def map_create():
     new_map = [[struc_Tile(False) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
@@ -360,9 +365,22 @@ def game_main_loop():
 
 
             if player_action != "no-action" and player_action != "mouse_click":
+                #toggle game state to enemy turn
+                GAME.game_state = GameStates.ENEMY_TURN
+
+            # enemy turn
+            if GAME.game_state == GameStates.ENEMY_TURN:
                 for ent in GAME.current_entities:
                     if ent.ai:
                         ent.ai.take_turn(PLAYER)
+
+                        if GAME.game_state == GameStates.PLAYER_DEAD:
+                            print("Player's dead, breaking the loop")
+                            break
+
+
+            if GAME.game_state == GameStates.PLAYER_DEAD:
+                print("PLAYER DEAD")
 
     #save
     save_game()
@@ -569,11 +587,17 @@ def game_initialize():
 
         print("Game loaded")
 
+        # set state to player turn
+        GAME.game_state = GameStates.PLAYER_TURN
+
     else:
         GAME, PLAYER, CAMERA = start_new_game()
         GAME.fov_recompute = True
         # fix issue where the map is black on turn 1
         map_calculate_fov()
+
+        #set state to player turn
+        GAME.game_state = GameStates.PLAYER_TURN
 
 if __name__ == '__main__':
 
