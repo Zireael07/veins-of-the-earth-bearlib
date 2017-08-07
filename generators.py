@@ -38,13 +38,13 @@ class AI_test(object):
         dy = player.y - self.owner.y
         distance = math.sqrt(dx ** 2 + dy ** 2)
 
-        print("Distance to player is " + str(distance))
+        #print("Distance to player is " + str(distance))
 
         if distance > 5:
-            print("AI distance > 5, random move")
+            #print("AI distance > 5, random move")
             self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), GAME.current_map)
         else:
-            print("AI distance less than 5, moving towards player")
+            #print("AI distance less than 5, moving towards player")
             self.owner.creature.move_towards(player.x, player.y, GAME.current_map)
 
 def death_monster(monster):

@@ -220,10 +220,14 @@ class com_Creature(object):
 
     def attack(self, target, damage):
 
-        GAME.game_message(self.name_instance + " attacks " + target.creature.name_instance + " for " +
-                     str(damage) +
-                     " damage!", "red")
-        target.creature.take_damage(damage)
+        result = roll(1, 100)
+
+        if result < 55:
+            GAME.game_message(self.name_instance + " hits " + target.creature.name_instance + " for " +
+                         str(damage) + " damage!", "red")
+            target.creature.take_damage(damage)
+        else:
+            GAME.game_message(self.name_instance + " misses " + target.creature.name_instance + "!", "lighter blue")
 
     def take_damage(self, damage):
         self.hp -= damage
