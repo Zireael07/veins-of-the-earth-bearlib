@@ -378,10 +378,13 @@ def game_main_loop():
                             print("Player's dead, breaking the loop")
                             break
 
+                if not GAME.game_state == GameStates.PLAYER_DEAD:
+                    GAME.game_state = GameStates.PLAYER_TURN
 
             if GAME.game_state == GameStates.PLAYER_DEAD:
                 print("PLAYER DEAD")
-
+            #if GAME.game_state == GameStates.PLAYER_TURN:
+            #    print("PLAYER TURN")
     #save
     save_game()
 
