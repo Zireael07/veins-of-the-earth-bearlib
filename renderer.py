@@ -124,6 +124,21 @@ def draw_messages(msg_history):
 
         i += 1
 
+def draw_bar(x, y, total_width, name, value, maximum, bar_color, bg_color, label=None):
+
+    blt.puts(x, y-1, name)
+
+    bar_width = int(float(value) / maximum * total_width)
+
+    for i in range(total_width):
+        blt.color(bg_color)
+        if i < bar_width:
+            blt.color(bar_color)
+        blt.put(x + i, y, 0x2588)
+
+    if label:
+        blt.color("white")
+        blt.puts(x+int(total_width/2), y, label)
 
 # GUI
 # based on https://github.com/FirstAidKitten/Roguelike-Sandbox
