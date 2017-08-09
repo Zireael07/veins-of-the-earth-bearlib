@@ -117,6 +117,7 @@ class com_Creature(object):
     def __init__(self, name_instance,
                  num_dice = 1, damage_dice = 6, base_def = 0, hp=10,
                  base_str = 8, base_dex = 8, base_con = 8, base_int = 8, base_wis = 8, base_cha = 8,
+                 dodge=25, melee=55,
                  faction = "enemy",
                  text = None,
                  death_function=None):
@@ -133,6 +134,9 @@ class com_Creature(object):
         self.base_int = base_int
         self.base_wis = base_wis
         self.base_cha = base_cha
+        # skills
+        self.dodge = dodge
+        self.melee = melee
 
         self.faction = faction
         self.text = text
@@ -218,14 +222,25 @@ class com_Creature(object):
         elif react > 0:
             return "blue"
 
+    def skill_test(self, skill):
+        print("Making a test for " + skill + " target: " + str(getattr(self, skill)))
+        result = roll(1,100)
+
+        if result < getattr(self, skill):
+            return True
+        else:
+            return False
+
     def attack(self, target, damage):
 
-        result = roll(1, 100)
-
-        if result < 55:
-            GAME.game_message(self.name_instance + " hits " + target.creature.name_instance + " for " +
-                         str(damage) + " damage!", "red")
-            target.creature.take_damage(damage)
+        if self.skill_test("melee"):
+            GAME.game_message(self.name_instance + " hits " + target.creature.name_instance +"!", "white")
+            # assume target can try to dodge
+            if target.creature.skill_test("dodge"):
+                GAME.game_message(target.creature.name_instance + " dodges!", "green")
+            else:
+                GAME.game_message(self.name_instance + " deals " + str(damage) + " damage to " + target.creature.name_instance, "red")
+                target.creature.take_damage(damage)
         else:
             GAME.game_message(self.name_instance + " misses " + target.creature.name_instance + "!", "lighter blue")
 
