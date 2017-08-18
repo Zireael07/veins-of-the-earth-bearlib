@@ -161,6 +161,13 @@ class BspMapGenerator(object):
 
         # TODO: Generate stairs
 
+        stairs_x = self._rooms_centers[len(self._rooms_centers)-1][0]
+        stairs_y = self._rooms_centers[len(self._rooms_centers)-1][1]
+
+        print("Stairs x :" + str(stairs_x) + " y: " +str(stairs_y))
+
+        self._map[stairs_x][stairs_y].stairs = True
+
         # TODO: generate monsters, items, etc.
         return self._map, self._rooms_centers[0][0], self._rooms_centers[0][1], self._rooms
 

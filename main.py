@@ -62,7 +62,21 @@ class obj_Game(object):
                     print("Faction reaction of " + fact[0] + " to " + fact[1] + " is " + str(fact[2]))
                 return fact[2]
 
+    def next_level(self):
+        self.game_message("You descend deeper in the dungeon", "violet")
 
+        # make next level
+        map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
+                                  constants.FULL_ROOMS)
+        self.current_map, self.player_start_x, self.player_start_y, self.rooms = map_gen.generate_map()
+
+        print_map_string(self.current_map)
+
+        global FOV_MAP
+        FOV_MAP = map_make_fov(self.current_map)
+
+        # force fov recompute
+        self.fov_recompute = True
 
 class obj_Camera(object):
     def __init__(self):
@@ -537,6 +551,8 @@ def game_initialize():
     # tiles
     blt.set("0x3002: gfx/floor_sand.png, align=center") # "."
     blt.set("0x23: gfx/wall_stone.png, align=center") # "#"
+    blt.set("0x003E: gfx/stairs_down.png, align=center") # ">"
+    blt.set("0x003C: gfx/stairs_up.png, align=center") # "<"
     blt.set("0x40: gfx/human_m.png, align=center") # "@"
     #NPCs (we use Unicode private area here)
     blt.set("0xE000: gfx/kobold.png,  align=center") # ""

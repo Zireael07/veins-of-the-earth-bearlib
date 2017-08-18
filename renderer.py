@@ -71,15 +71,19 @@ def draw_map(map_draw, fov_map):
 
                     tile_x, tile_y = draw_iso(x,y)
 
-                    if map_draw[x][y].block_path == True:
-                        # draw wall
-                        blt.put(tile_x, tile_y, "#")
-
+                    if map_draw[x][y].stairs == True:
+                        # draw stairs
+                        blt.put(tile_x, tile_y, ">")
                     else:
-                        # draw floor
-                        blt.put(tile_x, tile_y, 0x3002)
+                        if map_draw[x][y].block_path == True:
+                            # draw wall
+                            blt.put(tile_x, tile_y, "#")
 
-                        blt.put(tile_x,tile_y, ".")
+                        else:
+                            # draw floor
+                            blt.put(tile_x, tile_y, 0x3002)
+
+                            blt.put(tile_x,tile_y, ".")
 
 
 
@@ -92,13 +96,17 @@ def draw_map(map_draw, fov_map):
 
                     tile_x, tile_y = draw_iso(x,y)
 
-                    if map_draw[x][y].block_path == True:
-                        # draw wall
-                        blt.put(tile_x,tile_y, "#")
+                    if map_draw[x][y].stairs == True:
+                        # draw stairs
+                        blt.put(tile_x, tile_y, ">")
                     else:
-                        # draw floor
-                        blt.put(tile_x, tile_y, 0x3002)
-                        blt.put(tile_x,tile_y, ".")
+                        if map_draw[x][y].block_path == True:
+                            # draw wall
+                            blt.put(tile_x,tile_y, "#")
+                        else:
+                            # draw floor
+                            blt.put(tile_x, tile_y, 0x3002)
+                            blt.put(tile_x,tile_y, ".")
 
 
 def draw_mouseover(x,y):

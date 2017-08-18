@@ -133,6 +133,10 @@ def game_handle_keys():
         if key == blt.TK_RIGHT:
             return game_key_move('RIGHT')
 
+        if key == blt.TK_PERIOD and blt.check(blt.TK_SHIFT):
+            if GAME.current_map[PLAYER.x][PLAYER.y].stairs:
+                GAME.next_level()
+
         # items
         if key == blt.TK_G:
             ent = map_check_for_item(PLAYER.x, PLAYER.y, GAME)

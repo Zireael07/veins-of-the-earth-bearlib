@@ -7,6 +7,7 @@ class struc_Tile(object):
     def __init__(self, block_path):
         self.block_path = block_path
         self.explored = False
+        self.stairs = False
 
 class Rect(object):
     """
@@ -91,10 +92,13 @@ def map_check_for_item(x,y, game):
 def print_map_string(inc_map):
     for y in range(len(inc_map)):
         for x in range(len(inc_map[0])):
-            if not inc_map[x][y].block_path:
-                sys.stdout.write(".")
+            if inc_map[x][y].stairs:
+                sys.stdout.write(">")
             else:
-                sys.stdout.write("#")
+                if not inc_map[x][y].block_path:
+                    sys.stdout.write(".")
+                else:
+                    sys.stdout.write("#")
         
         #our row ended, add a line break
         sys.stdout.write("\n")
