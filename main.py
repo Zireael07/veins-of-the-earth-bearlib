@@ -500,7 +500,7 @@ def start_new_game():
                                             base_con=player_array[2],
                                             base_int=player_array[3], base_wis=player_array[4],
                                             base_cha=player_array[5],
-                                            faction="player", death_function=death_player)
+                                            player=True, faction="player", death_function=death_player)
 
     player = components.obj_Actor(game.player_start_x, game.player_start_y, "@", "Player", creature=creature_com1,
                                   container=container_com1)

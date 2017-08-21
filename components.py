@@ -119,6 +119,7 @@ class com_Creature(object):
                  base_str = 8, base_dex = 8, base_con = 8, base_int = 8, base_wis = 8, base_cha = 8,
                  dodge=25, melee=55,
                  faction = "enemy",
+                 player = False,
                  text = None,
                  death_function=None):
         self.name_instance = name_instance
@@ -138,6 +139,8 @@ class com_Creature(object):
         self.dodge = dodge
         self.melee = melee
 
+        # flag for player
+        self.player = player
         self.faction = faction
         self.text = text
         self.death_function = death_function
@@ -227,27 +230,31 @@ class com_Creature(object):
         result = roll(1,100)
 
         if result < getattr(self, skill):
-            # check how much we gain in the skill
-            tick = roll(1, 100)
-            # roll OVER the current skill
-            if tick > getattr(self, skill):
-                # +1d4 if we succeeded
-                gain =  roll(1, 4)
-                setattr(self, skill, getattr(self, skill) + gain)
-                GAME.game_message("You gain " + str(gain) + " skill points!", "light green")
-            else:
-                # +1 if we didn't
-                setattr(self, skill, getattr(self, skill) + 1)
-                GAME.game_message("You gain 1 skill point", "light green")
+            # player only
+            if self.player:
+                # check how much we gain in the skill
+                tick = roll(1, 100)
+                # roll OVER the current skill
+                if tick > getattr(self, skill):
+                    # +1d4 if we succeeded
+                    gain =  roll(1, 4)
+                    setattr(self, skill, getattr(self, skill) + gain)
+                    GAME.game_message("You gain " + str(gain) + " skill points!", "light green")
+                else:
+                    # +1 if we didn't
+                    setattr(self, skill, getattr(self, skill) + 1)
+                    GAME.game_message("You gain 1 skill point", "light green")
             return True
         else:
-            # if we failed, the check for gain is different
-            tick = roll(1,100)
-            # roll OVER the current skill
-            if tick > getattr(self, skill):
-                # +1 if we succeeded, else nothing
-                setattr(self, skill, getattr(self, skill) + 1)
-                GAME.game_message("You learn from your failure and gain 1 skill point", "light green")
+            # player only
+            if self.player:
+                # if we failed, the check for gain is different
+                tick = roll(1,100)
+                # roll OVER the current skill
+                if tick > getattr(self, skill):
+                    # +1 if we succeeded, else nothing
+                    setattr(self, skill, getattr(self, skill) + 1)
+                    GAME.game_message("You learn from your failure and gain 1 skill point", "light green")
 
             return False
 
