@@ -158,8 +158,27 @@ def game_handle_keys():
             renderer.character_sheet_menu("Character sheet", PLAYER)
 
     if key == blt.TK_L:
-        renderer.log_menu("Log history")
+        ret, begin, end = renderer.log_menu("Log history", 0, 26)
+        if ret is not None:
+            # if we are getting input, keep showing the log
+            while ret is not None:
+                if end + ret > len(GAME.message_history)-1:
+                    # do nothing if we'd scroll past the end
+                    end = end
+                    begin = begin
+                if begin + ret < 0:
+                    # if we would scroll past 0, do nothing
+                    begin = 0
+                    end = end
+                if begin + ret > 0 and end + ret <= len(GAME.message_history)-1:
+                    #print("Proceed normally")
+                    begin = begin + ret
+                    end = end + ret
 
+                #print("ret " + str(ret) + "Begin " + str(begin) + " end" + str(end))
+                ret, begin, end = renderer.log_menu("Log history", begin, end)
+
+    # Debugging
     if key == blt.TK_GRAVE and blt.check(blt.TK_SHIFT):
         print("Debug mode on")
         constants.DEBUG = True

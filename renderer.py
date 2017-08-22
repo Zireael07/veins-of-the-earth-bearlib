@@ -258,6 +258,59 @@ def menu_colored(header, options_tuples, width, title=None):
         blt.composition(True)
         return None
 
+# scrolling version of the above
+def menu_colored_scrolled(header, options_tuples, width, begin, end, title=None):
+    GAME.fov_recompute = True
+
+    menu_x = int((120 - width) / 2)
+
+    header_height = 2
+
+    menu_h = int(header_height + 1 + 26)
+    menu_y = int((50 - menu_h) / 2)
+
+    # calculate
+    if len(options_tuples) - 1 <= end:
+        end = len(options_tuples) - 1
+
+    # create a window
+    create_window(menu_x, menu_y, width, menu_h, title)
+
+    blt.puts(menu_x, menu_y, header)
+
+    # print all the options
+    y = menu_y + header_height + 1
+    # for option in options_tuples:
+    for i in range(begin, end):
+        option = options_tuples[i]
+        string = "[color=" + str(option[1]) + "] " + option[0]
+
+        blt.puts(menu_x, y, string)
+        y += 1
+
+    blt.refresh()
+    # present the root console to the player and wait for a key-press
+    blt.set('input: filter = [keyboard]')
+    while True:
+        key = blt.read()
+
+        if key == blt.TK_UP:
+            #print("Pressed up key in scrolling menu")
+            blt.set('input: filter = [keyboard, mouse+]')
+            blt.composition(True)
+            return -1, begin, end
+
+        if key == blt.TK_DOWN:
+            #print("Pressed down key in scrolling menu")
+
+            blt.set('input: filter = [keyboard, mouse+]')
+            blt.composition(True)
+            return 1, begin, end
+
+        else:
+            blt.set('input: filter = [keyboard, mouse+]')
+            blt.composition(True)
+            return None, begin, end
 
 # individual menus
 
@@ -289,11 +342,13 @@ def character_sheet_menu(header, player):
         return None
 
 
-def log_menu(header):
+def log_menu(header, begin, end):
     options = GAME.message_history
 
-    menu_colored(header, options, 50, 'LOG HISTORY')
+    scroll = menu_colored_scrolled(header, options, 50, begin, end, 'LOG HISTORY')
 
+    if scroll is not None:
+        return scroll
 
 def dmg_menu(header):
     options = ["Damage display"]
