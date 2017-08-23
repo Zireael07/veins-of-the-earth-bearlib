@@ -4,10 +4,19 @@ import sys
 import constants
 
 class struc_Tile(object):
-    def __init__(self, block_path):
+    def __init__(self, name, tile_put, str, block_path):
         self.block_path = block_path
-        self.explored = False
-        self.stairs = False
+        self.name = name
+        self.str = str
+        self.tile_put = tile_put
+
+
+tile_types = [
+    struc_Tile("wall", "#", "#", True),
+    struc_Tile("floor", 0x3002, ".", False),
+    struc_Tile("stairs", ">", ">", False)
+]
+
 
 class Rect(object):
     """
@@ -55,7 +64,9 @@ def map_make_fov(incoming_map):
         for x in range(constants.MAP_WIDTH):
             #libtcod.map_set_properties(FOV_MAP, x,y,
             libtcod.map_set_properties(fov_map, x,y,
-                                       not incoming_map[x][y].block_path, not incoming_map[x][y].block_path)
+                                      # not incoming_map[x][y].block_path, not incoming_map[x][y].block_path)
+                                        not tile_types[incoming_map[x][y]].block_path,
+                                       not tile_types[incoming_map[x][y]].block_path)
 
     return fov_map
 
@@ -63,7 +74,7 @@ def get_free_tiles(inc_map):
     free_tiles = []
     for y in range(len(inc_map)):
         for x in range(len(inc_map[0])):
-            if not inc_map[x][y].block_path:
+            if not tile_types[inc_map[x][y]].block_path:
                 free_tiles.append((x,y))
     return free_tiles
 
@@ -92,13 +103,7 @@ def map_check_for_item(x,y, game):
 def print_map_string(inc_map):
     for y in range(len(inc_map)):
         for x in range(len(inc_map[0])):
-            if inc_map[x][y].stairs:
-                sys.stdout.write(">")
-            else:
-                if not inc_map[x][y].block_path:
-                    sys.stdout.write(".")
-                else:
-                    sys.stdout.write("#")
+            sys.stdout.write(tile_types[inc_map[x][y]].str)
         
         #our row ended, add a line break
         sys.stdout.write("\n")

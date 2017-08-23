@@ -31,6 +31,9 @@ class obj_Game(object):
         global FOV_MAP
         FOV_MAP = map_make_fov(self.current_map)
 
+        # new way of storing explored info
+        self._explored = [[ False for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
+
         self.current_entities = []
         self.factions = []
 
@@ -179,19 +182,21 @@ def death_player(player):
     GAME.game_state = GameStates.PLAYER_DEAD
 
 def map_create():
-    new_map = [[struc_Tile(False) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
+    #new_map = [[struc_Tile(False) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
+    new_map = [[ 0 for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
 
-    new_map[10][10].block_path = True
-    new_map[12][12].block_path = True
+
+    new_map[10][10] = 0 #.block_path = True
+    new_map[12][12] = 0 #.block_path = True
 
     # walls around the map
     for x in range(constants.MAP_WIDTH):
-        new_map[x][0].block_path = True
-        new_map[x][constants.MAP_WIDTH-1].block_path = True
+        new_map[x][0] = 0 #.block_path = True
+        new_map[x][constants.MAP_WIDTH-1] = 0 #.block_path = True
 
     for y in range(constants.MAP_HEIGHT):
-        new_map[0][y].block_path = True
-        new_map[constants.MAP_HEIGHT-1][y].block_path = True
+        new_map[0][y] = 0 #.block_path = True
+        new_map[constants.MAP_HEIGHT-1][y] = 0 #.block_path = True
 
     return new_map
 
@@ -205,7 +210,7 @@ def map_calculate_fov():
 
 # the core drawing function
 def draw_game(x,y):
-    renderer.draw_map(GAME.current_map, FOV_MAP)
+    renderer.draw_map(GAME.current_map, GAME._explored, FOV_MAP)
 
     renderer.draw_mouseover(x,y)
 

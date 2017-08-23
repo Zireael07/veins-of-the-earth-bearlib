@@ -3,6 +3,7 @@ import libtcodpy as libtcod
 import math
 
 from renderer import draw_iso
+from map_common import tile_types
 
 # import constants
 
@@ -305,7 +306,7 @@ class com_Creature(object):
                 if self.text is not None:
                     GAME.game_message(self.name_instance + " says: " + self.text, "yellow")
 
-        tile_is_wall = (game_map[self.owner.x+dx][self.owner.y+dy].block_path == True)
+        tile_is_wall = (tile_types[game_map[self.owner.x+dx][self.owner.y+dy]].block_path == True)  #.block_path == True)
 
         if not tile_is_wall and target is None:
             self.owner.x += dx

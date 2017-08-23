@@ -3,6 +3,7 @@
 from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 
+from map_common import tile_types
 
 import constants
 
@@ -44,7 +45,7 @@ def pix_to_iso(x,y):
     return int(iso_x), int(iso_y)
 
 
-def draw_map(map_draw, fov_map):
+def draw_map(map_draw, map_explored, fov_map):
     width = constants.MAP_WIDTH
     height = constants.MAP_HEIGHT
     debug = constants.DEBUG
@@ -64,30 +65,20 @@ def draw_map(map_draw, fov_map):
                 if is_visible:
                     #blt.color("white")
                     blt.color(4294967295)
-                    map_draw[x][y].explored = True
+
+                    map_explored[x][y] = True
+                    #map_draw[x][y].explored = True
+
                     # cartesian
                     # tile_x = x*constants.TILE_WIDTH
                     # tile_y = y*constants.TILE_HEIGHT
 
                     tile_x, tile_y = draw_iso(x,y)
 
-                    if map_draw[x][y].stairs == True:
-                        # draw stairs
-                        blt.put(tile_x, tile_y, ">")
-                    else:
-                        if map_draw[x][y].block_path == True:
-                            # draw wall
-                            blt.put(tile_x, tile_y, "#")
-
-                        else:
-                            # draw floor
-                            blt.put(tile_x, tile_y, 0x3002)
-
-                            blt.put(tile_x,tile_y, ".")
+                    blt.put(tile_x, tile_y, tile_types[map_draw[x][y]].tile_put)
 
 
-
-                elif map_draw[x][y].explored:
+                elif map_explored[x][y]: #map_draw[x][y].explored:
                     #blt.color("gray")
                     blt.color(4286545791)
                     # cartesian
@@ -96,17 +87,7 @@ def draw_map(map_draw, fov_map):
 
                     tile_x, tile_y = draw_iso(x,y)
 
-                    if map_draw[x][y].stairs == True:
-                        # draw stairs
-                        blt.put(tile_x, tile_y, ">")
-                    else:
-                        if map_draw[x][y].block_path == True:
-                            # draw wall
-                            blt.put(tile_x,tile_y, "#")
-                        else:
-                            # draw floor
-                            blt.put(tile_x, tile_y, 0x3002)
-                            blt.put(tile_x,tile_y, ".")
+                    blt.put(tile_x, tile_y, tile_types[map_draw[x][y]].tile_put)
 
 
 def draw_mouseover(x,y):

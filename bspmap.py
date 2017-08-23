@@ -17,15 +17,15 @@ class BspMapGenerator(object):
         if y1 > y2:
             y1, y2 = y2, y1
         for y in range(y1, y2 + 1):
-            self._map[x][y].block_path = False
+            self._map[x][y] = 1 #.block_path = False
 
     def _vline_up(self, x, y):
         print("Generating a corridor from " + str(x) + " " + str(y) + " upwards")
         if x > self.map_width -1:
             return
 
-        while y >= 0 and self._map[x][y].block_path == True:
-            self._map[x][y].block_path = False
+        while y >= 0 and self._map[x][y] == 0: #.block_path == True:
+            self._map[x][y] = 1 #.block_path = False
             y -= 1
 
     def _vline_down(self, x, y):
@@ -33,8 +33,8 @@ class BspMapGenerator(object):
         if x > self.map_width -1:
             return
 
-        while y < self.map_height and self._map[x][y].block_path == True:
-            self._map[x][y].block_path = False
+        while y < self.map_height and self._map[x][y] == 0: # .block_path == True:
+            self._map[x][y] = 1 #.block_path = False
             y += 1
 
     def _hline(self, x1, y, x2):
@@ -42,23 +42,23 @@ class BspMapGenerator(object):
         if x1 > x2:
             x1, x2 = x2, x1
         for x in range(x1, x2 + 1):
-            self._map[x][y].block_path = False
+            self._map[x][y] = 1 #.block_path = False
 
     def _hline_left(self, x, y):
         print("Generating a corridor from " + str(x) + " " + str(y) + " left")
         if y > self.map_height - 1:
             return
 
-        while x >= 0 and self._map[x][y].block_path == True:
-            self._map[x][y].block_path = False
+        while x >= 0 and self._map[x][y] == 0: #.block_path == True:
+            self._map[x][y] = 1 #.block_path = False
             x -= 1
 
     def _hline_right(self, x, y):
         print("Generating a corridor from " + str(x) + "  " + str(y) + " right")
         if y > self.map_height - 1:
             return
-        while x < self.map_width and self._map[x][y].block_path == True:
-            self._map[x][y].block_path = False
+        while x < self.map_width and self._map[x][y] == 0: #.block_path == True:
+            self._map[x][y] = 1 #.block_path = False
             x += 1
 
     def _traverse_node(self, node, dat):
@@ -87,7 +87,7 @@ class BspMapGenerator(object):
             # Dig room
             for x in range(minx, maxx + 1):
                 for y in range(miny, maxy + 1):
-                    self._map[x][y].block_path = False
+                    self._map[x][y] = 1 #.block_path = False
             self._rooms_centers.append(((minx + maxx) // 2, (miny + maxy) // 2))
 
             new_room = Rect(minx, miny, node.w, node.h)
@@ -147,7 +147,8 @@ class BspMapGenerator(object):
         return True
 
     def _generate_empty_map(self):
-        self._map = [[struc_Tile(True) for y in range(self.map_height)] for x in range(self.map_width)]
+        #self._map = [[struc_Tile(True) for y in range(self.map_height)] for x in range(self.map_width)]
+        self._map = [[0 for y in range(self.map_height)] for x in range(self.map_width)]
         return self._map
 
     def generate_map(self):
@@ -166,7 +167,7 @@ class BspMapGenerator(object):
 
         print("Stairs x :" + str(stairs_x) + " y: " +str(stairs_y))
 
-        self._map[stairs_x][stairs_y].stairs = True
+        self._map[stairs_x][stairs_y] = 2 #.stairs = True
 
         # TODO: generate monsters, items, etc.
         return self._map, self._rooms_centers[0][0], self._rooms_centers[0][1], self._rooms

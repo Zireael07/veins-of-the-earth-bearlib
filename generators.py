@@ -32,7 +32,7 @@ def roll(dice, sides):
 # AI
 class AI_test(object):
     def take_turn(self, player):
-        print("AI taking turn")
+        # print("AI taking turn")
         # check distance to player
         dx = player.x - self.owner.x
         dy = player.y - self.owner.y
