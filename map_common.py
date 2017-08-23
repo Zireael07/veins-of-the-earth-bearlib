@@ -4,10 +4,10 @@ import sys
 import constants
 
 class struc_Tile(object):
-    def __init__(self, name, tile_put, str, block_path):
+    def __init__(self, name, tile_put, map_str, block_path):
         self.block_path = block_path
         self.name = name
-        self.str = str
+        self.map_str = map_str
         self.tile_put = tile_put
 
 
@@ -103,7 +103,7 @@ def map_check_for_item(x,y, game):
 def print_map_string(inc_map):
     for y in range(len(inc_map)):
         for x in range(len(inc_map[0])):
-            sys.stdout.write(tile_types[inc_map[x][y]].str)
+            sys.stdout.write(tile_types[inc_map[x][y]].map_str)
         
         #our row ended, add a line break
         sys.stdout.write("\n")
