@@ -1,7 +1,7 @@
 import libtcodpy as libtcod
 
 import constants
-from map_common import struc_Tile, Rect, print_map_string
+from map_common import Rect, print_map_string
 
 class BspMapGenerator(object):
     def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms):
@@ -147,8 +147,7 @@ class BspMapGenerator(object):
         return True
 
     def _generate_empty_map(self):
-        #self._map = [[struc_Tile(True) for y in range(self.map_height)] for x in range(self.map_width)]
-        self._map = [[0 for y in range(self.map_height)] for x in range(self.map_width)]
+        self._map = [[0 for _ in range(self.map_height)] for _ in range(self.map_width)]
         return self._map
 
     def generate_map(self):

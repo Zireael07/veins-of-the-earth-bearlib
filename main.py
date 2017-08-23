@@ -13,7 +13,7 @@ import constants
 import renderer
 import components
 import generators
-from map_common import struc_Tile, map_make_fov, random_free_tile, Rect, print_map_string
+from map_common import map_make_fov, random_free_tile, Rect, print_map_string
 from bspmap import BspMapGenerator
 import handle_input
 from game_states import GameStates
@@ -32,7 +32,7 @@ class obj_Game(object):
         FOV_MAP = map_make_fov(self.current_map)
 
         # new way of storing explored info
-        self._explored = [[ False for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
+        self.current_explored = [[ False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
 
         self.current_entities = []
         self.factions = []
@@ -183,7 +183,7 @@ def death_player(player):
 
 def map_create():
     #new_map = [[struc_Tile(False) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
-    new_map = [[ 0 for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
+    new_map = [[ 0 for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
 
 
     new_map[10][10] = 0 #.block_path = True
@@ -210,7 +210,7 @@ def map_calculate_fov():
 
 # the core drawing function
 def draw_game(x,y):
-    renderer.draw_map(GAME.current_map, GAME._explored, FOV_MAP)
+    renderer.draw_map(GAME.current_map, GAME.current_explored, FOV_MAP)
 
     renderer.draw_mouseover(x,y)
 
