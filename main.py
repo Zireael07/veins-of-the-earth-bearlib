@@ -238,7 +238,7 @@ def cell_to_iso(x,y):
 
 def roll(dice, sides):
     result = 0
-    for i in range(0, dice, 1):
+    for _ in range(0, dice, 1):
         roll = libtcod.random_get_int(0, 1, sides)
         result += roll
 
