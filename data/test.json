@@ -2,7 +2,7 @@
 
  "kobold": {
            "char": "0xE000",
-           "rarity": 15,
+           "rarity": 20,
            "name": "kobold",
            "faction": "enemy",
            "hit_points": 4,
@@ -11,7 +11,7 @@
  },
  "goblin": {
            "char": "0xE001",
-           "rarity": 10,
+           "rarity": 15,
            "name": "goblin",
            "faction": "enemy",
            "hit_points": 5,
@@ -20,7 +20,7 @@
  },
  "drow": {
            "char": "0xE002",
-           "rarity": 8,
+           "rarity": 12,
            "name": "drow",
            "faction": "enemy",
            "hit_points": 6,
@@ -29,7 +29,7 @@
  },
  "human": {
            "char": "0xE003",
-           "rarity": 2,
+           "rarity": 3,
            "name": "human",
            "faction": "neutral",
            "hit_points": 8,
@@ -39,7 +39,7 @@
  },
  "orc": {
            "char": "0xE001",
-           "rarity": 1,
+           "rarity": 5,
            "name": "orc",
            "faction": "enemy",
            "hit_points": 8,
