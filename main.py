@@ -166,7 +166,8 @@ def move_astar(actor, target, inc_map):
     libtcod.path_delete(my_path)
     
 def death_monster(monster):
-    GAME.game_message(monster.creature.name_instance + " is dead!", "gray")
+    if monster.visible:
+        GAME.game_message(monster.creature.name_instance + " is dead!", "gray")
     # clean up components
     monster.creature = None
     monster.ai = None

@@ -61,6 +61,7 @@ class obj_Actor(object):
         self.name = name
         self.char = char
         self.creature = creature
+        self.visible = False
 
         if self.creature:
             creature.owner = self
@@ -95,6 +96,7 @@ class obj_Actor(object):
         is_visible = libtcod.map_is_in_fov(fov_map, self.x, self.y)
 
         if is_visible:
+            self.visible = True
             tile_x, tile_y = draw_iso(self.x,self.y) #this is the top(?) corner of our tile
             # this works for ASCII mode
             #blt.put_ext(tile_x, tile_y, 0, blt.state(blt.TK_CELL_HEIGHT), self.char)
@@ -111,7 +113,8 @@ class obj_Actor(object):
 
             #cartesian
             #blt.put_ext(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, 10, 10, self.char)
-
+        else:
+            self.visible = False
 
 class com_Creature(object):
     ''' Name_instance is the name of an individual, e.g. "Agrk"'''
@@ -262,19 +265,24 @@ class com_Creature(object):
     def attack(self, target, damage):
 
         if self.skill_test("melee"):
-            GAME.game_message(self.name_instance + " hits " + target.creature.name_instance +"!", "white")
+            if self.owner.visible:
+                GAME.game_message(self.name_instance + " hits " + target.creature.name_instance +"!", "white")
             # assume target can try to dodge
             if target.creature.skill_test("dodge"):
-                GAME.game_message(target.creature.name_instance + " dodges!", "green")
+                if self.owner.visible:
+                    GAME.game_message(target.creature.name_instance + " dodges!", "green")
             else:
-                GAME.game_message(self.name_instance + " deals " + str(damage) + " damage to " + target.creature.name_instance, "red")
+                if self.owner.visible:
+                    GAME.game_message(self.name_instance + " deals " + str(damage) + " damage to " + target.creature.name_instance, "red")
                 target.creature.take_damage(damage)
         else:
-            GAME.game_message(self.name_instance + " misses " + target.creature.name_instance + "!", "lighter blue")
+            if self.owner.visible:
+                GAME.game_message(self.name_instance + " misses " + target.creature.name_instance + "!", "lighter blue")
 
     def take_damage(self, damage):
         self.hp -= damage
-        GAME.game_message(self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp), "white")
+        if self.owner.visible:
+            GAME.game_message(self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp), "white")
 
         if self.hp <= 0:
             if self.death_function is not None:
@@ -303,7 +311,7 @@ class com_Creature(object):
                 damage_dealt = self.attack_mod
                 self.attack(target, damage_dealt)
             else:
-                if self.text is not None:
+                if self.text is not None and self.owner.visible:
                     GAME.game_message(self.name_instance + " says: " + self.text, "yellow")
 
         tile_is_wall = (tile_types[game_map[self.owner.x+dx][self.owner.y+dy]].block_path == True)  #.block_path == True)
