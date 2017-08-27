@@ -51,18 +51,17 @@ class BspCityGenerator(object):
             new_room = Rect(minx, miny, node.w, node.h)
             self._rooms.append(new_room)
 
-            self.create_doors()
-
         return True
 
     def create_doors(self):
         for room in self._rooms:
             (x, y) = room.center()
+            #print("Creating door for " + str(x) + " " + str(y))
 
             wall = random.choice(["north", "south", "east", "west"])
             if wall == "north":
                 wallX = x
-                wallY = room.y1 + 1
+                wallY = room.y1
             elif wall == "south":
                 wallX = x
                 wallY = room.y2 - 1
@@ -70,7 +69,7 @@ class BspCityGenerator(object):
                 wallX = room.x2 - 1
                 wallY = y
             elif wall == "west":
-                wallX = room.x1 + 1
+                wallX = room.x1
                 wallY = y
 
             self._map[wallX][wallY] = 1
@@ -93,6 +92,8 @@ class BspCityGenerator(object):
 
         print("Stairs x :" + str(stairs_x) + " y: " +str(stairs_y))
 
+        self.create_doors()
+
         #self._map[stairs_x][stairs_y] = 2 #.stairs = True
 
         # TODO: generate monsters, items, etc.
@@ -103,8 +104,8 @@ if __name__ == '__main__':
     #test map generation
     test_attempts = 3
     for i in range(test_attempts):
-        map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, 2,
-                                  constants.FULL_ROOMS)
+        map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+1, 2,
+                                  False)
 
         current_map, player_start_x, player_start_y, rooms = map_gen.generate_map()
         print_map_string(current_map)
