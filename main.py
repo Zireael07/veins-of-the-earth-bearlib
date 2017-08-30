@@ -15,6 +15,7 @@ import components
 import generators
 from map_common import map_make_fov, random_free_tile, Rect, print_map_string
 from bspmap import BspMapGenerator
+from bspcity import BspCityGenerator
 import handle_input
 from game_states import GameStates
 
@@ -22,8 +23,10 @@ from game_states import GameStates
 class obj_Game(object):
     def __init__(self):
         #self.current_map = map_create()
-        map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
+        map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
                                   constants.FULL_ROOMS)
+        #map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
+                  #                constants.FULL_ROOMS)
         self.current_map, self.player_start_x, self.player_start_y, self.rooms = map_gen.generate_map()
 
         print_map_string(self.current_map)
@@ -536,7 +539,8 @@ def game_initialize():
     blt.refresh()
 
     # tiles
-    blt.set("0x3002: gfx/floor_sand.png, align=center") # "."
+    blt.set("0x3002: gfx/floor_cave.png, align=center") # "."
+    blt.set("0x3003: gfx/floor_sand.png, align=center")
     blt.set("0x23: gfx/wall_stone.png, align=center") # "#"
     blt.set("0x003E: gfx/stairs_down.png, align=center") # ">"
     blt.set("0x003C: gfx/stairs_up.png, align=center") # "<"

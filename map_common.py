@@ -14,6 +14,7 @@ class struc_Tile(object):
 tile_types = [
     struc_Tile("wall", "#", "#", True),
     struc_Tile("floor", 0x3002, ".", False),
+    struc_Tile("sand floor", 0x3003, ".", False),
     struc_Tile("stairs", ">", ">", False)
 ]
 
