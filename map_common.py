@@ -19,6 +19,12 @@ tile_types = [
 ]
 
 
+room_desc = [
+    "",
+    "This is a room.",
+    "This is an interior of a hut.",
+]
+
 class Rect(object):
     """
     A rectangle on the map. used to characterize a room.
@@ -108,3 +114,31 @@ def print_map_string(inc_map):
         
         #our row ended, add a line break
         sys.stdout.write("\n")
+
+def get_map_desc(x,y, fov_map, explored_map, desc_map=None):
+    # catch if we don't have descriptions at all
+    if desc_map is None:
+        return
+
+    is_visible = libtcod.map_is_in_fov(fov_map, x, y)
+
+    #print("Getting map desc for " + str(x) + " " + str(y))
+    #print("Desc map is " + str(desc_map[x][y]))
+
+    if is_visible:
+        if x >= 0 and x < constants.MAP_WIDTH: #len(desc_map):
+            if y >= 0 and y < constants.MAP_HEIGHT: #len(desc_map[0):
+                return room_desc[desc_map[x][y]]
+            else:
+                return ""
+        else:
+            return ""
+    else:
+        if x >= 0 and x < constants.MAP_WIDTH: #len(desc_map):
+            if y >= 0 and y < constants.MAP_HEIGHT: #len(desc_map[0):
+                if explored_map[x][y]:
+                    return room_desc[desc_map[x][y]]
+                else:
+                    return ""
+            else:
+                return ""

@@ -13,7 +13,7 @@ import constants
 import renderer
 import components
 import generators
-from map_common import map_make_fov, random_free_tile, Rect, print_map_string
+from map_common import map_make_fov, random_free_tile, Rect, print_map_string, get_map_desc
 from bspmap import BspMapGenerator
 from bspcity import BspCityGenerator
 import handle_input
@@ -27,7 +27,7 @@ class obj_Game(object):
                                   constants.FULL_ROOMS)
         #map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
                   #                constants.FULL_ROOMS)
-        self.current_map, self.player_start_x, self.player_start_y, self.rooms = map_gen.generate_map()
+        self.current_map, self.player_start_x, self.player_start_y, self.rooms, self.map_desc = map_gen.generate_map()
 
         print_map_string(self.current_map)
 
@@ -341,6 +341,8 @@ def game_main_loop():
         # this works on cells
         blt.layer(0)
         mouse_picking(m_x, m_y)
+        # this works on map tiles
+        show_tile_desc(pix_x, pix_y)
 
         # refresh term
         blt.refresh()
@@ -451,6 +453,15 @@ def mouse_picking(m_x, m_y):
         #
         if n == 0:
             blt.puts(w, h, "Empty cell")
+
+def show_tile_desc(pix_x, pix_y):
+    w = 4
+    h = 12
+    iso_x, iso_y = renderer.pix_to_iso(pix_x, pix_y)
+
+    blt.layer(1)
+    blt.puts(w, h, get_map_desc(iso_x, iso_y, FOV_MAP, GAME.current_explored, GAME.map_desc))
+    blt.layer(0)
 
 
 

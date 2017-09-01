@@ -2,7 +2,7 @@ import libtcodpy as libtcod
 import random
 
 import constants
-from map_common import Rect, print_map_string
+from map_common import Rect, print_map_string, room_desc
 
 class BspCityGenerator(object):
     def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms):
@@ -74,6 +74,13 @@ class BspCityGenerator(object):
 
             self._map[wallX][wallY] = 1
 
+
+    def generate_build_desc(self):
+        for room in self._rooms:
+            for x in range(room.x1+1, room.x2-1):
+                for y in range(room.y1+1, room.y2-1):
+                    self.map_desc[x][y] = 2
+
     def _generate_empty_map(self):
         self._map = [[1 for _ in range(self.map_height)] for _ in range(self.map_width)]
         return self._map
@@ -94,10 +101,14 @@ class BspCityGenerator(object):
 
         self.create_doors()
 
+        self.map_desc = [[ 0 for _ in range(self.map_height)] for _ in range(self.map_width)]
+
+        self.generate_build_desc()
+
         #self._map[stairs_x][stairs_y] = 2 #.stairs = True
 
         # TODO: generate monsters, items, etc.
-        return self._map, self._rooms_centers[0][0], self._rooms_centers[0][1], self._rooms
+        return self._map, self._rooms_centers[0][0], self._rooms_centers[0][1], self._rooms, self.map_desc
 
 if __name__ == '__main__':
 
@@ -107,5 +118,5 @@ if __name__ == '__main__':
         map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+1, 2,
                                   False)
 
-        current_map, player_start_x, player_start_y, rooms = map_gen.generate_map()
+        current_map, player_start_x, player_start_y, rooms, map_desc = map_gen.generate_map()
         print_map_string(current_map)
