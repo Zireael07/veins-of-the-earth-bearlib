@@ -150,6 +150,12 @@ class BspMapGenerator(object):
         self._map = [[0 for _ in range(self.map_height)] for _ in range(self.map_width)]
         return self._map
 
+    def generate_room_desc(self):
+        for room in self._rooms:
+            for x in range(room.x1, room.x2):
+                for y in range(room.y1, room.y2):
+                    self.map_desc[x][y] = 1
+
     def generate_map(self):
         self._map = self._generate_empty_map()
         self._rooms_centers = []
@@ -159,8 +165,6 @@ class BspMapGenerator(object):
                                     1.5)
         libtcod.bsp_traverse_inverted_level_order(bsp, self._traverse_node)
 
-        # TODO: Generate stairs
-
         stairs_x = self._rooms_centers[len(self._rooms_centers)-1][0]
         stairs_y = self._rooms_centers[len(self._rooms_centers)-1][1]
 
@@ -168,8 +172,12 @@ class BspMapGenerator(object):
 
         self._map[stairs_x][stairs_y] = 2 #.stairs = True
 
+        self.map_desc = [[0 for _ in range(self.map_height)] for _ in range(self.map_width)]
+
+        self.generate_room_desc()
+
         # TODO: generate monsters, items, etc.
-        return self._map, self._rooms_centers[0][0], self._rooms_centers[0][1], self._rooms
+        return self._map, self._rooms_centers[0][0], self._rooms_centers[0][1], self._rooms, self.map_desc
 
 
 if __name__ == '__main__':
@@ -180,5 +188,5 @@ if __name__ == '__main__':
         map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
                                   constants.FULL_ROOMS)
 
-        current_map, player_start_x, player_start_y, rooms = map_gen.generate_map()
+        current_map, player_start_x, player_start_y, rooms, map_desc = map_gen.generate_map()
         print_map_string(current_map)

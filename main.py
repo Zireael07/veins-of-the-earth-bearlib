@@ -455,6 +455,8 @@ def mouse_picking(m_x, m_y):
             blt.puts(w, h, "Empty cell")
 
 def show_tile_desc(pix_x, pix_y):
+    if not hasattr(GAME, 'map_desc'):
+        return
     w = 4
     h = 12
     iso_x, iso_y = renderer.pix_to_iso(pix_x, pix_y)
