@@ -170,14 +170,14 @@ class BspMapGenerator(object):
 
         print("Stairs x :" + str(stairs_x) + " y: " +str(stairs_y))
 
-        self._map[stairs_x][stairs_y] = 2 #.stairs = True
+        self._map[stairs_x][stairs_y] = 3 #.stairs = True
 
         self.map_desc = [[0 for _ in range(self.map_height)] for _ in range(self.map_width)]
 
         self.generate_room_desc()
 
         # TODO: generate monsters, items, etc.
-        return self._map, self._rooms_centers[0][0], self._rooms_centers[0][1], self._rooms, self.map_desc
+        return [self._map, self.map_desc, self._rooms_centers[0][0], self._rooms_centers[0][1], self._rooms]
 
 
 if __name__ == '__main__':
@@ -187,6 +187,6 @@ if __name__ == '__main__':
     for i in range(test_attempts):
         map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
                                   constants.FULL_ROOMS)
-
-        current_map, player_start_x, player_start_y, rooms, map_desc = map_gen.generate_map()
+        gen_map = map_gen.generate_map()
+        current_map, map_desc = gen_map[0], gen_map[1]
         print_map_string(current_map)

@@ -23,11 +23,17 @@ from game_states import GameStates
 class obj_Game(object):
     def __init__(self):
         #self.current_map = map_create()
-        map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
+        #map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
+        #                          constants.FULL_ROOMS)
+        map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
                                   constants.FULL_ROOMS)
-        #map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-                  #                constants.FULL_ROOMS)
-        self.current_map, self.player_start_x, self.player_start_y, self.rooms, self.map_desc = map_gen.generate_map()
+        gen_map = map_gen.generate_map()
+        self.current_map, self.map_desc = gen_map[0], gen_map[1]
+        if len(gen_map) > 2:
+            self.player_start_x, self.player_start_y = gen_map[2], gen_map[3]
+        if len(gen_map) > 4:
+            self.rooms = gen_map[4]
+        #self.current_map, self.player_start_x, self.player_start_y, self.rooms, self.map_desc = map_gen.generate_map()
 
         print_map_string(self.current_map)
 
@@ -74,7 +80,14 @@ class obj_Game(object):
         # make next level
         map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
                                   constants.FULL_ROOMS)
-        self.current_map, self.player_start_x, self.player_start_y, self.rooms = map_gen.generate_map()
+
+        gen_map = map_gen.generate_map()
+        self.current_map, self.map_desc = gen_map[0], gen_map[1]
+        if len(gen_map) > 2:
+            self.player_start_x, self.player_start_y = gen_map[2], gen_map[3]
+        if len(gen_map) > 4:
+            self.rooms = gen_map[4]
+        #self.current_map, self.player_start_x, self.player_start_y, self.rooms = map_gen.generate_map()
 
         print_map_string(self.current_map)
 
