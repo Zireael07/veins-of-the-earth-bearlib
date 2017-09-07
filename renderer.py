@@ -237,7 +237,7 @@ def menu_colored(header, options_tuples, width, title=None):
         key = blt.read()
         blt.set('input: filter = [keyboard, mouse+]')
         blt.composition(True)
-        return None
+        return key
 
 # scrolling version of the above
 def menu_colored_scrolled(header, options_tuples, width, begin, end, title=None):
@@ -346,3 +346,13 @@ def display_dmg_window(index):
         # extract the dmg number
         dmg = filter(str.isdigit, str(GAME.message_history[index][0]))
         dmg_menu(dmg)
+
+def main_menu():
+    key = menu_colored("MAIN MENU", [("(S)tart new game", "white"), ("(L)oad game", "white"), ("(E)xit game", "white")], 50)
+
+    if key == blt.TK_S:
+        return 1
+    if key == blt.TK_L:
+        return 2
+    if key == blt.TK_E:
+        return 3

@@ -21,32 +21,34 @@ from game_states import GameStates
 
 
 class obj_Game(object):
-    def __init__(self):
-        #self.current_map = map_create()
-        #map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-        #                          constants.FULL_ROOMS)
-        map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-                                  constants.FULL_ROOMS)
-        gen_map = map_gen.generate_map()
-        self.current_map, self.map_desc = gen_map[0], gen_map[1]
-        if len(gen_map) > 2:
-            self.player_start_x, self.player_start_y = gen_map[2], gen_map[3]
-        if len(gen_map) > 4:
-            self.rooms = gen_map[4]
-        #self.current_map, self.player_start_x, self.player_start_y, self.rooms, self.map_desc = map_gen.generate_map()
+    def __init__(self, basic):
+        if not basic:
+            #self.current_map = map_create()
+            #map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
+            #                          constants.FULL_ROOMS)
+            map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
+                                      constants.FULL_ROOMS)
+            gen_map = map_gen.generate_map()
+            self.current_map, self.map_desc = gen_map[0], gen_map[1]
+            if len(gen_map) > 2:
+                self.player_start_x, self.player_start_y = gen_map[2], gen_map[3]
+            if len(gen_map) > 4:
+                self.rooms = gen_map[4]
+            #self.current_map, self.player_start_x, self.player_start_y, self.rooms, self.map_desc = map_gen.generate_map()
 
-        print_map_string(self.current_map)
+            print_map_string(self.current_map)
 
-        global FOV_MAP
-        FOV_MAP = map_make_fov(self.current_map)
+            global FOV_MAP
+            FOV_MAP = map_make_fov(self.current_map)
 
-        # new way of storing explored info
-        self.current_explored = [[ False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
+            # new way of storing explored info
+            self.current_explored = [[ False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
 
-        self.current_entities = []
-        self.factions = []
+            self.current_entities = []
+            self.factions = []
 
-        self.message_history = []
+            self.message_history = []
+
         self.fov_recompute = False
 
     def game_message(self, msg, msg_color):
@@ -498,7 +500,7 @@ def generate_items_monsters(game):
 
 
 def start_new_game():
-    game = obj_Game()
+    game = obj_Game(False)
 
     # init game for submodules
     components.initialize_game(game)
@@ -585,16 +587,15 @@ def game_initialize():
     blt.set("0x2317: gfx/mouseover.png, align=center") # "⌗"
     blt.set("0x2017: gfx/unit_marker.png, align=center") # "̳"
 
-    # if we have a savegame, load it
-    if os.path.isfile('savegame.json'):
-        GAME, PLAYER, CAMERA = load_game()
+    # main menu
+    GAME = obj_Game(True)
+    GAME.game_state = GameStates.MAIN_MENU
+    renderer.initialize_game(GAME)
+    action = renderer.main_menu()
 
-        # fix player ref
-        # player is always last in the entities list
-        # player_id = len(GAME.current_entities)-1
-        # the assumption isn't true if you pick up and drop some items
-        # so we handle it in load_game()
-        #GAME.current_entities[player_id] = PLAYER
+    # if we have a savegame, load it
+    if action == 2 and os.path.isfile('savegame.json'):
+        GAME, PLAYER, CAMERA = load_game()
 
         # handle FOV
         GAME.fov_recompute = True
@@ -627,7 +628,7 @@ def game_initialize():
         # set state to player turn
         GAME.game_state = GameStates.PLAYER_TURN
 
-    else:
+    elif action == 1:
         GAME, PLAYER, CAMERA = start_new_game()
         GAME.fov_recompute = True
         # fix issue where the map is black on turn 1
@@ -635,6 +636,9 @@ def game_initialize():
 
         #set state to player turn
         GAME.game_state = GameStates.PLAYER_TURN
+    else:
+        #quit
+        blt.close()
 
 if __name__ == '__main__':
 
