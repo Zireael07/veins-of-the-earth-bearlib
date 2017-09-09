@@ -334,43 +334,45 @@ def game_main_loop():
         #clear
         blt.clear()
 
-        blt.layer(1)
-        blt.puts(2,1, "[color=white]FPS: %d" % (fps_value))
+        if not GAME.game_state == GameStates.MAIN_MENU:
+            blt.layer(1)
+            blt.puts(2,1, "[color=white]FPS: %d" % (fps_value))
 
-        #mouse
-        pix_x, pix_y, m_x, m_y = game_handle_mouse()
+            #mouse
+            pix_x, pix_y, m_x, m_y = game_handle_mouse()
 
-        # camera
-        CAMERA.update()
+            # camera
+            CAMERA.update()
 
-        # draw
-        draw_game(pix_x, pix_y)
+            # draw
+            draw_game(pix_x, pix_y)
 
-        # debug
-        #on top of map
-        blt.layer(1)
-        blt.puts(2,2, "[color=red] player position: %d %d" % (PLAYER.x, PLAYER.y))
-        blt.puts(2,5, "[color=red] camera offset: %d %d" % (CAMERA.offset[0], CAMERA.offset[1]))
-        # debugging rooms
-        blt.puts(2,6, "[color=orange] room index: %s" % (room_index_str()))
-        blt.puts(2,7, "[color=orange] room center %s" % (get_room_data()))
+            # debug
+            #on top of map
+            blt.layer(1)
+            blt.puts(2,2, "[color=red] player position: %d %d" % (PLAYER.x, PLAYER.y))
+            blt.puts(2,5, "[color=red] camera offset: %d %d" % (CAMERA.offset[0], CAMERA.offset[1]))
+            # debugging rooms
+            blt.puts(2,6, "[color=orange] room index: %s" % (room_index_str()))
+            blt.puts(2,7, "[color=orange] room center %s" % (get_room_data()))
 
-        # this works on cells
-        blt.layer(0)
-        mouse_picking(m_x, m_y)
-        # this works on map tiles
-        show_tile_desc(pix_x, pix_y)
+            # this works on cells
+            blt.layer(0)
+            mouse_picking(m_x, m_y)
+            # this works on map tiles
+            show_tile_desc(pix_x, pix_y)
 
         # refresh term
         blt.refresh()
 
-        # fps
-        fps_counter += 1
-        tm = time()
-        if tm > fps_update_time + 1:
-            fps_value = fps_counter
-            fps_counter = 0
-            fps_update_time = tm
+        if not GAME.game_state == GameStates.MAIN_MENU:
+            # fps
+            fps_counter += 1
+            tm = time()
+            if tm > fps_update_time + 1:
+                fps_value = fps_counter
+                fps_counter = 0
+                fps_update_time = tm
 
         # avoid blocking the game with blt.read
         while not game_quit and blt.has_input():
@@ -378,10 +380,11 @@ def game_main_loop():
             player_action = handle_input.game_handle_keys()
             #print player_action
 
-            map_calculate_fov()
-
             if player_action == "QUIT":
                 game_quit = True
+                break
+            else:
+                map_calculate_fov()
 
 
             if player_action == "mouse_click":
@@ -411,7 +414,7 @@ def game_main_loop():
             #    print("PLAYER TURN")
 
     #save if not dead
-    if not GAME.game_state == GameStates.PLAYER_DEAD:
+    if not GAME.game_state == GameStates.PLAYER_DEAD and not GAME.game_state == GameStates.MAIN_MENU:
         #print(str(GAME.game_state) + " we should save game")
         save_game()
 

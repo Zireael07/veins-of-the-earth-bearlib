@@ -354,5 +354,3 @@ def main_menu():
         return 1
     if key == blt.TK_L:
         return 2
-    if key == blt.TK_E:
-        return 3

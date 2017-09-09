@@ -123,6 +123,10 @@ def game_handle_keys():
     if key in (blt.TK_ESCAPE, blt.TK_CLOSE):
         return "QUIT"
 
+    if GAME.game_state == GameStates.MAIN_MENU:
+        if key not in (blt.TK_S, blt.TK_L):
+            return "QUIT"
+
     if GAME.game_state == GameStates.PLAYER_TURN:
         if key == blt.TK_UP:
             return game_key_move('UP')
