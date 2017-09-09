@@ -192,13 +192,15 @@ def death_monster(monster):
     # remove from map
     GAME.current_entities.remove(monster)
 
-
 def death_player(player):
     GAME.game_message(player.creature.name_instance + " is dead!", "dark red")
     # remove from map
     GAME.current_entities.remove(player)
     # set game state to player dead
     GAME.game_state = GameStates.PLAYER_DEAD
+    #delete savegame (this assumes we can only have one)
+    if os.path.isfile('savegame.json'):
+        os.remove('savegame.json')
 
 
 def map_calculate_fov():
@@ -407,8 +409,11 @@ def game_main_loop():
                 print("PLAYER DEAD")
             #if GAME.game_state == GameStates.PLAYER_TURN:
             #    print("PLAYER TURN")
-    #save
-    save_game()
+
+    #save if not dead
+    if not GAME.game_state == GameStates.PLAYER_DEAD:
+        #print(str(GAME.game_state) + " we should save game")
+        save_game()
 
     # quit the game
     blt.close()
