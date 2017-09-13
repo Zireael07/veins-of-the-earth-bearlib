@@ -131,7 +131,7 @@ def draw_bar(x, y, total_width, name, value, maximum, bar_color, bg_color, label
 
 # GUI
 # based on https://github.com/FirstAidKitten/Roguelike-Sandbox
-def create_window(x, y, w, h, title=None):
+def create_window(x, y, w, h, title=None, border=True):
     #test
     blt.composition(False)
 
@@ -140,16 +140,17 @@ def create_window(x, y, w, h, title=None):
     blt.clear_area(x - 2, y - 2, w + 2, h + 2)
     blt.bkcolor(last_bg)
 
-    # upper border
-    border = '┌' + '─' * (w) + '┐'
-    blt.puts(x - 1, y - 1, border)
-    # sides
-    for i in range(h):
-        blt.puts(x - 1, y + i, '│')
-        blt.puts(x + w, y + i, '│')
-    # lower border
-    border = '└' + '─' * (w) + '┘'
-    blt.puts(x - 1, y + h, border)
+    if border:
+        # upper border
+        border = '┌' + '─' * (w) + '┐'
+        blt.puts(x - 1, y - 1, border)
+        # sides
+        for i in range(h):
+            blt.puts(x - 1, y + i, '│')
+            blt.puts(x + w, y + i, '│')
+        # lower border
+        border = '└' + '─' * (w) + '┘'
+        blt.puts(x - 1, y + h, border)
 
     if title is not None:
         leng = len(title)
@@ -206,10 +207,11 @@ def options_menu(header, options, width, title=None):
 
 # this one doesn't show keys and conversely doesn't have the 26 entries limit
 # it takes tuples instead of strings
-def menu_colored(header, options_tuples, width, title=None):
+def menu_colored(header, options_tuples, width, title=None, menu_x=None, border=True):
     GAME.fov_recompute = True
 
-    menu_x = int((120 - width) / 2)
+    if menu_x is None:
+        menu_x = int((120 - width) / 2)
 
     header_height = 2
 
@@ -218,7 +220,7 @@ def menu_colored(header, options_tuples, width, title=None):
 
     # create a window
 
-    create_window(menu_x, menu_y, width, menu_h, title)
+    create_window(menu_x, menu_y, width, menu_h, title, border)
 
     blt.puts(menu_x, menu_y, header)
 
@@ -348,7 +350,9 @@ def display_dmg_window(index):
         dmg_menu(dmg)
 
 def main_menu():
-    key = menu_colored("MAIN MENU", [("(S)tart new game", "white"), ("(L)oad game", "white"), ("(E)xit game", "white")], 50)
+
+    key = menu_colored("MAIN MENU", [("(S)tart new game", "white"), ("(L)oad game", "white"), ("(E)xit game", "white")],
+                       50, menu_x = int((180 - 50) / 2), border=False)
 
     if key == blt.TK_S:
         return 1
