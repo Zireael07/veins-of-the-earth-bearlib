@@ -574,6 +574,9 @@ def game_initialize():
     # needed to avoid insta-close
     blt.refresh()
 
+    # menu background
+    blt.set("0xE100: gfx/Veins.png")
+
     # tiles
     blt.set("0x3002: gfx/floor_cave.png, align=center") # "."
     blt.set("0x3003: gfx/floor_sand.png, align=center")
@@ -599,6 +602,7 @@ def game_initialize():
     GAME = obj_Game(True)
     GAME.game_state = GameStates.MAIN_MENU
     renderer.initialize_game(GAME)
+    blt.put(10,0, 0xE100)
     action = renderer.main_menu()
 
     # if we have a savegame, load it
