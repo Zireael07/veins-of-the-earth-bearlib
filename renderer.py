@@ -3,6 +3,8 @@
 from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 
+import time
+
 from map_common import tile_types
 
 import constants
@@ -358,3 +360,39 @@ def main_menu():
         return 1
     if key == blt.TK_L:
         return 2
+
+# drawing special effects
+def wait(wait_time):
+    wait_time = wait_time * 0.01
+    start_time = time.time()
+
+
+    while time.time() - start_time < wait_time:
+        blt.refresh()
+
+def draw_effect(x,y, tile, speed, clear, color="white"):
+    blt.color(color)
+    blt.put_ext(x, y, 0, 0, tile)
+    wait(8*speed)
+    if clear:
+        blt.clear_area(x,y)
+
+def draw_effects(effects, speed, clr_x, clr_y, clr_w=1, clr_h=1):
+    for eff in effects:
+        draw_effect(eff[1],eff[2], eff[0], speed, False, eff[3])
+
+    blt.clear_area(clr_x,clr_y, clr_w, clr_h)
+
+def draw_blood_splatter(x,y, damage):
+    effects = []
+    effects.append((0x2BC1, x, y, "red"))
+    w = 1
+    for l in str(damage):
+        effects.append((l, x, y, "white"))
+        x + 1
+        w += 1
+
+    draw_effects(effects, 1.5, x, y, w,1)
+
+def draw_shield(x,y):
+    draw_effect(x,y, 0x2BC2, 1.5, True)

@@ -2,7 +2,7 @@ from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 import math
 
-from renderer import draw_iso
+from renderer import draw_iso, draw_blood_splatter, draw_shield
 from map_common import tile_types
 
 # import constants
@@ -277,11 +277,15 @@ class com_Creature(object):
                 target.creature.take_damage(damage)
         else:
             if self.owner.visible:
+                tile_x, tile_y = draw_iso(self.owner.x, self.owner.y)
+                draw_shield(tile_x, tile_y)
                 GAME.game_message(self.name_instance + " misses " + target.creature.name_instance + "!", "lighter blue")
 
     def take_damage(self, damage):
         self.hp -= damage
         if self.owner.visible:
+            tile_x, tile_y = draw_iso(self.owner.x, self.owner.y)
+            draw_blood_splatter(tile_x, tile_y, damage)
             GAME.game_message(self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp), "white")
 
         if self.hp <= 0:

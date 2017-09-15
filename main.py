@@ -488,7 +488,13 @@ def show_tile_desc(pix_x, pix_y):
     blt.puts(w, h, get_map_desc(iso_x, iso_y, FOV_MAP, GAME.current_explored, GAME.map_desc))
     blt.layer(0)
 
+def wait(wait_time):
+    wait_time = wait_time * 0.01
+    start_time = time()
 
+
+    while time() - start_time < wait_time:
+        blt.refresh()
 
 def generate_items_monsters(game):
     # test generating items
@@ -597,6 +603,8 @@ def game_initialize():
     # gfx
     blt.set("0x2317: gfx/mouseover.png, align=center") # "⌗"
     blt.set("0x2017: gfx/unit_marker.png, align=center") # "̳"
+    blt.set("0x2BC1: gfx/splash_gray.png, align=center") # "⯁"
+    blt.set("0x2BC2: gfx/splash_shield.png, align=center") # "⯂"
 
     # main menu
     GAME = obj_Game(True)
