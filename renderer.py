@@ -371,6 +371,7 @@ def wait(wait_time):
         blt.refresh()
 
 def draw_effect(x,y, tile, speed, clear, color="white"):
+    blt.layer(1)
     blt.color(color)
     blt.put_ext(x, y, 0, 0, tile)
     wait(8*speed)
@@ -389,10 +390,20 @@ def draw_blood_splatter(x,y, damage):
     w = 1
     for l in str(damage):
         effects.append((l, x, y, "white"))
-        x + 1
+        x += 1
         w += 1
 
     draw_effects(effects, 1.5, x, y, w,1)
 
 def draw_shield(x,y):
     draw_effect(x,y, 0x2BC2, 1.5, True)
+
+def draw_floating_text_step(x,y, string):
+    effects = []
+    w = 1
+    for l in str(string):
+        effects.append((l,x,y, "white"))
+        x += 1
+        w += 1
+
+    draw_effects(effects, 2, x, y, w, 1)

@@ -2,7 +2,7 @@ from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 import math
 
-from renderer import draw_iso, draw_blood_splatter, draw_shield
+from renderer import draw_iso, draw_blood_splatter, draw_shield, draw_floating_text_step
 from map_common import tile_types
 
 # import constants
@@ -316,6 +316,8 @@ class com_Creature(object):
                 self.attack(target, damage_dealt)
             else:
                 if self.text is not None and self.owner.visible:
+                    tile_x, tile_y = draw_iso(self.owner.x, self.owner.y)
+                    draw_floating_text_step(tile_x, tile_y-1, self.text)
                     GAME.game_message(self.name_instance + " says: " + self.text, "yellow")
 
         tile_is_wall = (tile_types[game_map[self.owner.x+dx][self.owner.y+dy]].block_path == True)  #.block_path == True)
