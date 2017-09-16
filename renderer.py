@@ -378,6 +378,19 @@ def draw_effect(x,y, tile, speed, clear, color="white"):
     if clear:
         blt.clear_area(x,y)
 
+def draw_effect_mult(x,y,tile, speed, color="white"):
+    blt.layer(1)
+    blt.color(color)
+    blt.put_ext(x, y, 0, 0, tile)
+
+def draw_effects_batch(effects, speed, clr_x, clr_y, clr_w=1, clr_h=1):
+    for eff in effects:
+        draw_effect_mult(eff[1], eff[2], eff[0], speed, eff[3])
+
+    wait(8*speed)
+    blt.clear_area(clr_x, clr_y, clr_w, clr_h)
+
+
 def draw_effects(effects, speed, clr_x, clr_y, clr_w=1, clr_h=1):
     for eff in effects:
         draw_effect(eff[1],eff[2], eff[0], speed, False, eff[3])
@@ -393,10 +406,20 @@ def draw_blood_splatter(x,y, damage):
         x += 1
         w += 1
 
-    draw_effects(effects, 1.5, x, y, w,1)
+    draw_effects_batch(effects, 1.5, x, y, w,1)
 
 def draw_shield(x,y):
     draw_effect(x,y, 0x2BC2, 1.5, True)
+
+def draw_floating_text(x,y, string):
+    effects = []
+    w = 1
+    for l in str(string):
+        effects.append((l, x, y, "white"))
+        x +=1
+        w +=1
+
+    draw_effects_batch(effects, 5, x, y, w, 1)
 
 def draw_floating_text_step(x,y, string):
     effects = []
