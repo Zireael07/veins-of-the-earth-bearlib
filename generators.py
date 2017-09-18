@@ -44,8 +44,14 @@ class AI_test(object):
             #print("AI distance > 5, random move")
             self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), GAME.current_map)
         else:
-            #print("AI distance less than 5, moving towards player")
-            self.owner.creature.move_towards(player.x, player.y, GAME.current_map)
+            if self.owner.creature.faction != player.creature.faction:
+                is_neutral_faction = GAME.get_faction_reaction(self.owner.creature.faction, player.creature.faction, True) > 0
+                if is_neutral_faction:
+                    self.owner.creature.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1),
+                                             GAME.current_map)
+                else:
+                    #print("AI distance less than 5, moving towards player")
+                    self.owner.creature.move_towards(player.x, player.y, GAME.current_map)
 
 def death_monster(monster):
     GAME.game_message(monster.creature.name_instance + " is dead!", "gray")

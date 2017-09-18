@@ -277,7 +277,7 @@ class com_Creature(object):
                 target.creature.take_damage(damage)
         else:
             if self.owner.visible:
-                tile_x, tile_y = draw_iso(self.owner.x, self.owner.y)
+                tile_x, tile_y = draw_iso(target.x, target.y)
                 draw_shield(tile_x, tile_y)
                 GAME.game_message(self.name_instance + " misses " + target.creature.name_instance + "!", "lighter blue")
 
