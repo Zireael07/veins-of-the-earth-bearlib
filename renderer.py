@@ -507,7 +507,7 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
         if len(inventory) > 0:
             if len(inventory) > i:
                 item = inventory[i]
-                if not item.equipment.equipped:
+                if not item.equipment or not item.equipment.equipped:
                     char = item.char
                     draw_slot(x, y, char)
                     letter_index += 1

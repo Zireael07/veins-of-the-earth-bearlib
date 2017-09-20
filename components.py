@@ -292,6 +292,11 @@ class com_Creature(object):
             if self.death_function is not None:
                 self.death_function(self.owner)
 
+    def heal(self, amount):
+        self.hp += amount
+        if self.owner.visible:
+            GAME.game_message(self.name_instance + " heals!", "lighter red")
+
     def move(self, dx, dy, game_map):
         if self.owner.y + dy >= len(game_map) or self.owner.y + dy < 0:
             print("Tried to move out of map")
@@ -357,8 +362,9 @@ class com_Container(object):
         return list_equipped
 
 class com_Item(object):
-    def __init__(self, weight=0.0):
+    def __init__(self, weight=0.0, use_function=None):
         self.weight = weight
+        self.use_function = use_function
 
     def pick_up(self, actor):
         if actor.container:
@@ -378,7 +384,10 @@ class com_Item(object):
         if self.owner.equipment:
             self.owner.equipment.toggle_equip(actor)
             return
-
+        elif self.use_function is not None:
+            # destroy after use, unless it was cancelled for some reason
+            if self.use_function(actor) != 'cancelled':
+                self.current_container.inventory.remove(self.owner)
 
 class com_Equipment(object):
     def __init__(self, slot, num_dice = 1, damage_dice = 4, attack_bonus = 0, defense_bonus = 0):
