@@ -300,18 +300,25 @@ def menu_colored_scrolled(header, options_tuples, width, begin, end, title=None)
 # individual menus
 
 def inventory_menu(header, player):
-    # show a menu with each item of the inventory as an option
-    if len(player.container.inventory) == 0:
-        options = ['Inventory is empty.']
-    else:
-        options = [item.display_name() for item in player.container.inventory]
 
-    index = options_menu(header, options, 50, 'INVENTORY')
+    #if len(player.container.equipped_items) > 0:
 
-    # if an item was chosen, return it
+
+    index = inventory_menu_test(header, 50, 'INVENTORY', player.container.equipped_items, player.container.inventory)
+
+    #if an item was chosen, return it
     if index is None or len(player.container.inventory) == 0:
-        return None
+         return None
     return player.container.inventory[index]
+
+    # show a menu with each item of the inventory as an option
+    # if len(player.container.inventory) == 0:
+    #     options = ['Inventory is empty.']
+    # else:
+    #     options = [item.display_name() for item in player.container.inventory]
+    #
+    # index = options_menu(header, options, 50, 'INVENTORY')
+
 
 def character_sheet_menu(header, player):
     options = [("STR: " + str(player.creature.strength), "white"), ("DEX: " + str(player.creature.dexterity), "white"),
@@ -430,3 +437,101 @@ def draw_floating_text_step(x,y, string):
         w += 1
 
     draw_effects(effects, 2, x, y, w, 1)
+
+def draw_box(x,y,w,h):
+    # upper border
+    border = '┌' + '─' * (w) + '┐'
+    blt.puts(x - 1, y - 1, border)
+    # sides
+    for i in range(h):
+        blt.puts(x - 1, y + i, '│')
+        blt.puts(x + w, y + i, '│')
+    # lower border
+    border = '└' + '─' * (w) + '┘'
+    blt.puts(x - 1, y + h, border)
+
+
+def draw_slot(x,y,char=None):
+    draw_box(x, y, 2, 1)
+    if char is not None:
+        blt.put_ext(x, y, 2, -1, char)
+
+def inventory_menu_test(header, width, title, equipped_items, inventory):
+    GAME.fov_recompute = True
+
+    menu_x = int((120 - width) / 2)
+
+    header_height = 2
+
+    menu_h = int(header_height + 1 + 26)
+    menu_y = int((50 - menu_h) / 2)
+
+    # create a window
+
+    create_window(menu_x, menu_y, width, menu_h, title)
+
+
+    blt.puts(menu_x, menu_y, header)
+
+    y = menu_y + header_height + 1
+
+    x = menu_x + 2
+
+    letter_index = ord('a')
+
+    # draw equipped items
+    # draw two slots (mainhand and body)
+    for i in range(0, 2):
+        if len(equipped_items) > 0:
+            if len(equipped_items) > i:
+                item = equipped_items[i]
+                char = item.char
+                draw_slot(x,y, char)
+            else:
+                draw_slot(x,y,None)
+        else:
+            draw_slot(x,y,None)
+
+        x = x + 4 # 2 wide + 2 spacing
+
+    y = y + 3
+
+    # back to 1st row
+    x = menu_x + 2
+    blt.puts(x, y, '─' * 40)
+
+    y = y + 2
+
+    # draw inventory slots
+    for i in range(0,10):
+        if len(inventory) > 0:
+            if len(inventory) > i:
+                item = inventory[i]
+                if not item.equipment.equipped:
+                    char = item.char
+                    draw_slot(x, y, char)
+                    letter_index += 1
+            else:
+                draw_slot(x,y,None)
+        else:
+            draw_slot(x,y,None)
+
+        x = x + 4
+
+    blt.refresh()
+    # present the root console to the player and wait for a key-press
+    blt.set('input: filter = [keyboard]')
+    while True:
+        key = blt.read()
+        if blt.check(blt.TK_CHAR):
+            # convert the ASCII code to an index; if it corresponds to an option, return it
+            key = blt.state(blt.TK_CHAR)
+            index = key - ord('a')
+            if 0 <= index < len(inventory):
+                blt.set('input: filter = [keyboard, mouse+]')
+                blt.composition(True)
+                return index
+        else:
+            blt.set('input: filter = [keyboard, mouse+]')
+            blt.composition(True)
+            return None
