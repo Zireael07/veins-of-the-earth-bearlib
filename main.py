@@ -247,6 +247,17 @@ def roll(dice, sides):
     print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
     return result
 
+# item use effects
+def cast_heal(actor):
+    if actor.creature.hp == actor.creature.max_hp:
+        GAME.game_message("You are already fully healed!", "red")
+        return 'cancelled'
+
+    heal = roll(1,8)
+    GAME.game_message("You healed " + str(heal) + " damage", "violet")
+    actor.creature.heal(heal)
+
+
 # debugging rooms
 def get_room_index():
     room_index = -1
@@ -497,6 +508,12 @@ def wait(wait_time):
         blt.refresh()
 
 def generate_items_monsters(game):
+    #test potion
+    x,y = random_free_tile(game.current_map)
+    item_com = components.com_Item(use_function=cast_heal)
+    item = components.obj_Actor(x, y, 0x2762, "potion", item=item_com)
+    game.current_entities.append(item)
+
     # test generating items
     game.current_entities.append(generators.generate_item("longsword", *random_free_tile(game.current_map)))
     game.current_entities.append(generators.generate_item("dagger", *random_free_tile(game.current_map)))
@@ -599,6 +616,7 @@ def game_initialize():
     blt.set("0x2215: gfx/longsword.png, align=center") #"∕"
     blt.set("0x1C0: gfx/dagger.png, align=center") # "ǀ"
     blt.set("0xFF3B: gfx/chain_armor.png, align=center") # "［"
+    blt.set("0x2762: gfx/potion.png, align=center") # "❢"
 
     # gfx
     blt.set("0x2317: gfx/mouseover.png, align=center") # "⌗"
