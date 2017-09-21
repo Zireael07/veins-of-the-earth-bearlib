@@ -205,8 +205,18 @@ class com_Creature(object):
 
         return total_attack
 
+    @property
     def defense(self):
         total_def = self.base_def
+
+        if self.owner.container:
+            # get bonuses
+            object_bonuses = [obj.equipment.defense_bonus
+                              for obj in self.owner.container.equipped_items]
+
+            for bonus in object_bonuses:
+                total_def += bonus
+
         return total_def
 
     def get_weapon(self):
@@ -282,8 +292,13 @@ class com_Creature(object):
                 GAME.game_message(self.name_instance + " misses " + target.creature.name_instance + "!", "lighter blue")
 
     def take_damage(self, damage):
-        self.hp -= damage
+        change = damage - self.defense
+        if change < 0:
+            change = 0
+        self.hp -= change
         if self.owner.visible:
+            if self.defense > 0:
+                GAME.game_message(self.name_instance + " blocks " + str(self.defense) + " damage", "gray")
             tile_x, tile_y = draw_iso(self.owner.x, self.owner.y)
             draw_blood_splatter(tile_x, tile_y, damage)
             GAME.game_message(self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp), "white")

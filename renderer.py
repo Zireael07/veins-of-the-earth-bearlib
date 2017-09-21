@@ -324,8 +324,8 @@ def character_sheet_menu(header, player):
     options = [("STR: " + str(player.creature.strength), "white"), ("DEX: " + str(player.creature.dexterity), "white"),
                ("CON: " + str(player.creature.constitution), "white"), ("INT: " + str(player.creature.intelligence), "white"),
                 ("WIS: " + str(player.creature.wisdom), "white"), ("CHA: " + str(player.creature.charisma), "white"),
-               ("Attack: " + str(player.creature.melee), "white"), ("Dodge: " + str(player.creature.dodge), "white")
-
+               ("Attack: " + str(player.creature.melee), "white"), ("Dodge: " + str(player.creature.dodge), "white"),
+               ("Armor defense: " + str(player.creature.defense), "white")
                ]
 
     index = menu_colored(header, options, 50, 'CHARACTER SHEET')
