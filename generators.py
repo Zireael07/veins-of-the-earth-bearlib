@@ -55,6 +55,10 @@ class AI_test(object):
 
 def death_monster(monster):
     GAME.game_message(monster.creature.name_instance + " is dead!", "gray")
+
+    # spawn loot
+    GAME.current_entities.append(generate_item("dagger", monster.x, monster.y))
+
     # clean up components
     monster.creature = None
     monster.ai = None
