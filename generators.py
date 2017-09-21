@@ -239,17 +239,25 @@ def generate_item(i_id, x,y):
     item_char = int(items_data[i_id]['char'], 16)
     item_type = items_data[i_id]['type']
 
+    # create the most basic item
+    eq_com = components.com_Equipment(item_slot)
+
+
     # optional parameters depending on type
     if item_type == "weapon":
         item_dice = items_data[i_id]['damage_number']
         item_sides = items_data[i_id]['damage_dice']
 
+        # Create the item
+        eq_com = components.com_Equipment(item_slot, num_dice=item_dice, damage_dice=item_sides)
+
     if item_type == "armor":
         item_armor = items_data[i_id]['combat_armor']
 
+        # Create the item
+        eq_com = components.com_Equipment(item_slot, defense_bonus=item_armor)
 
-    # Create the item
-    eq_com = components.com_Equipment(item_slot)
+
     item_com = components.com_Item()
     item = components.obj_Actor(x,y, item_char, item_name, item=item_com, equipment=eq_com)
 
