@@ -604,6 +604,7 @@ def game_initialize():
     blt.set("0x3002: gfx/floor_cave.png, align=center") # "."
     blt.set("0x3003: gfx/floor_sand.png, align=center")
     blt.set("0x23: gfx/wall_stone.png, align=center") # "#"
+    blt.set("0x2503: gfx/wall_stone_vert_EW.png, align=center") # "│" #2502 is used by window rendering
     blt.set("0x003E: gfx/stairs_down.png, align=center") # ">"
     blt.set("0x003C: gfx/stairs_up.png, align=center") # "<"
     blt.set("0x40: gfx/human_m.png, align=center") # "@"
