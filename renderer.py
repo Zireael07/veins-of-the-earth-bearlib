@@ -358,6 +358,11 @@ def display_dmg_window(index):
         dmg = filter(str.isdigit, str(GAME.message_history[index][0]))
         dmg_menu(dmg)
 
+def dialogue_window(creature):
+    blt.layer(0)
+    index = dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat['chat'], creature.chat['answer'])
+
+
 def main_menu():
 
     key = menu_colored("MAIN MENU", [("(S)tart new game", "white"), ("(L)oad game", "white"), ("(E)xit game", "white")],
@@ -528,6 +533,55 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
             key = blt.state(blt.TK_CHAR)
             index = key - ord('a')
             if 0 <= index < len(inventory):
+                blt.set('input: filter = [keyboard, mouse+]')
+                blt.composition(True)
+                return index
+        else:
+            blt.set('input: filter = [keyboard, mouse+]')
+            blt.composition(True)
+            return None
+
+def dialogue_menu(header, width, title, text, answers):
+    GAME.fov_recompute = True
+
+    menu_x = int((120 - width) / 2)
+
+    header_height = 2
+
+    menu_h = int(header_height + 1 + 26)
+    menu_y = int((50 - menu_h) / 2)
+
+    # create a window
+
+    create_window(menu_x, menu_y, width, menu_h, title)
+
+
+    blt.puts(menu_x, menu_y, header)
+
+    y = menu_y + header_height + 1
+
+    blt.puts(menu_x, y, text)
+
+    y = y + 2
+
+    letter_index = ord('a')
+    for answer in answers:
+        answer_text = answer['chat']
+        text = '(' + chr(letter_index) + ') ' + answer_text
+        blt.puts(menu_x, y, text)
+        y += 1
+        letter_index += 1
+
+    blt.refresh()
+    # present the root console to the player and wait for a key-press
+    blt.set('input: filter = [keyboard]')
+    while True:
+        key = blt.read()
+        if blt.check(blt.TK_CHAR):
+            # convert the ASCII code to an index; if it corresponds to an option, return it
+            key = blt.state(blt.TK_CHAR)
+            index = key - ord('a')
+            if 0 <= index < len(answers):
                 blt.set('input: filter = [keyboard, mouse+]')
                 blt.composition(True)
                 return index

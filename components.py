@@ -2,7 +2,7 @@ from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 import math
 
-from renderer import draw_iso, draw_blood_splatter, draw_shield, draw_floating_text, draw_floating_text_step
+from renderer import draw_iso, draw_blood_splatter, draw_shield, draw_floating_text, draw_floating_text_step, dialogue_window
 from map_common import tile_types
 
 # import constants
@@ -350,14 +350,10 @@ class com_Creature(object):
 
                 # test
                 if self.chat is not None:
-                    print("Chat: " + self.chat['chat'])
-                    for answers in self.chat['answer']:
-                        print(answers['reply'] + " : " + answers['chat'])
+                    dialogue_window(self)
 
                 if target.creature.chat is not None:
-                    print("Chat: " + target.creature.chat['chat'])
-                    for answers in target.creature.chat['answer']:
-                        print(answers['reply'] + " : " + answers['chat'])
+                    dialogue_window(target.creature)
 
         tile_is_wall = (tile_types[game_map[self.owner.x+dx][self.owner.y+dy]].block_path == True)  #.block_path == True)
 
