@@ -1,3 +1,5 @@
+# coding: utf8
+
 import libtcodpy as libtcod
 import sys
 
@@ -12,7 +14,8 @@ class struc_Tile(object):
 
 
 tile_types = [
-    struc_Tile("wall", "#", "#", True),
+    struc_Tile("wall", "#", "#", True), #this is the simple wall, horizontal
+    struc_Tile("wall", 0x2503, "#", True), #vertical wall
     struc_Tile("floor", 0x3002, ".", False),
     struc_Tile("sand floor", 0x3003, ".", False),
     struc_Tile("stairs", ">", ">", False)
@@ -113,6 +116,86 @@ def print_map_string(inc_map):
             sys.stdout.write(tile_types[inc_map[x][y]].map_str)
         
         #our row ended, add a line break
+        sys.stdout.write("\n")
+
+def convert_to_box_drawing(inc_map):
+    for y in range(len(inc_map)):
+        for x in range(len(inc_map[0])):
+            tile = tile_types[inc_map[x][y]]
+
+            #print("Checking neighbors of " + str(x) + " " + str(y))
+
+            north = y-1 > 0 and tile_types[inc_map[x][y-1]].map_str == "#"
+            south = y+1 < len(inc_map) and tile_types[inc_map[x][y+1]].map_str == "#"
+            west = x-1 > 0 and tile_types[inc_map[x-1][y]].map_str == "#"
+            east = x+1 < len(inc_map[0]) and tile_types[inc_map[x+1][y]].map_str == "#"
+
+            # if north:
+            #     print("Wall to the north")
+            # if south:
+            #     print("Wall to the south")
+            # if west:
+            #     print("Wall to the west")
+            # if east:
+            #     print("Wall to the east")
+
+
+            if tile.map_str == "#":
+                # detect direction
+                if west and east:
+                    sys.stdout.write("─")
+                elif north and south:
+                    sys.stdout.write("│")
+                # detect corners
+                elif east and south:
+                    sys.stdout.write("┌")
+                elif west and south:
+                    sys.stdout.write("┐")
+                elif east and north:
+                    sys.stdout.write("└")
+                elif west and north:
+                    sys.stdout.write("┘")
+
+                else:
+                    sys.stdout.write(tile.map_str)
+            else:
+                sys.stdout.write(tile.map_str)
+
+        # our row ended, add a line break
+        sys.stdout.write("\n")
+
+def convert_walls(inc_map):
+    for y in range(len(inc_map)):
+        for x in range(len(inc_map[0])):
+            tile = tile_types[inc_map[x][y]]
+
+            #print("Checking neighbors of " + str(x) + " " + str(y))
+
+            north = y-1 > 0 and tile_types[inc_map[x][y-1]].map_str == "#"
+            south = y+1 < len(inc_map) and tile_types[inc_map[x][y+1]].map_str == "#"
+            west = x-1 > 0 and tile_types[inc_map[x-1][y]].map_str == "#"
+            east = x+1 < len(inc_map[0]) and tile_types[inc_map[x+1][y]].map_str == "#"
+
+            if tile.map_str == "#":
+                # detect direction
+                if west and east:
+                    inc_map[x][y] = 0
+                elif north and south:
+                    inc_map[x][y] = 1
+                else:
+                    inc_map[x][y] = 0
+            else:
+                inc_map[x][y] = inc_map[x][y]
+
+    return inc_map
+
+def print_converted(inc_map):
+    new_map = convert_walls(inc_map)
+    for y in range(len(new_map)):
+        for x in range (len(new_map[0])):
+            sys.stdout.write(tile_types[inc_map[x][y]].map_str)
+
+        # our row ended, add a line break
         sys.stdout.write("\n")
 
 def get_map_desc(x,y, fov_map, explored_map, desc_map=None):
