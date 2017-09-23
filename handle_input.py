@@ -138,7 +138,7 @@ def game_handle_keys():
             return game_key_move('RIGHT')
 
         if key == blt.TK_PERIOD and blt.check(blt.TK_SHIFT):
-            if GAME.current_map[PLAYER.x][PLAYER.y] == 3: #.stairs:
+            if GAME.current_map[PLAYER.x][PLAYER.y] == 4: #.stairs:
                 GAME.next_level()
 
         # items
