@@ -342,6 +342,22 @@ class com_Creature(object):
                     draw_floating_text(tile_x, tile_y-1, self.text)
                     #draw_floating_text_step(tile_x, tile_y-1, self.text)
                     GAME.game_message(self.name_instance + " says: " + self.text, "yellow")
+                if target.creature.text is not None and target.visible:
+                    tile_x, tile_y = draw_iso(target.x, target.y)
+                    draw_floating_text(tile_x, tile_y - 1, target.creature.text)
+                    # draw_floating_text_step(tile_x, tile_y-1, target.creature.text)
+                    GAME.game_message(target.creature.name_instance + " says: " + target.creature.text, "yellow")
+
+                # test
+                if self.chat is not None:
+                    print("Chat: " + self.chat['chat'])
+                    for answers in self.chat['answer']:
+                        print(answers['reply'] + " : " + answers['chat'])
+
+                if target.creature.chat is not None:
+                    print("Chat: " + target.creature.chat['chat'])
+                    for answers in target.creature.chat['answer']:
+                        print(answers['reply'] + " : " + answers['chat'])
 
         tile_is_wall = (tile_types[game_map[self.owner.x+dx][self.owner.y+dy]].block_path == True)  #.block_path == True)
 
