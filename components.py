@@ -125,6 +125,7 @@ class com_Creature(object):
                  faction = "enemy",
                  player = False,
                  text = None,
+                 chat = None,
                  death_function=None):
         self.name_instance = name_instance
         self.max_hp = hp
@@ -147,6 +148,7 @@ class com_Creature(object):
         self.player = player
         self.faction = faction
         self.text = text
+        self.chat = chat
         self.death_function = death_function
 
     @property

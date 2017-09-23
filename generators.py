@@ -384,6 +384,12 @@ def generate_monster(m_id, x,y):
     else:
         mon_text = None
 
+    if 'chat' in monster_data[m_id]:
+        mon_chat_id = monster_data[m_id]['chat']
+        mon_chat = dialogue_data[mon_chat_id]
+    else:
+        mon_chat = None
+
     # Defaults
     death = death_monster
 
@@ -394,6 +400,7 @@ def generate_monster(m_id, x,y):
                                             base_int=mon_array[3], base_wis=mon_array[4], base_cha=mon_array[5],
                                             faction=mon_faction,
                                             text = mon_text,
+                                            chat = mon_chat,
                                             death_function=death)
     ai_comp = AI_test()
 
@@ -447,6 +454,11 @@ with open("data/weapons_properties.json") as json_data:
     weap_prop_data = json.load(json_data)
     logger.debug(weap_prop_data)
     #print weap_prop_data
+
+with open("data/dialogue.json") as json_data:
+    dialogue_data = json.load(json_data)
+    logger.debug(dialogue_data)
+
 
 if __name__ == '__main__':
     test_force_roll(100)
