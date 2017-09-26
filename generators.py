@@ -42,28 +42,28 @@ class AI_test(object):
 
         if distance > 5:
             #print("AI distance > 5, random move")
-            self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), GAME.current_map)
+            self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), GAME.level.current_map)
         else:
             if self.owner.creature.faction != player.creature.faction:
                 is_neutral_faction = GAME.get_faction_reaction(self.owner.creature.faction, player.creature.faction, True) == 0
                 if is_neutral_faction:
                     self.owner.creature.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1),
-                                             GAME.current_map)
+                                             GAME.level.current_map)
                 else:
                     #print("AI distance less than 5, moving towards player")
-                    self.owner.creature.move_towards(player.x, player.y, GAME.current_map)
+                    self.owner.creature.move_towards(player.x, player.y, GAME.level.current_map)
 
 def death_monster(monster):
     GAME.game_message(monster.creature.name_instance + " is dead!", "gray")
 
     # spawn loot
-    GAME.current_entities.append(generate_item("dagger", monster.x, monster.y))
+    GAME.level.current_entities.append(generate_item("dagger", monster.x, monster.y))
 
     # clean up components
     monster.creature = None
     monster.ai = None
     # remove from map
-    GAME.current_entities.remove(monster)
+    GAME.level.current_entities.remove(monster)
 
 
 # Generating stuff

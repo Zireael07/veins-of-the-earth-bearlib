@@ -23,28 +23,29 @@ from game_states import GameStates
 class obj_Game(object):
     def __init__(self, basic):
         if not basic:
+            self.level = obj_Level()
             #self.current_map = map_create()
             #map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
             #                          constants.FULL_ROOMS)
-            map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-                                      constants.FULL_ROOMS)
-            gen_map = map_gen.generate_map()
-            self.current_map, self.map_desc = gen_map[0], gen_map[1]
-            if len(gen_map) > 2:
-                self.player_start_x, self.player_start_y = gen_map[2], gen_map[3]
-            if len(gen_map) > 4:
-                self.rooms = gen_map[4]
+            #map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
+            #                          constants.FULL_ROOMS)
+            #gen_map = map_gen.generate_map()
+            #self.current_map, self.map_desc = gen_map[0], gen_map[1]
+            #if len(gen_map) > 2:
+            #    self.player_start_x, self.player_start_y = gen_map[2], gen_map[3]
+            #if len(gen_map) > 4:
+            #    self.rooms = gen_map[4]
             #self.current_map, self.player_start_x, self.player_start_y, self.rooms, self.map_desc = map_gen.generate_map()
 
-            print_map_string(self.current_map)
+            #print_map_string(self.current_map)
 
             global FOV_MAP
-            FOV_MAP = map_make_fov(self.current_map)
+            FOV_MAP = map_make_fov(self.level.current_map)
 
             # new way of storing explored info
-            self.current_explored = [[ False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
+            #self.current_explored = [[ False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
 
-            self.current_entities = []
+            #self.current_entities = []
             self.factions = []
 
             self.message_history = []
@@ -54,9 +55,9 @@ class obj_Game(object):
     def game_message(self, msg, msg_color):
         self.message_history.append((msg, msg_color))
 
-    def add_entity(self, entity):
-        if entity is not None:
-            self.current_entities.append(entity)
+    #def add_entity(self, entity):
+    #    if entity is not None:
+    #        self.current_entities.append(entity)
 
     def add_faction(self, faction_data):
         self.factions.append(faction_data)
@@ -79,25 +80,54 @@ class obj_Game(object):
     def next_level(self):
         self.game_message("You descend deeper in the dungeon", "violet")
 
-        # make next level
+        self.level = obj_Level()
+        # # make next level
+        # map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
+        #                           constants.FULL_ROOMS)
+        #
+        # gen_map = map_gen.generate_map()
+        # self.current_map, self.map_desc = gen_map[0], gen_map[1]
+        # if len(gen_map) > 2:
+        #     self.player_start_x, self.player_start_y = gen_map[2], gen_map[3]
+        # if len(gen_map) > 4:
+        #     self.rooms = gen_map[4]
+        # #self.current_map, self.player_start_x, self.player_start_y, self.rooms = map_gen.generate_map()
+        #
+        # print_map_string(self.current_map)
+
+        # add player
+        self.level.current_entities.append(PLAYER)
+
+        global FOV_MAP
+        FOV_MAP = map_make_fov(self.level.current_map)
+
+
+        # force fov recompute
+        self.fov_recompute = True
+
+class obj_Level(object):
+    def __init__(self):
+        # map gen
         map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
                                   constants.FULL_ROOMS)
-
         gen_map = map_gen.generate_map()
         self.current_map, self.map_desc = gen_map[0], gen_map[1]
         if len(gen_map) > 2:
             self.player_start_x, self.player_start_y = gen_map[2], gen_map[3]
         if len(gen_map) > 4:
             self.rooms = gen_map[4]
-        #self.current_map, self.player_start_x, self.player_start_y, self.rooms = map_gen.generate_map()
 
+        # debug
         print_map_string(self.current_map)
 
-        global FOV_MAP
-        FOV_MAP = map_make_fov(self.current_map)
+        # new way of storing explored info
+        self.current_explored = [[False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
 
-        # force fov recompute
-        self.fov_recompute = True
+        self.current_entities = []
+
+    def add_entity(self, entity):
+        if entity is not None:
+            self.current_entities.append(entity)
 
 class obj_Camera(object):
     def __init__(self):
@@ -212,13 +242,13 @@ def map_calculate_fov():
 
 # the core drawing function
 def draw_game(x,y):
-    renderer.draw_map(GAME.current_map, GAME.current_explored, FOV_MAP)
+    renderer.draw_map(GAME.level.current_map, GAME.level.current_explored, FOV_MAP)
 
     renderer.draw_mouseover(x,y)
 
     #blt.color("white")
     blt.color(4294967295)
-    for ent in GAME.current_entities:
+    for ent in GAME.level.current_entities:
         ent.draw(fov_map=FOV_MAP)
 
     # on top of map
@@ -261,10 +291,10 @@ def cast_heal(actor):
 # debugging rooms
 def get_room_index():
     room_index = -1
-    for r in GAME.rooms:
+    for r in GAME.level.rooms:
 
         if r.contains((PLAYER.x, PLAYER.y)):
-            room_index = GAME.rooms.index(r)
+            room_index = GAME.level.rooms.index(r)
             break
 
     return room_index
@@ -279,7 +309,7 @@ def room_index_str():
 
 def get_room_from_index(index):
     if index != -1:
-        return GAME.rooms[index]
+        return GAME.level.rooms[index]
 
 def get_room_data():
     index = get_room_index()
@@ -308,7 +338,7 @@ def get_top_log_string_index():
 # save/load
 def save_game():
     data = {
-        'serialized_player_index': jsonpickle.encode(GAME.current_entities.index(PLAYER)),
+        'serialized_player_index': jsonpickle.encode(GAME.level.current_entities.index(PLAYER)),
         'serialized_cam': jsonpickle.encode(CAMERA),
         'serialized_game': jsonpickle.encode(GAME),
     }
@@ -328,7 +358,7 @@ def load_game():
     player_index = jsonpickle.decode(data['serialized_player_index'])
     camera = jsonpickle.decode(data['serialized_cam'])
 
-    player = game.current_entities[player_index]
+    player = game.level.current_entities[player_index]
 
     return game, player, camera
 
@@ -408,7 +438,7 @@ def game_main_loop():
 
             # enemy turn
             if GAME.game_state == GameStates.ENEMY_TURN:
-                for ent in GAME.current_entities:
+                for ent in GAME.level.current_entities:
                     if ent.ai:
                         ent.ai.take_turn(PLAYER)
 
@@ -496,7 +526,7 @@ def show_tile_desc(pix_x, pix_y):
     iso_x, iso_y = renderer.pix_to_iso(pix_x, pix_y)
 
     blt.layer(1)
-    blt.puts(w, h, get_map_desc(iso_x, iso_y, FOV_MAP, GAME.current_explored, GAME.map_desc))
+    blt.puts(w, h, get_map_desc(iso_x, iso_y, FOV_MAP, GAME.level.current_explored, GAME.level.map_desc))
     blt.layer(0)
 
 def wait(wait_time):
@@ -507,27 +537,27 @@ def wait(wait_time):
     while time() - start_time < wait_time:
         blt.refresh()
 
-def generate_items_monsters(game):
+def generate_items_monsters(level):
     #test potion
-    x,y = random_free_tile(game.current_map)
+    x,y = random_free_tile(level.current_map)
     item_com = components.com_Item(use_function=cast_heal)
     item = components.obj_Actor(x, y, 0x2762, "potion", item=item_com)
-    game.current_entities.append(item)
+    level.current_entities.append(item)
 
     # test generating items
-    game.current_entities.append(generators.generate_item("longsword", *random_free_tile(game.current_map)))
-    game.current_entities.append(generators.generate_item("dagger", *random_free_tile(game.current_map)))
-    game.current_entities.append(generators.generate_item("chainmail", *random_free_tile(game.current_map)))
+    level.current_entities.append(generators.generate_item("longsword", *random_free_tile(level.current_map)))
+    level.current_entities.append(generators.generate_item("dagger", *random_free_tile(level.current_map)))
+    level.current_entities.append(generators.generate_item("chainmail", *random_free_tile(level.current_map)))
 
-    game.add_entity(generators.generate_monster("human", *random_free_tile(game.current_map)))
+    level.add_entity(generators.generate_monster("human", *random_free_tile(level.current_map)))
     # test generating monsters
-    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
-    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
-    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
-    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
-    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
-    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
-    game.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(game.current_map)))
+    level.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(level.current_map)))
+    level.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(level.current_map)))
+    level.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(level.current_map)))
+    level.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(level.current_map)))
+    level.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(level.current_map)))
+    level.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(level.current_map)))
+    level.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(level.current_map)))
 
 
 def start_new_game():
@@ -551,7 +581,7 @@ def start_new_game():
                                             base_cha=player_array[5],
                                             player=True, faction="player", death_function=death_player)
 
-    player = components.obj_Actor(game.player_start_x, game.player_start_y, "@", "Player", creature=creature_com1,
+    player = components.obj_Actor(game.level.player_start_x, game.level.player_start_y, "@", "Player", creature=creature_com1,
                                   container=container_com1)
 
     camera = obj_Camera()
@@ -568,10 +598,10 @@ def start_new_game():
     camera.start_update(player)
 
     # generate items
-    generate_items_monsters(game)
+    generate_items_monsters(game.level)
 
     # put player last
-    game.current_entities.append(player)
+    game.level.current_entities.append(player)
 
     # test
     generators.get_random_item()
@@ -640,7 +670,7 @@ def game_initialize():
         GAME.fov_recompute = True
         # recreate the fov
         global FOV_MAP
-        FOV_MAP = map_make_fov(GAME.current_map)
+        FOV_MAP = map_make_fov(GAME.level.current_map)
 
         # patch in required stuff
         # init game for submodules

@@ -101,7 +101,7 @@ def random_free_tile(inc_map):
 def map_check_for_item(x,y, game):
     target = None
 
-    for ent in game.current_entities:
+    for ent in game.level.current_entities:
         if (ent.x == x
             and ent.y == y
             and ent.item):

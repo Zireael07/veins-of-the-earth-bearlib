@@ -27,7 +27,7 @@ def map_check_for_creature(x, y, exclude_entity = None):
 
     # find entity that isn't excluded
     if exclude_entity:
-        for ent in GAME.current_entities:
+        for ent in GAME.level.current_entities:
             if (ent is not exclude_entity
                 and ent.x == x
                 and ent.y == y
@@ -39,7 +39,7 @@ def map_check_for_creature(x, y, exclude_entity = None):
 
     # find any entity if no exclusions
     else:
-        for ent in GAME.current_entities:
+        for ent in GAME.level.current_entities:
             if (ent.x == x
                 and ent.y == y
                 and ent.creature):
@@ -400,12 +400,12 @@ class com_Item(object):
             GAME.game_message(actor.creature.name_instance + " picked up " + self.owner.name, "white")
             actor.container.inventory.append(self.owner)
             self.current_container = actor.container
-            GAME.current_entities.remove(self.owner)
+            GAME.level.current_entities.remove(self.owner)
 
     def drop(self, actor):
         GAME.game_message(actor.creature.name_instance + " dropped " + self.owner.name, "white")
         self.current_container.inventory.remove(self.owner)
-        GAME.current_entities.append(self.owner)
+        GAME.level.current_entities.append(self.owner)
         self.owner.x = actor.x
         self.owner.y = actor.y
 

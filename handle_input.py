@@ -91,7 +91,7 @@ def game_handle_mouse_input(key):
                     print "Clicked on tile " + str(click_x) + " " + str(click_y)
 
                     if click_x != PLAYER.x or click_y != PLAYER.y:
-                        moved = PLAYER.creature.move_towards(click_x, click_y, GAME.current_map)
+                        moved = PLAYER.creature.move_towards(click_x, click_y, GAME.level.current_map)
                         if (moved[0]):
                             CAMERA.move(moved[1], moved[2])
                             GAME.fov_recompute = True
@@ -111,7 +111,7 @@ def game_key_move(key):
         'UP': (0, -1), 'DOWN': (0, 1), 'LEFT': (-1, 0), 'RIGHT': (1, 0)
     }
 
-    if PLAYER.creature.move(KEY_TO_DIR[key][0], KEY_TO_DIR[key][1], GAME.current_map):
+    if PLAYER.creature.move(KEY_TO_DIR[key][0], KEY_TO_DIR[key][1], GAME.level.current_map):
         CAMERA.move(KEY_TO_DIR[key][0], KEY_TO_DIR[key][1])
         GAME.fov_recompute = True
 
@@ -138,7 +138,7 @@ def game_handle_keys():
             return game_key_move('RIGHT')
 
         if key == blt.TK_PERIOD and blt.check(blt.TK_SHIFT):
-            if GAME.current_map[PLAYER.x][PLAYER.y] == 4: #.stairs:
+            if GAME.level.current_map[PLAYER.x][PLAYER.y] == 4: #.stairs:
                 GAME.next_level()
 
         # items
