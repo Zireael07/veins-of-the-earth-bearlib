@@ -6,12 +6,14 @@ import math
 
 import components
 import constants
+from map_common import map_check_for_creature, find_grid_in_range
 
 import logging
 from logging.config import dictConfig
 
 # need a reference to global GAME %^$@
 def initialize_game(game):
+    print("Initialized game")
     global GAME
 
     GAME = game
@@ -403,6 +405,13 @@ def generate_monster(m_id, x,y):
                                             chat = mon_chat,
                                             death_function=death)
     ai_comp = AI_test()
+
+    # check that x,y isn't taken
+    taken = map_check_for_creature(x,y,GAME)
+    if taken is not None:
+        grids = find_grid_in_range(3,x,y)
+        if grids is not None:
+            x,y = grids[0]
 
     monster = components.obj_Actor(x,y, char, mon_name, creature=creature_comp, ai=ai_comp)
 

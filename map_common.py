@@ -97,6 +97,17 @@ def random_free_tile(inc_map):
     print("Coordinates are " + str(x) + " " + str(y))
     return x, y
 
+def find_grid_in_range(dist, x, y):
+    print("Looking for grids in range " + str(dist) + " of " + str(x) + " " + str(y))
+    coord_in_range = []
+    for i in range(x-dist,x+dist+1):
+        for j in range(y-dist, y+dist+1):
+            if i > 0 and i < constants.MAP_WIDTH and j > 0 and j < constants.MAP_HEIGHT:
+                coord_in_range.append((i, j))
+    return coord_in_range
+
+
+
 # admittedly not ideal here due to the reliance on game... but /shrug
 def map_check_for_item(x,y, game):
     target = None
@@ -109,6 +120,34 @@ def map_check_for_item(x,y, game):
 
         if target:
             return target
+
+def map_check_for_creature(x, y, game, exclude_entity = None):
+    print("Checking for creatures at " + str(x) + " " + str(y))
+    target = None
+
+    # find entity that isn't excluded
+    if exclude_entity:
+        for ent in game.level.current_entities:
+            if (ent is not exclude_entity
+                and ent.x == x
+                and ent.y == y
+                and ent.creature):
+                target = ent
+
+            if target:
+                return target
+
+    # find any entity if no exclusions
+    else:
+        for ent in game.level.current_entities:
+            if (ent.x == x
+                and ent.y == y
+                and ent.creature):
+                target = ent
+
+            if target:
+                return target
+
 
 def print_map_string(inc_map):
     for y in range(len(inc_map)):

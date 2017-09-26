@@ -13,7 +13,8 @@ import constants
 import renderer
 import components
 import generators
-from map_common import map_make_fov, random_free_tile, Rect, print_map_string, get_map_desc
+from map_common import map_make_fov, random_free_tile, Rect, print_map_string, get_map_desc,\
+    map_check_for_creature, find_grid_in_range
 from bspmap import BspMapGenerator
 from bspcity import BspCityGenerator
 import handle_input
@@ -24,6 +25,11 @@ class obj_Game(object):
     def __init__(self, basic):
         if not basic:
             self.level = obj_Level()
+
+            # init game for submodules
+            components.initialize_game(self)
+            generators.initialize_game(self)
+            renderer.initialize_game(self)
 
             self.level.generate_items_monsters()
             global FOV_MAP
@@ -129,6 +135,8 @@ class obj_Level(object):
         self.add_entity(
             generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
 
+        # test: force spawn a monster on top of the player
+        self.add_entity(generators.generate_monster("goblin", self.player_start_x, self.player_start_y))
 
 class obj_Camera(object):
     def __init__(self):
@@ -542,10 +550,10 @@ def wait(wait_time):
 def start_new_game():
     game = obj_Game(False)
 
-    # init game for submodules
-    components.initialize_game(game)
-    generators.initialize_game(game)
-    renderer.initialize_game(game)
+    # init game for submodules (moved to the game init itself)
+    #components.initialize_game(game)
+    #generators.initialize_game(game)
+    #renderer.initialize_game(game)
 
     # init factions
     game.add_faction(("player", "enemy", -100))
@@ -560,7 +568,18 @@ def start_new_game():
                                             base_cha=player_array[5],
                                             player=True, faction="player", death_function=death_player)
 
-    player = components.obj_Actor(game.level.player_start_x, game.level.player_start_y, "@", "Player", creature=creature_com1,
+    # check that x,y isn't taken
+    x,y = game.level.player_start_x, game.level.player_start_y
+    taken = map_check_for_creature(x,y, game)
+    if taken is not None:
+        print("Looking for grid in range")
+        grids = find_grid_in_range(3, x,y)
+        if grids is not None:
+            x,y = grids[0]
+    else:
+        print("No creature at " + str(x) + " " + str(y))
+
+    player = components.obj_Actor(x, y, "@", "Player", creature=creature_com1,
                                   container=container_com1)
 
     camera = obj_Camera()
