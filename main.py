@@ -24,28 +24,10 @@ class obj_Game(object):
     def __init__(self, basic):
         if not basic:
             self.level = obj_Level()
-            #self.current_map = map_create()
-            #map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-            #                          constants.FULL_ROOMS)
-            #map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-            #                          constants.FULL_ROOMS)
-            #gen_map = map_gen.generate_map()
-            #self.current_map, self.map_desc = gen_map[0], gen_map[1]
-            #if len(gen_map) > 2:
-            #    self.player_start_x, self.player_start_y = gen_map[2], gen_map[3]
-            #if len(gen_map) > 4:
-            #    self.rooms = gen_map[4]
-            #self.current_map, self.player_start_x, self.player_start_y, self.rooms, self.map_desc = map_gen.generate_map()
-
-            #print_map_string(self.current_map)
 
             global FOV_MAP
             FOV_MAP = map_make_fov(self.level.current_map)
 
-            # new way of storing explored info
-            #self.current_explored = [[ False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
-
-            #self.current_entities = []
             self.factions = []
 
             self.message_history = []
@@ -55,9 +37,6 @@ class obj_Game(object):
     def game_message(self, msg, msg_color):
         self.message_history.append((msg, msg_color))
 
-    #def add_entity(self, entity):
-    #    if entity is not None:
-    #        self.current_entities.append(entity)
 
     def add_faction(self, faction_data):
         self.factions.append(faction_data)
@@ -80,20 +59,8 @@ class obj_Game(object):
     def next_level(self):
         self.game_message("You descend deeper in the dungeon", "violet")
 
+        # make next level
         self.level = obj_Level()
-        # # make next level
-        # map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-        #                           constants.FULL_ROOMS)
-        #
-        # gen_map = map_gen.generate_map()
-        # self.current_map, self.map_desc = gen_map[0], gen_map[1]
-        # if len(gen_map) > 2:
-        #     self.player_start_x, self.player_start_y = gen_map[2], gen_map[3]
-        # if len(gen_map) > 4:
-        #     self.rooms = gen_map[4]
-        # #self.current_map, self.player_start_x, self.player_start_y, self.rooms = map_gen.generate_map()
-        #
-        # print_map_string(self.current_map)
 
         # add player
         self.level.current_entities.append(PLAYER)
@@ -225,7 +192,7 @@ def death_monster(monster):
 def death_player(player):
     GAME.game_message(player.creature.name_instance + " is dead!", "dark red")
     # remove from map
-    GAME.current_entities.remove(player)
+    GAME.level.current_entities.remove(player)
     # set game state to player dead
     GAME.game_state = GameStates.PLAYER_DEAD
     #delete savegame (this assumes we can only have one)
@@ -394,8 +361,8 @@ def game_main_loop():
             blt.puts(2,2, "[color=red] player position: %d %d" % (PLAYER.x, PLAYER.y))
             blt.puts(2,5, "[color=red] camera offset: %d %d" % (CAMERA.offset[0], CAMERA.offset[1]))
             # debugging rooms
-            blt.puts(2,6, "[color=orange] room index: %s" % (room_index_str()))
-            blt.puts(2,7, "[color=orange] room center %s" % (get_room_data()))
+            #blt.puts(2,6, "[color=orange] room index: %s" % (room_index_str()))
+            #blt.puts(2,7, "[color=orange] room center %s" % (get_room_data()))
 
             # this works on cells
             blt.layer(0)
