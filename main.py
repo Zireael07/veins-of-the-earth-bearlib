@@ -25,6 +25,7 @@ class obj_Game(object):
         if not basic:
             self.level = obj_Level()
 
+            self.level.generate_items_monsters()
             global FOV_MAP
             FOV_MAP = map_make_fov(self.level.current_map)
 
@@ -65,6 +66,9 @@ class obj_Game(object):
         # add player
         self.level.current_entities.append(PLAYER)
 
+        # add stuff
+        self.level.generate_items_monsters()
+
         global FOV_MAP
         FOV_MAP = map_make_fov(self.level.current_map)
 
@@ -95,6 +99,36 @@ class obj_Level(object):
     def add_entity(self, entity):
         if entity is not None:
             self.current_entities.append(entity)
+
+    def generate_items_monsters(self):
+        # test potion
+        x, y = random_free_tile(self.current_map)
+        item_com = components.com_Item(use_function=cast_heal)
+        item = components.obj_Actor(x, y, 0x2762, "potion", item=item_com)
+        self.current_entities.append(item)
+
+        # test generating items
+        self.current_entities.append(generators.generate_item("longsword", *random_free_tile(self.current_map)))
+        self.current_entities.append(generators.generate_item("dagger", *random_free_tile(self.current_map)))
+        self.current_entities.append(generators.generate_item("chainmail", *random_free_tile(self.current_map)))
+
+        self.add_entity(generators.generate_monster("human", *random_free_tile(self.current_map)))
+        # test generating monsters
+        self.add_entity(
+            generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+        self.add_entity(
+            generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+        self.add_entity(
+            generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+        self.add_entity(
+            generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+        self.add_entity(
+            generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+        self.add_entity(
+            generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+        self.add_entity(
+            generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+
 
 class obj_Camera(object):
     def __init__(self):
@@ -504,28 +538,6 @@ def wait(wait_time):
     while time() - start_time < wait_time:
         blt.refresh()
 
-def generate_items_monsters(level):
-    #test potion
-    x,y = random_free_tile(level.current_map)
-    item_com = components.com_Item(use_function=cast_heal)
-    item = components.obj_Actor(x, y, 0x2762, "potion", item=item_com)
-    level.current_entities.append(item)
-
-    # test generating items
-    level.current_entities.append(generators.generate_item("longsword", *random_free_tile(level.current_map)))
-    level.current_entities.append(generators.generate_item("dagger", *random_free_tile(level.current_map)))
-    level.current_entities.append(generators.generate_item("chainmail", *random_free_tile(level.current_map)))
-
-    level.add_entity(generators.generate_monster("human", *random_free_tile(level.current_map)))
-    # test generating monsters
-    level.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(level.current_map)))
-    level.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(level.current_map)))
-    level.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(level.current_map)))
-    level.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(level.current_map)))
-    level.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(level.current_map)))
-    level.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(level.current_map)))
-    level.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(level.current_map)))
-
 
 def start_new_game():
     game = obj_Game(False)
@@ -563,9 +575,6 @@ def start_new_game():
 
     # adjust camera position so that player is centered
     camera.start_update(player)
-
-    # generate items
-    generate_items_monsters(game.level)
 
     # put player last
     game.level.current_entities.append(player)
