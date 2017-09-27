@@ -31,13 +31,15 @@ class obj_Game(object):
             generators.initialize_game(self)
             renderer.initialize_game(self)
 
+            self.message_history = []
+
             self.level.generate_items_monsters()
             global FOV_MAP
             FOV_MAP = map_make_fov(self.level.current_map)
 
             self.factions = []
 
-            self.message_history = []
+
 
         self.fov_recompute = False
 

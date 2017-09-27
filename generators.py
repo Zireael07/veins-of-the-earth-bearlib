@@ -59,7 +59,15 @@ def death_monster(monster):
     GAME.game_message(monster.creature.name_instance + " is dead!", "gray")
 
     # spawn loot
-    GAME.level.current_entities.append(generate_item("dagger", monster.x, monster.y))
+    #GAME.level.current_entities.append(generate_item("dagger", monster.x, monster.y))
+
+    if monster.container is not None:
+        print("Monster had inventory")
+        for item in monster.container.inventory:
+            print("Spawning an item from inventory")
+            item.x = monster.x
+            item.y = monster.y
+            GAME.level.current_entities.append(item)
 
     # clean up components
     monster.creature = None
@@ -413,7 +421,19 @@ def generate_monster(m_id, x,y):
         if grids is not None:
             x,y = grids[0]
 
-    monster = components.obj_Actor(x,y, char, mon_name, creature=creature_comp, ai=ai_comp)
+    # equipment
+    #if 'equipment' in monster_data[m_id]:
+
+
+    container_comp = components.com_Container()
+
+    monster = components.obj_Actor(x,y, char, mon_name, creature=creature_comp, ai=ai_comp, container=container_comp)
+
+    # equip equipment
+    if 'equipment' in monster_data[m_id]:
+        mon_equip_id = monster_data[m_id]['equipment']
+        mon_equip = generate_item(mon_equip_id, x,y)
+        mon_equip.item.pick_up(monster)
 
     return monster
 
