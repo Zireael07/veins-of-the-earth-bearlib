@@ -14,7 +14,7 @@ import renderer
 import components
 import generators
 from map_common import map_make_fov, random_free_tile, Rect, print_map_string, get_map_desc,\
-    map_check_for_creature, find_grid_in_range
+    map_check_for_creature, find_grid_in_range, find_free_grid_in_range
 from bspmap import BspMapGenerator
 from bspcity import BspCityGenerator
 import handle_input
@@ -573,7 +573,8 @@ def start_new_game():
     taken = map_check_for_creature(x,y, game)
     if taken is not None:
         print("Looking for grid in range")
-        grids = find_grid_in_range(3, x,y)
+        grids = find_free_grid_in_range(3, x, y, game)
+        #grids = find_grid_in_range(3, x,y)
         if grids is not None:
             x,y = grids[0]
     else:

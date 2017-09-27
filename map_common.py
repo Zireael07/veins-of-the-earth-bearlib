@@ -2,6 +2,8 @@
 
 import libtcodpy as libtcod
 import sys
+import math
+from operator import itemgetter
 
 import constants
 
@@ -97,16 +99,37 @@ def random_free_tile(inc_map):
     print("Coordinates are " + str(x) + " " + str(y))
     return x, y
 
+def distance_to(start, other):
+    # return the distance to another object
+    dx = other[0] - start[0]
+    dy = other[1] - start[1]
+    return math.sqrt(dx ** 2 + dy ** 2)
+
 def find_grid_in_range(dist, x, y):
     print("Looking for grids in range " + str(dist) + " of " + str(x) + " " + str(y))
     coord_in_range = []
     for i in range(x-dist,x+dist+1):
         for j in range(y-dist, y+dist+1):
             if i > 0 and i < constants.MAP_WIDTH and j > 0 and j < constants.MAP_HEIGHT:
-                coord_in_range.append((i, j))
+                distance = distance_to((x,y), (i,j))
+                coord_in_range.append((i, j, distance))
+
+    # sort 'em
+    coord_in_range = sorted(coord_in_range, key=itemgetter(2))
+
     return coord_in_range
 
+def find_free_grid_in_range(dist, x, y, game):
+    coords = find_grid_in_range(dist, x,y)
+    free = get_free_tiles(game.level.current_map)
+    out = []
 
+    for c in coords:
+        if (c[0], c[1]) in free:
+            if map_check_for_creature(c[0],c[1],game) is None:
+                out.append((c[0], c[1]))
+
+    return out
 
 # admittedly not ideal here due to the reliance on game... but /shrug
 def map_check_for_item(x,y, game):
@@ -122,7 +145,7 @@ def map_check_for_item(x,y, game):
             return target
 
 def map_check_for_creature(x, y, game, exclude_entity = None):
-    print("Checking for creatures at " + str(x) + " " + str(y))
+    #print("Checking for creatures at " + str(x) + " " + str(y))
     target = None
 
     # find entity that isn't excluded
