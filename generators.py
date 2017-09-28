@@ -6,7 +6,7 @@ import math
 
 import components
 import constants
-from map_common import map_check_for_creature, find_grid_in_range
+from map_common import map_check_for_creature, find_free_grid_in_range
 
 import logging
 from logging.config import dictConfig
@@ -417,9 +417,9 @@ def generate_monster(m_id, x,y):
     # check that x,y isn't taken
     taken = map_check_for_creature(x,y,GAME)
     if taken is not None:
-        grids = find_grid_in_range(3,x,y)
+        grids = find_free_grid_in_range(3,x,y,GAME)
         if grids is not None:
-            x,y = grids[0]
+            x,y, = grids[0]
 
     # equipment
     #if 'equipment' in monster_data[m_id]:

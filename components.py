@@ -397,12 +397,13 @@ class com_Item(object):
 
     def pick_up(self, actor):
         if actor.container:
-            GAME.game_message(actor.creature.name_instance + " picked up " + self.owner.name, "white")
             actor.container.inventory.append(self.owner)
             self.current_container = actor.container
             # special case: we might not be in the entities list at all if creating NPC inventory
             if self.owner in GAME.level.current_entities:
                 GAME.level.current_entities.remove(self.owner)
+                # if we're creating NPC inventory, don't make a log message
+                GAME.game_message(actor.creature.name_instance + " picked up " + self.owner.name, "white")
 
     def drop(self, actor):
         GAME.game_message(actor.creature.name_instance + " dropped " + self.owner.name, "white")
