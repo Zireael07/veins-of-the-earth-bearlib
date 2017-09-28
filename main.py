@@ -548,19 +548,7 @@ def wait(wait_time):
     while time() - start_time < wait_time:
         blt.refresh()
 
-
-def start_new_game():
-    game = obj_Game(False)
-
-    # init game for submodules (moved to the game init itself)
-    #components.initialize_game(game)
-    #generators.initialize_game(game)
-    #renderer.initialize_game(game)
-
-    # init factions
-    game.add_faction(("player", "enemy", -100))
-    game.add_faction(("player", "neutral", 0))
-
+def generate_player(game):
     container_com1 = components.com_Container()
     player_array = generators.generate_stats("heroic")
     creature_com1 = components.com_Creature("Player", hp=20,
@@ -579,11 +567,36 @@ def start_new_game():
         #grids = find_grid_in_range(3, x,y)
         if grids is not None:
             x,y = grids[0]
+        else:
+            print("No grids found")
     else:
         print("No creature at " + str(x) + " " + str(y))
 
     player = components.obj_Actor(x, y, "@", "Player", creature=creature_com1,
                                   container=container_com1)
+    
+    # give starting equipment
+    start_equip = generators.generate_item("longsword", x, y)
+    start_equip.item.pick_up(player)
+
+
+    return player
+
+
+def start_new_game():
+    game = obj_Game(False)
+
+    # init game for submodules (moved to the game init itself)
+    #components.initialize_game(game)
+    #generators.initialize_game(game)
+    #renderer.initialize_game(game)
+
+    # init factions
+    game.add_faction(("player", "enemy", -100))
+    game.add_faction(("player", "neutral", 0))
+
+    # spawn player
+    player = generate_player(game)
 
     camera = obj_Camera()
 
