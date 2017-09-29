@@ -269,6 +269,8 @@ def draw_game(x,y):
     renderer.draw_bar(2, 15, 20, "HP", PLAYER.creature.hp, PLAYER.creature.max_hp, "red", "darker red", str(PLAYER.creature.hp))
     blt.color(4294967295)
 
+    if GAME.game_state == GameStates.PLAYER_DEAD:
+        blt.puts(80, 20, "You are dead!")
 
 
 def cell_to_iso(x,y):
