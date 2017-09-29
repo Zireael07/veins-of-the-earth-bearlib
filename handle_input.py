@@ -144,8 +144,8 @@ def game_handle_keys():
         # items
         if key == blt.TK_G:
             ent = map_check_for_item(PLAYER.x, PLAYER.y, GAME)
-            #for ent in objects:
-            ent.item.pick_up(PLAYER)
+            if ent is not None:
+                ent.item.pick_up(PLAYER)
 
         if key == blt.TK_D:
             if len(PLAYER.container.inventory) > 0:
