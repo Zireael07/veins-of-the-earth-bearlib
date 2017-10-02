@@ -362,6 +362,11 @@ def dialogue_window(creature):
     blt.layer(0)
     index = dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat['chat'], creature.chat['answer'])
 
+    if index is not None and creature.chat['answer'][index]:
+        print("Index " + str(index) + " " + str(creature.chat['answer'][index]['reply']))
+        reply = creature.chat['answer'][index]['reply']
+        index = dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat[reply], [])
+
 
 def main_menu():
 
