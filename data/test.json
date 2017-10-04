@@ -8,7 +8,9 @@
            "hit_points": 4,
            "damage_dice": 6,
            "damage_number": 1,
-           "equipment": "dagger"
+           "equipment": [
+              "dagger"
+           ]
  },
  "goblin": {
            "char": "0xE001",
@@ -18,7 +20,9 @@
            "hit_points": 5,
            "damage_dice": 6,
            "damage_number": 1,
-           "equipment": "dagger"
+           "equipment": [
+              "dagger"
+           ]
  },
  "drow": {
            "char": "0xE002",
@@ -28,7 +32,10 @@
            "hit_points": 6,
            "damage_dice": 6,
            "damage_number": 1,
-           "equipment": "longsword"
+           "equipment": [
+              "longsword",
+              "chainmail"
+           ]
  },
  "human": {
            "char": "0xE003",
@@ -49,6 +56,8 @@
            "hit_points": 8,
            "damage_dice": 8,
            "damage_number": 1,
-           "equipment": "longsword"
+           "equipment": [
+              "longsword"
+           ]
  }
 }

@@ -431,9 +431,10 @@ def generate_monster(m_id, x,y):
 
     # equip equipment
     if 'equipment' in monster_data[m_id]:
-        mon_equip_id = monster_data[m_id]['equipment']
-        mon_equip = generate_item(mon_equip_id, x,y)
-        mon_equip.item.pick_up(monster)
+        for id in monster_data[m_id]['equipment']:
+            mon_equip_id = id
+            mon_equip = generate_item(mon_equip_id, x,y)
+            mon_equip.item.pick_up(monster)
 
     return monster
 
