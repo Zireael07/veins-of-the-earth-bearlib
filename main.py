@@ -415,6 +415,7 @@ def game_main_loop():
             mouse_picking(m_x, m_y)
             # this works on map tiles
             show_tile_desc(pix_x, pix_y)
+            show_npc_desc(pix_x, pix_y)
 
         # refresh term
         blt.refresh()
@@ -531,8 +532,18 @@ def mouse_picking(m_x, m_y):
         if n == 0:
             blt.puts(w, h, "Empty cell")
 
+def show_npc_desc(pix_x, pix_y):
+    w = 4
+    h = 13
+    iso_x, iso_y = renderer.pix_to_iso(pix_x, pix_y)
+    taken = map_check_for_creature(iso_x, iso_y, GAME)
+    if taken is not None:
+        blt.layer(1)
+        blt.puts(w,h, "Enemy hp: " + str(taken.creature.hp))
+        blt.layer(0)
+
 def show_tile_desc(pix_x, pix_y):
-    if not hasattr(GAME, 'map_desc'):
+    if not hasattr(GAME.level, 'map_desc'):
         return
     w = 4
     h = 12

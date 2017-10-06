@@ -263,6 +263,7 @@ def print_converted(inc_map):
 def get_map_desc(x,y, fov_map, explored_map, desc_map=None):
     # catch if we don't have descriptions at all
     if desc_map is None:
+        print("No descriptions")
         return
 
     is_visible = libtcod.map_is_in_fov(fov_map, x, y)
