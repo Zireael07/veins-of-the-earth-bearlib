@@ -302,7 +302,7 @@ class com_Creature(object):
             if self.defense > 0:
                 GAME.game_message(self.name_instance + " blocks " + str(self.defense) + " damage", "gray")
             tile_x, tile_y = draw_iso(self.owner.x, self.owner.y)
-            draw_blood_splatter(tile_x, tile_y, damage)
+            draw_blood_splatter(tile_x, tile_y, change)
             GAME.game_message(self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp), "white")
 
         if self.hp <= 0:
