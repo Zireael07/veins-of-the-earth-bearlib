@@ -24,7 +24,7 @@ from game_states import GameStates
 class obj_Game(object):
     def __init__(self, basic):
         if not basic:
-            self.level = obj_Level()
+            self.level = obj_Level("encampment")
 
             # init game for submodules
             components.initialize_game(self)
@@ -69,7 +69,7 @@ class obj_Game(object):
         self.game_message("You descend deeper in the dungeon", "violet")
 
         # make next level
-        self.level = obj_Level()
+        self.level = obj_Level("dungeon")
 
         # add player
         self.level.current_entities.append(PLAYER)
@@ -85,10 +85,18 @@ class obj_Game(object):
         self.fov_recompute = True
 
 class obj_Level(object):
-    def __init__(self):
+    def __init__(self, type="dungeon"):
         # map gen
-        map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
+        if type == "dungeon":
+            map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
                                   constants.FULL_ROOMS)
+        elif type == "encampment":
+            map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+1, 2,
+                                False)
+        # fallback
+        else:
+            map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
+                                      constants.FULL_ROOMS)
         gen_map = map_gen.generate_map()
         self.current_map, self.map_desc = gen_map[0], gen_map[1]
         if len(gen_map) > 2:
