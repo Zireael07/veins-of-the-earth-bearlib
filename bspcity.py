@@ -2,7 +2,7 @@ import libtcodpy as libtcod
 import random
 
 import constants
-from map_common import Rect, print_map_string, room_desc
+from map_common import Rect, print_map_string, room_desc, convert_walls
 
 class BspCityGenerator(object):
     def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms):
@@ -44,7 +44,7 @@ class BspCityGenerator(object):
             #Make floors
             for x in range(minx+1, maxx):
                 for y in range(miny+1, maxy):
-                    self._map[x][y] = 1
+                    self._map[x][y] = 2
 
             self._rooms_centers.append(((minx + maxx) // 2, (miny + maxy) // 2))
 
@@ -72,7 +72,7 @@ class BspCityGenerator(object):
                 wallX = room.x1
                 wallY = y
 
-            self._map[wallX][wallY] = 1
+            self._map[wallX][wallY] = 2
 
 
     def generate_build_desc(self):
@@ -82,7 +82,7 @@ class BspCityGenerator(object):
                     self.map_desc[x][y] = 2
 
     def _generate_empty_map(self):
-        self._map = [[1 for _ in range(self.map_height)] for _ in range(self.map_width)]
+        self._map = [[2 for _ in range(self.map_height)] for _ in range(self.map_width)]
         return self._map
 
     def generate_map(self):
@@ -105,7 +105,9 @@ class BspCityGenerator(object):
 
         self.generate_build_desc()
 
-        #self._map[stairs_x][stairs_y] = 2 #.stairs = True
+        self._map[stairs_x][stairs_y] = 4 #.stairs = True
+
+        self._map = convert_walls(self._map)
 
         # TODO: generate monsters, items, etc.
         return [self._map, self.map_desc, self._rooms_centers[0][0], self._rooms_centers[0][1], self._rooms]
