@@ -126,6 +126,7 @@ class obj_Level(object):
         # test generating items
         self.current_entities.append(generators.generate_item("longsword", *random_free_tile(self.current_map)))
         self.current_entities.append(generators.generate_item("dagger", *random_free_tile(self.current_map)))
+        self.current_entities.append(generators.generate_item("studded armor", *random_free_tile(self.current_map)))
         self.current_entities.append(generators.generate_item("chainmail", *random_free_tile(self.current_map)))
 
         self.add_entity(generators.generate_monster("human", *random_free_tile(self.current_map)))
@@ -599,7 +600,7 @@ def generate_player(game):
     # give starting equipment
     start_equip = generators.generate_item("longsword", x, y)
     start_equip.item.pick_up(player)
-    start_equip = generators.generate_item("chainmail", x, y)
+    start_equip = generators.generate_item("leather armor", x, y)
     start_equip.item.pick_up(player)
 
 
@@ -681,6 +682,8 @@ def game_initialize():
     blt.set("0x2215: gfx/longsword.png, align=center") #"∕"
     blt.set("0x1C0: gfx/dagger.png, align=center") # "ǀ"
     blt.set("0xFF3B: gfx/chain_armor.png, align=center") # "［"
+    blt.set("0xFF09: gfx/armor_leather.png, align=center") # ")"
+    blt.set("0xFF08: gfx/armor_studded.png, align=center") # "("
     blt.set("0x2762: gfx/potion.png, align=center") # "❢"
 
     # gfx

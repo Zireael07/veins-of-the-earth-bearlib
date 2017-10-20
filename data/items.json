@@ -22,5 +22,19 @@
            "slot": "body",
            "type": "armor",
            "combat_armor": 5
+ },
+ "leather armor": {
+           "char": "0xFF09",
+           "name": "leather armor",
+           "slot": "body",
+           "type": "armor",
+           "combat_armor": 3
+ },
+ "studded armor": {
+           "char": "0xFF08",
+           "name": "studded armor",
+           "slot": "body",
+           "type": "armor",
+           "combat_armor": 4
  }
 }
