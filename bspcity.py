@@ -5,12 +5,13 @@ import constants
 from map_common import Rect, print_map_string, room_desc, convert_walls
 
 class BspCityGenerator(object):
-    def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms):
+    def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms, wall=False):
         self.map_width = map_width
         self.map_height = map_height
         self.min_room_size = min_room_size
         self.generation_depth = generation_depth
         self.full_rooms = full_rooms
+        self.wall = wall
         self._map = []
 
     def _traverse_node(self, node, dat):
@@ -74,6 +75,15 @@ class BspCityGenerator(object):
 
             self._map[wallX][wallY] = 2
 
+    def create_walls(self):
+        # walls around the map
+        for x in range(constants.MAP_WIDTH):
+            self._map[x][0] = 0  # .block_path = True
+            self._map[x][constants.MAP_WIDTH - 1] = 0  # .block_path = True
+
+        for y in range(constants.MAP_HEIGHT):
+            self._map[0][y] = 0  # .block_path = True
+            self._map[constants.MAP_HEIGHT - 1][y] = 0  # .block_path = True
 
     def generate_build_desc(self):
         for room in self._rooms:
@@ -101,6 +111,9 @@ class BspCityGenerator(object):
 
         self.create_doors()
 
+        if self.wall:
+            self.create_walls()
+
         self.map_desc = [[ 0 for _ in range(self.map_height)] for _ in range(self.map_width)]
 
         self.generate_build_desc()
@@ -118,7 +131,7 @@ if __name__ == '__main__':
     test_attempts = 3
     for i in range(test_attempts):
         map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+1, 2,
-                                  False)
+                                  False, True)
         gen_map = map_gen.generate_map()
         current_map, map_desc = gen_map[0], gen_map[1]
         print_map_string(current_map)
