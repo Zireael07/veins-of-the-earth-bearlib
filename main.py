@@ -24,7 +24,7 @@ from game_states import GameStates
 class obj_Game(object):
     def __init__(self, basic):
         if not basic:
-            self.level = obj_Level("encampment")
+            self.level = obj_Level("city")
 
             # init game for submodules
             components.initialize_game(self)
@@ -93,6 +93,9 @@ class obj_Level(object):
         elif type == "encampment":
             map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+1, 2,
                                 False)
+        elif type == "city":
+            map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+1, 2,
+                                False, True)
         # fallback
         else:
             map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
