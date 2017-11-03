@@ -45,6 +45,9 @@ def map_check_for_creature(x, y, exclude_entity = None):
                 and ent.creature):
                 target = ent
 
+            if target:
+                return target
+
 # returns the equipment in a slot, or None if it's empty
 def get_equipped_in_slot(actor, slot):
     for obj in actor.container.inventory:
