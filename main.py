@@ -550,8 +550,9 @@ def show_npc_desc(pix_x, pix_y):
     iso_x, iso_y = renderer.pix_to_iso(pix_x, pix_y)
     taken = map_check_for_creature(iso_x, iso_y, GAME)
     if taken is not None:
+        hp_perc = (taken.creature.hp*100.0/taken.creature.max_hp) # *100.0
         blt.layer(1)
-        blt.puts(w,h, "Enemy hp: " + str(taken.creature.hp))
+        blt.puts(w,h, "Enemy hp: " + str(taken.creature.hp) + " " + str(hp_perc) + "%")
         blt.layer(0)
 
 def show_tile_desc(pix_x, pix_y):
