@@ -424,7 +424,7 @@ def game_main_loop():
 
             # this works on cells
             blt.layer(0)
-            mouse_picking(m_x, m_y)
+            #mouse_picking(m_x, m_y)
             # this works on map tiles
             show_tile_desc(pix_x, pix_y)
             show_npc_desc(pix_x, pix_y)
@@ -546,20 +546,22 @@ def mouse_picking(m_x, m_y):
 
 def show_npc_desc(pix_x, pix_y):
     w = 4
-    h = 13
+    h = 10
     iso_x, iso_y = renderer.pix_to_iso(pix_x, pix_y)
     taken = map_check_for_creature(iso_x, iso_y, GAME)
     if taken is not None:
         hp_perc = (taken.creature.hp*100.0/taken.creature.max_hp) # *100.0
         blt.layer(1)
-        blt.puts(w,h, "Enemy hp: " + str(taken.creature.hp) + " " + str(hp_perc) + "%")
+        # draw the npc
+        blt.puts(w, h, u"%c  %s" % (taken.char, taken.creature.name_instance) )
+        blt.puts(w,h+2, "Enemy hp: " + str(taken.creature.hp) + " " + str(hp_perc) + "%")
         blt.layer(0)
 
 def show_tile_desc(pix_x, pix_y):
     if not hasattr(GAME.level, 'map_desc'):
         return
     w = 4
-    h = 12
+    h = 8
     iso_x, iso_y = renderer.pix_to_iso(pix_x, pix_y)
 
     blt.layer(1)
