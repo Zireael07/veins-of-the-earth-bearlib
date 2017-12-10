@@ -164,6 +164,9 @@ def game_handle_keys():
     if key == blt.TK_L:
         renderer.log_menu("Log history", 0, 26)
 
+    if key == blt.TK_SLASH and blt.check(blt.TK_SHIFT):
+        renderer.help_menu()
+
     # Debugging
     if key == blt.TK_GRAVE and blt.check(blt.TK_SHIFT):
         print("Debug mode on")

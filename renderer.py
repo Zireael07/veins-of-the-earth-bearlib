@@ -399,6 +399,16 @@ def main_menu():
     if key == blt.TK_L:
         return 2
 
+def help_menu():
+    # make possible drawing the >
+    blt.set("0x003E: none")
+    text_menu("Keybindings", 70, "HELP", "Arrows to move" + "\n" + " > to ascend/descend stairs" + \
+                "\n" + "G to pick up items, D to drop items, I to open inventory" + \
+                "\n" + "C to open character sheet, L to open log" + \
+                "\n" + "? to bring up this menu again")
+    # restore drawing
+    blt.set("0x003E: gfx/stairs_down.png, align=center")
+
 # drawing special effects
 def wait(wait_time):
     wait_time = wait_time * 0.01
@@ -615,3 +625,34 @@ def dialogue_menu(header, width, title, text, answers):
             blt.set('input: filter = [keyboard, mouse+]')
             blt.composition(True)
             return None
+
+def text_menu(header, width, title, text):
+    GAME.fov_recompute = True
+
+    menu_x = int((120 - width) / 2)
+
+    header_height = 2
+
+    menu_h = int(header_height + 1 + 26)
+    menu_y = int((50 - menu_h) / 2)
+
+    # create a window
+
+    create_window(menu_x, menu_y, width, menu_h, title)
+
+
+    blt.puts(menu_x, menu_y, header)
+
+    y = menu_y + header_height + 1
+
+    blt.puts(menu_x, y, text)
+
+    blt.refresh()
+
+    # present the root console to the player and wait for a key-press
+    blt.set('input: filter = [keyboard]')
+    while True:
+        key = blt.read()
+        blt.set('input: filter = [keyboard, mouse+]')
+        blt.composition(True)
+        return key
