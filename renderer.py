@@ -298,28 +298,6 @@ def menu_colored_scrolled(header, options_tuples, width, begin, end, title=None)
             return None, begin, end
 
 # individual menus
-
-def inventory_menu(header, player):
-
-    #if len(player.container.equipped_items) > 0:
-
-
-    index = inventory_menu_test(header, 50, 'INVENTORY', player.container.equipped_items, player.container.inventory)
-
-    #if an item was chosen, return it
-    if index is None or len(player.container.inventory) == 0:
-         return None
-    return player.container.inventory[index]
-
-    # show a menu with each item of the inventory as an option
-    # if len(player.container.inventory) == 0:
-    #     options = ['Inventory is empty.']
-    # else:
-    #     options = [item.display_name() for item in player.container.inventory]
-    #
-    # index = options_menu(header, options, 50, 'INVENTORY')
-
-
 def character_sheet_menu(header, player):
     options = [("STR: " + str(player.creature.strength), "white"), ("DEX: " + str(player.creature.dexterity), "white"),
                ("CON: " + str(player.creature.constitution), "white"), ("INT: " + str(player.creature.intelligence), "white"),
@@ -409,75 +387,17 @@ def help_menu():
     # restore drawing
     blt.set("0x003E: gfx/stairs_down.png, align=center")
 
-# drawing special effects
-def wait(wait_time):
-    wait_time = wait_time * 0.01
-    start_time = time.time()
+def inventory_menu(header, player):
+
+    #if len(player.container.equipped_items) > 0:
 
 
-    while time.time() - start_time < wait_time:
-        blt.refresh()
+    index = inventory_menu_test(header, 50, 'INVENTORY', player.container.equipped_items, player.container.inventory)
 
-def draw_effect(x,y, tile, speed, clear, color="white"):
-    blt.layer(1)
-    blt.color(color)
-    blt.put_ext(x, y, 0, 0, tile)
-    wait(8*speed)
-    if clear:
-        blt.clear_area(x,y)
-
-def draw_effect_mult(x,y,tile, speed, color="white"):
-    blt.layer(1)
-    blt.color(color)
-    blt.put_ext(x, y, 0, 0, tile)
-
-def draw_effects_batch(effects, speed, clr_x, clr_y, clr_w=1, clr_h=1):
-    for eff in effects:
-        draw_effect_mult(eff[1], eff[2], eff[0], speed, eff[3])
-
-    wait(8*speed)
-    blt.clear_area(clr_x, clr_y, clr_w, clr_h)
-
-
-def draw_effects(effects, speed, clr_x, clr_y, clr_w=1, clr_h=1):
-    for eff in effects:
-        draw_effect(eff[1],eff[2], eff[0], speed, False, eff[3])
-
-    blt.clear_area(clr_x,clr_y, clr_w, clr_h)
-
-def draw_blood_splatter(x,y, damage):
-    effects = []
-    effects.append((0x2BC1, x, y, "red"))
-    w = 1
-    for l in str(damage):
-        effects.append((l, x, y, "white"))
-        x += 1
-        w += 1
-
-    draw_effects_batch(effects, 1.5, x, y, w,1)
-
-def draw_shield(x,y):
-    draw_effect(x,y, 0x2BC2, 1.5, True)
-
-def draw_floating_text(x,y, string):
-    effects = []
-    w = 1
-    for l in str(string):
-        effects.append((l, x, y, "white"))
-        x +=1
-        w +=1
-
-    draw_effects_batch(effects, 5, x, y, w, 1)
-
-def draw_floating_text_step(x,y, string):
-    effects = []
-    w = 1
-    for l in str(string):
-        effects.append((l,x,y, "white"))
-        x += 1
-        w += 1
-
-    draw_effects(effects, 2, x, y, w, 1)
+    #if an item was chosen, return it
+    if index is None or len(player.container.inventory) == 0:
+         return None
+    return player.container.inventory[index]
 
 def draw_box(x,y,w,h):
     # upper border
@@ -656,3 +576,74 @@ def text_menu(header, width, title, text):
         blt.set('input: filter = [keyboard, mouse+]')
         blt.composition(True)
         return key
+
+
+# drawing special effects
+def wait(wait_time):
+    wait_time = wait_time * 0.01
+    start_time = time.time()
+
+
+    while time.time() - start_time < wait_time:
+        blt.refresh()
+
+def draw_effect(x,y, tile, speed, clear, color="white"):
+    blt.layer(1)
+    blt.color(color)
+    blt.put_ext(x, y, 0, 0, tile)
+    wait(8*speed)
+    if clear:
+        blt.clear_area(x,y)
+
+def draw_effect_mult(x,y,tile, speed, color="white"):
+    blt.layer(1)
+    blt.color(color)
+    blt.put_ext(x, y, 0, 0, tile)
+
+def draw_effects_batch(effects, speed, clr_x, clr_y, clr_w=1, clr_h=1):
+    for eff in effects:
+        draw_effect_mult(eff[1], eff[2], eff[0], speed, eff[3])
+
+    wait(8*speed)
+    blt.clear_area(clr_x, clr_y, clr_w, clr_h)
+
+
+def draw_effects(effects, speed, clr_x, clr_y, clr_w=1, clr_h=1):
+    for eff in effects:
+        draw_effect(eff[1],eff[2], eff[0], speed, False, eff[3])
+
+    blt.clear_area(clr_x,clr_y, clr_w, clr_h)
+
+def draw_blood_splatter(x,y, damage):
+    effects = []
+    effects.append((0x2BC1, x, y, "red"))
+    w = 1
+    for l in str(damage):
+        effects.append((l, x, y, "white"))
+        x += 1
+        w += 1
+
+    draw_effects_batch(effects, 1.5, x, y, w,1)
+
+def draw_shield(x,y):
+    draw_effect(x,y, 0x2BC2, 1.5, True)
+
+def draw_floating_text(x,y, string):
+    effects = []
+    w = 1
+    for l in str(string):
+        effects.append((l, x, y, "white"))
+        x +=1
+        w +=1
+
+    draw_effects_batch(effects, 5, x, y, w, 1)
+
+def draw_floating_text_step(x,y, string):
+    effects = []
+    w = 1
+    for l in str(string):
+        effects.append((l,x,y, "white"))
+        x += 1
+        w += 1
+
+    draw_effects(effects, 2, x, y, w, 1)
