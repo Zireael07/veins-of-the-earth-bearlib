@@ -748,6 +748,11 @@ def game_initialize():
 
         #set state to player turn
         GAME.game_state = GameStates.PLAYER_TURN
+
+        # show character creation
+        blt.clear()
+        renderer.character_creation_menu()
+
     else:
         #quit
         blt.close()

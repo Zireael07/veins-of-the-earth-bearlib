@@ -387,6 +387,15 @@ def help_menu():
     # restore drawing
     blt.set("0x003E: gfx/stairs_down.png, align=center")
 
+def character_creation_menu():
+    races = ["human", "drow"]
+    tiles = ["gfx/human_m.png", "gfx/drow_m.png"]
+
+    key = options_menu("CHARACTER CREATION", races, 80)
+
+    blt.set("0x40: " + tiles[key] + ", align=center")  # "@"
+
+
 def inventory_menu(header, player):
 
     #if len(player.container.equipped_items) > 0:
