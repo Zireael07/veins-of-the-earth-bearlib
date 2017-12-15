@@ -389,11 +389,118 @@ def help_menu():
 
 def character_creation_menu():
     races = ["human", "drow"]
+    genders = ["male", "female"]
+
+    columns = [races, genders]
+
     tiles = ["gfx/human_m.png", "gfx/drow_m.png"]
 
-    key = options_menu("CHARACTER CREATION", races, 80)
+    key = multicolumn_menu("CHARACTER CREATION", columns, 80)
+
+    #print("Selected: " + str(key))
 
     blt.set("0x40: " + tiles[key] + ", align=center")  # "@"
+
+def multicolumn_menu(title, columns, width):
+    current = 0
+    ret = multicolumn_menu_inner(title, columns, width, current)
+    if ret is not None:
+        #print("Ret is not none " + str(ret))
+        # if we are getting input, keep showing the log
+        while ret is not None and ret[0] is not None:
+            print("Ret is not none" + str(ret))
+            ret = multicolumn_menu_inner(title, columns, width, ret[0])
+
+        return ret[1]
+
+def multicolumn_menu_inner(title, columns, width, current):
+    GAME.fov_recompute = True
+
+    menu_x = int((120 - width) / 2)
+
+    if len(columns[0]) > 26:
+        raise ValueError('Cannot have a menu with more than 26 options.')
+
+    header_height = 2
+
+    menu_h = int(header_height + 1 + 26)
+    menu_y = int((50 - menu_h) / 2)
+
+    # default column
+    cur_column = current
+
+    # create a window
+
+    create_window(menu_x, menu_y, width, menu_h, title)
+
+    blt.puts(menu_x, menu_y, "Press tab to change columns")
+
+    # print all the options
+    y = menu_y + header_height + 1
+    # this continues the lettering between columns e.g ab | cd | ef
+    letter_index = ord('a')
+
+    x = menu_x
+    for i in range(0, len(columns)):
+        #col = columns[i]
+        w = 10
+        y = menu_y + header_height + 2
+        # outline current column
+        if i == cur_column:
+            h = len(columns[i])
+            # upper border
+            border = '┌' + '─' * (w) + '┐'
+            blt.puts(x - 1, y - 1, border)
+            # sides
+            for j in range(h):
+                blt.puts(x - 1, y + j, '│')
+                blt.puts(x + w, y + j, '│')
+            # lower border
+            border = '└' + '─' * (w) + '┘'
+            blt.puts(x - 1, y + h, border)
+
+
+        # draw the column
+        #letter_index = ord('a')
+        for option_text in columns[i]:
+            text = '(' + chr(letter_index) + ') ' + option_text
+            blt.puts(x, y, text)
+            y += 1
+            letter_index += 1
+
+        x += w+2
+
+        i += 1
+
+    blt.refresh()
+    # present the root console to the player and wait for a key-press
+    blt.set('input: filter = [keyboard]')
+    while True:
+        key = blt.read()
+        # change current column
+        if key == blt.TK_TAB:
+            if cur_column < len(columns)-1:
+                return [cur_column+1, None]
+            else:
+                return [0, None]
+
+        # handle options
+        elif blt.check(blt.TK_CHAR):
+            # convert the ASCII code to an index; if it corresponds to an option, return it
+            key = blt.state(blt.TK_CHAR)
+            index = key - ord('a')
+            # this reacts to any of the keys listed in current column
+            if 0 <= index < len(columns[cur_column]):
+                blt.set('input: filter = [keyboard, mouse+]')
+                blt.composition(True)
+                print("Pressed key " + str(index))
+                return [None, index]
+        else:
+            blt.set('input: filter = [keyboard, mouse+]')
+            blt.composition(True)
+            print("Pressed any key")
+            return None
+
 
 
 def inventory_menu(header, player):
