@@ -48,48 +48,48 @@ def pix_to_iso(x,y):
 
 
 def draw_map(map_draw, map_explored, fov_map):
-    width = constants.MAP_WIDTH
-    height = constants.MAP_HEIGHT
+    #width = constants.MAP_WIDTH
+    #height = constants.MAP_HEIGHT
     debug = constants.DEBUG
 
-    for x in range(0, width):
-        for y in range(0, height):
-            #tile_x, tile_y = draw_iso(x, y)
-            is_in_map_range = CAMERA.rectangle.contains((x,y))  #((tile_x,tile_y))
-            #print("Is in map range " + str(tile_x) + " " + str(tile_y) + ": " + str(is_in_map_range))
+    width_start = CAMERA.get_width_start()
+    width_end = CAMERA.get_width_end()
+    height_start = CAMERA.get_height_start()
+    height_end = CAMERA.get_height_end()
 
-            if is_in_map_range:
-                if debug:
-                    is_visible = True
-                else:
-                    is_visible = libtcod.map_is_in_fov(fov_map, x, y)
+    for x in range(width_start, width_end):
+        for y in range(height_start, height_end):
+            if debug:
+                is_visible = True
+            else:
+                is_visible = libtcod.map_is_in_fov(fov_map, x, y)
 
-                if is_visible:
-                    #blt.color("white")
-                    blt.color(4294967295)
+            if is_visible:
+                # blt.color("white")
+                blt.color(4294967295)
 
-                    map_explored[x][y] = True
-                    #map_draw[x][y].explored = True
+                map_explored[x][y] = True
+                # map_draw[x][y].explored = True
 
-                    # cartesian
-                    # tile_x = x*constants.TILE_WIDTH
-                    # tile_y = y*constants.TILE_HEIGHT
+                # cartesian
+                # tile_x = x*constants.TILE_WIDTH
+                # tile_y = y*constants.TILE_HEIGHT
 
-                    tile_x, tile_y = draw_iso(x,y)
+                tile_x, tile_y = draw_iso(x, y)
 
-                    blt.put(tile_x, tile_y, tile_types[map_draw[x][y]].tile_put)
+                blt.put(tile_x, tile_y, tile_types[map_draw[x][y]].tile_put)
 
 
-                elif map_explored[x][y]: #map_draw[x][y].explored:
-                    #blt.color("gray")
-                    blt.color(4286545791)
-                    # cartesian
-                    # tile_x = x * constants.TILE_WIDTH
-                    # tile_y = y * constants.TILE_HEIGHT
+            elif map_explored[x][y]:  # map_draw[x][y].explored:
+                # blt.color("gray")
+                blt.color(4286545791)
+                # cartesian
+                # tile_x = x * constants.TILE_WIDTH
+                # tile_y = y * constants.TILE_HEIGHT
 
-                    tile_x, tile_y = draw_iso(x,y)
+                tile_x, tile_y = draw_iso(x, y)
 
-                    blt.put(tile_x, tile_y, tile_types[map_draw[x][y]].tile_put)
+                blt.put(tile_x, tile_y, tile_types[map_draw[x][y]].tile_put)
 
 
 def draw_mouseover(x,y):

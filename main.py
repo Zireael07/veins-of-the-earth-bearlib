@@ -191,7 +191,30 @@ class obj_Camera(object):
 
         self.offset = (new_x, new_y)
 
+    # camera extents to speed up rendering
+    def get_width_start(self):
+        if self.top_x > 0:
+            return self.top_x
+        else:
+            return 0
 
+    def get_width_end(self):
+        if self.top_x + self.width <= constants.MAP_WIDTH:
+            return self.top_x + self.width
+        else:
+            return constants.MAP_WIDTH
+
+    def get_height_start(self):
+        if self.top_y > 0:
+            return self.top_y
+        else:
+            return 0
+
+    def get_height_end(self):
+        if self.top_y + self.height <= constants.MAP_HEIGHT:
+            return self.top_y + self.height
+        else:
+            return constants.MAP_HEIGHT
 
 # This will be used both by AI and map checking - that's why it's not in components.py
 def move_astar(actor, target, inc_map):
