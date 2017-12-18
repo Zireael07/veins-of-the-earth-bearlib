@@ -98,15 +98,17 @@ class obj_Actor(object):
     def draw(self, fov_map):
         is_visible = libtcod.map_is_in_fov(fov_map, self.x, self.y)
 
-        if is_visible:
-            self.visible = True
+        self.visible = is_visible
+
+        if self.visible:
             tile_x, tile_y = draw_iso(self.x,self.y) #this is the top(?) corner of our tile
             # this works for ASCII mode
             #blt.put_ext(tile_x, tile_y, 0, blt.state(blt.TK_CELL_HEIGHT), self.char)
 
             # draw the marker
             if self.creature and self.creature.faction:
-                blt.color(self.creature.get_marker_color())
+                blt.color(self.creature.faction_color)
+                #blt.color(self.creature.get_marker_color())
                 blt.put_ext(tile_x, tile_y, 0, 0, 0x2017)
                 #blt.color("white")
                 blt.color(4294967295)
@@ -116,8 +118,7 @@ class obj_Actor(object):
 
             #cartesian
             #blt.put_ext(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, 10, 10, self.char)
-        else:
-            self.visible = False
+
 
 class com_Creature(object):
     ''' Name_instance is the name of an individual, e.g. "Agrk"'''
@@ -230,6 +231,10 @@ class com_Creature(object):
                 return obj
             else:
                 return None
+
+    @property
+    def faction_color(self):
+        return self.get_marker_color()
 
     def get_marker_color(self):
         react = GAME.get_faction_reaction(self.faction, "player", False)
