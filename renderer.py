@@ -393,27 +393,39 @@ def character_creation_menu():
 
     columns = [races, genders]
 
-    tiles = ["gfx/human_m.png", "gfx/drow_m.png"]
+    tiles = ["gfx/human_m.png", "gfx/drow_m.png", "gfx/human_f.png", "gfx/drow_f.png"]
 
     key = multicolumn_menu("CHARACTER CREATION", columns, 80)
 
-    #print("Selected: " + str(key))
+    if key[0] == 0 and key[1] == 2:
+        select = tiles[0]
+    if key[0] == 0 and key[1] == 3:
+        select = tiles[2]
+    if key[0] == 1 and key[1] == 2:
+        select = tiles[1]
+    if key[0] == 1 and key[1] == 3:
+        select = tiles[3]
 
-    blt.set("0x40: " + tiles[key] + ", align=center")  # "@"
+    blt.set("0x40: " + select + ", align=center")  # "@"
+
+    #print("Selected: " + str(select))
 
 def multicolumn_menu(title, columns, width):
     current = 0
-    ret = multicolumn_menu_inner(title, columns, width, current)
+    ret = multicolumn_menu_inner(title, columns, width, current, None)
     if ret is not None:
         #print("Ret is not none " + str(ret))
         # if we are getting input, keep showing the log
-        while ret is not None and ret[0] is not None:
-            print("Ret is not none" + str(ret))
-            ret = multicolumn_menu_inner(title, columns, width, ret[0])
+        while ret is not None and len(ret[1]) < 2:
+            print("Ret is not none " + str(ret[1]))
+            if ret[0] is not None:
+                ret = multicolumn_menu_inner(title, columns, width, ret[0], ret[1])
+            else:
+                ret = multicolumn_menu_inner(title, columns, width, 0, ret[1])
 
         return ret[1]
 
-def multicolumn_menu_inner(title, columns, width, current):
+def multicolumn_menu_inner(title, columns, width, current, values):
     GAME.fov_recompute = True
 
     menu_x = int((120 - width) / 2)
@@ -439,6 +451,9 @@ def multicolumn_menu_inner(title, columns, width, current):
     y = menu_y + header_height + 1
     # this continues the lettering between columns e.g ab | cd | ef
     letter_index = ord('a')
+
+    if values is None:
+        values = []
 
     x = menu_x
     for i in range(0, len(columns)):
@@ -480,9 +495,9 @@ def multicolumn_menu_inner(title, columns, width, current):
         # change current column
         if key == blt.TK_TAB:
             if cur_column < len(columns)-1:
-                return [cur_column+1, None]
+                return [cur_column+1, values]
             else:
-                return [0, None]
+                return [0, values]
 
         # handle options
         elif blt.check(blt.TK_CHAR):
@@ -490,11 +505,26 @@ def multicolumn_menu_inner(title, columns, width, current):
             key = blt.state(blt.TK_CHAR)
             index = key - ord('a')
             # this reacts to any of the keys listed in current column
-            if 0 <= index < len(columns[cur_column]):
+
+            prev_column = None
+            if cur_column > 0:
+                prev_column = cur_column-1
+                start = len(columns[prev_column])
+            else:
+                start = 0
+
+            #print("Start " + str(start) + "end: " + str(start + len(columns[cur_column])))
+
+            if start <= index < start + len(columns[cur_column]):
                 blt.set('input: filter = [keyboard, mouse+]')
                 blt.composition(True)
                 print("Pressed key " + str(index))
-                return [None, index]
+
+                if index not in values:
+                    values.append(index)
+                print(values)
+
+                return [None, values]
         else:
             blt.set('input: filter = [keyboard, mouse+]')
             blt.composition(True)
