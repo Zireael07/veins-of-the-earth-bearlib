@@ -618,6 +618,8 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
                     char = item.char
                     draw_slot(x, y, char)
                     letter_index += 1
+                else:
+                    draw_slot(x,y, None)
             else:
                 draw_slot(x,y,None)
         else:
