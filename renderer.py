@@ -410,6 +410,16 @@ def character_creation_menu():
 
     #print("Selected: " + str(select))
 
+    # welcome!
+    blt.clear()
+    # TODO: text wrap
+    text_menu("", 70, "Welcome to Veins of the Earth",
+              """Brave adventurer, you are now lost in the underground corridors 
+of the Veins of the Earth. 
+There is no way to return to your homeland.
+How long can you survive...?
+Press ESC or click to close.""")
+
 def multicolumn_menu(title, columns, width):
     current = 0
     ret = multicolumn_menu_inner(title, columns, width, current, None)
