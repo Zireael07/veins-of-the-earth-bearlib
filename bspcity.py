@@ -59,7 +59,34 @@ class BspCityGenerator(object):
             (x, y) = room.center()
             #print("Creating door for " + str(x) + " " + str(y))
 
-            wall = random.choice(["north", "south", "east", "west"])
+            choices = ["north", "south", "east", "west"]
+
+            # check if the door leads anywhere
+            for choice in choices:
+                if choice == "north":
+                    checkX = x
+                    checkY = room.y1-1
+                if choice == "south":
+                    checkX = x
+                    checkY = room.y2
+                if choice == "east":
+                    checkX = room.x2
+                    checkY = y
+                if choice == "west":
+                    checkX = room.x1-1
+                    checkY = y
+
+                # if it leads to a wall, remove it from list of choices
+                #print("Checking direction " + str(choice) + ": x:" + str(checkX) + " y:" + str(checkY) + " " + str(self._map[checkX][checkY]))
+                if self._map[checkX][checkY] == 0:
+                    #print("Removing direction from list")
+                    choices.remove(choice)
+
+            #print("Choices: " + str(choices))
+
+            wall = random.choice(choices)
+
+
             if wall == "north":
                 wallX = x
                 wallY = room.y1
@@ -109,10 +136,13 @@ class BspCityGenerator(object):
 
         print("Stairs x :" + str(stairs_x) + " y: " +str(stairs_y))
 
-        self.create_doors()
-
+        # city wall before doors
         if self.wall:
             self.create_walls()
+
+        self.create_doors()
+
+
 
         self.map_desc = [[ 0 for _ in range(self.map_height)] for _ in range(self.map_width)]
 
