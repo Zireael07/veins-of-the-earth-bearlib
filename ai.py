@@ -13,7 +13,7 @@ def initialize_game(game):
 
 # AI
 class AI_test(object):
-    def take_turn(self, player):
+    def take_turn(self, player, fov_map):
         # print("AI taking turn")
         # check distance to player
         dx = player.x - self.owner.x
@@ -22,7 +22,17 @@ class AI_test(object):
 
         #print("Distance to player is " + str(distance))
 
-        if distance > 5:
+        # if we can see it, it can see us too
+        #if libtcod.map_is_in_fov(fov_map, self.owner.x, self.owner.y):
+
+        #ai fov
+        libtcod.map_compute_fov(fov_map, self.owner.x, self.owner.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
+                                constants.FOV_ALGO)
+
+        # if not in fov
+        if not libtcod.map_is_in_fov(fov_map, player.x, player.y):
+
+        #if distance > 5:
             #print("AI distance > 5, random move")
             self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), GAME.level.current_map)
         else:

@@ -36,6 +36,8 @@ class obj_Game(object):
             self.level.generate_items_monsters()
             global FOV_MAP
             FOV_MAP = map_make_fov(self.level.current_map)
+            global AI_FOV_MAP
+            AI_FOV_MAP = map_make_fov(self.level.current_map)
 
             self.factions = []
 
@@ -79,6 +81,8 @@ class obj_Game(object):
 
         global FOV_MAP
         FOV_MAP = map_make_fov(self.level.current_map)
+        global AI_FOV_MAP
+        AI_FOV_MAP = map_make_fov(self.level.current_map)
 
 
         # force fov recompute
@@ -447,7 +451,7 @@ def game_main_loop():
             if GAME.game_state == GameStates.ENEMY_TURN:
                 for ent in GAME.level.current_entities:
                     if ent.ai:
-                        ent.ai.take_turn(PLAYER)
+                        ent.ai.take_turn(PLAYER, AI_FOV_MAP)
 
                         if GAME.game_state == GameStates.PLAYER_DEAD:
                             print("Player's dead, breaking the loop")
@@ -695,6 +699,9 @@ def game_initialize():
         # recreate the fov
         global FOV_MAP
         FOV_MAP = map_make_fov(GAME.level.current_map)
+
+        global AI_FOV_MAP
+        AI_FOV_MAP = map_make_fov(GAME.level.current_map)
 
         # patch in required stuff
         # init game for submodules
