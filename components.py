@@ -159,26 +159,49 @@ class com_Creature(object):
     def strength(self):
         return self.base_str
 
+    @strength.setter
+    def strength(self, value):
+        self.base_str = value
+
     @property
     def dexterity(self):
         return self.base_dex
+
+    @dexterity.setter
+    def dexterity(self, value):
+        self.base_dex = value
 
     @property
     def constitution(self):
         return self.base_con
 
+    @constitution.setter
+    def constitution(self, value):
+        self.base_con = value
+
     @property
     def intelligence(self):
         return self.base_int
+
+    @intelligence.setter
+    def intelligence(self, value):
+        self.base_int = value
 
     @property
     def wisdom(self):
         return self.base_wis
 
+    @wisdom.setter
+    def wisdom(self, value):
+        self.base_wis = value
+
     @property
     def charisma(self):
         return self.base_cha
 
+    @charisma.setter
+    def charisma(self, value):
+        self.base_cha = value
 
     @property
     def attack_mod(self):
