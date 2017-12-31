@@ -739,7 +739,7 @@ def game_initialize():
 
         # show character creation
         blt.clear()
-        renderer.character_creation_menu()
+        renderer.character_creation_menu(PLAYER)
 
     else:
         #quit

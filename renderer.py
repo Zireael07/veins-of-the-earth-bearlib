@@ -17,6 +17,16 @@ def initialize_game(game):
     global GAME
     GAME = game
 
+def roll(dice, sides):
+    result = 0
+    for _ in range(0, dice, 1):
+        roll = libtcod.random_get_int(0, 1, sides)
+        result += roll
+
+    print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
+    return result
+
+
 # based on STI library for LOVE2D
 def draw_iso(x,y):
     # isometric
@@ -387,7 +397,41 @@ def help_menu():
     # restore drawing
     blt.set("0x003E: gfx/stairs_down.png, align=center")
 
-def character_creation_menu():
+def character_stats_menu_outer(player):
+    ret = character_stats_menu(player)
+    if ret is not None:
+        # if we are getting input, keep showing the log
+        while ret is not None:
+            ret = character_stats_menu(player)
+
+        return ret
+
+def character_stats_menu(player):
+    options = [("STR: " + str(player.creature.strength), "white"), ("DEX: " + str(player.creature.dexterity), "white"),
+               ("CON: " + str(player.creature.constitution), "white"),
+               ("INT: " + str(player.creature.intelligence), "white"),
+               ("WIS: " + str(player.creature.wisdom), "white"), ("CHA: " + str(player.creature.charisma), "white"),
+               ("(R)eroll!", "yellow"), ("(E)xit", "white")]
+
+    key = menu_colored("STATS", options, 50, 'CHARACTER CREATION II')
+
+    if key == blt.TK_R:
+        # reroll
+        player.creature.strength = roll(3,6)
+        player.creature.dexterity = roll(3,6)
+        player.creature.constitution = roll(3,6)
+        player.creature.intelligence = roll(3,6)
+        player.creature.wisdom = roll(3,6)
+        player.creature.charisma = roll(3,6)
+        return True
+    elif key == blt.TK_E or key == blt.TK_ESCAPE:
+        # exit
+        return None
+    else:
+        # redraw
+        return True
+
+def character_creation_menu(player):
     races = ["human", "drow"]
     genders = ["male", "female"]
 
@@ -410,6 +454,10 @@ def character_creation_menu():
 
     #print("Selected: " + str(select))
 
+    # step II - character stats
+    blt.clear()
+    opt = character_stats_menu_outer(player)
+
     # welcome!
     blt.clear()
     # TODO: text wrap
@@ -427,7 +475,7 @@ def multicolumn_menu(title, columns, width):
         #print("Ret is not none " + str(ret))
         # if we are getting input, keep showing the log
         while ret is not None and len(ret[1]) < 2:
-            print("Ret is not none " + str(ret[1]))
+            #print("Ret is not none " + str(ret[1]))
             if ret[0] is not None:
                 ret = multicolumn_menu_inner(title, columns, width, ret[0], ret[1])
             else:
