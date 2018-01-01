@@ -14,7 +14,7 @@ import renderer
 import components
 import generators
 from map_common import map_make_fov, random_free_tile, Rect, print_map_string, get_map_desc,\
-    map_check_for_creature, find_grid_in_range, find_free_grid_in_range
+    map_check_for_creature, find_grid_in_range, find_free_grid_in_range, distance_to, tiles_distance_to
 from bspmap import BspMapGenerator
 from bspcity import BspCityGenerator
 import handle_input
@@ -549,7 +549,11 @@ def show_tile_desc(pix_x, pix_y):
     h = 8
     iso_x, iso_y = renderer.pix_to_iso(pix_x, pix_y)
 
+    dist = round(distance_to((iso_x, iso_y), (PLAYER.x, PLAYER.y)), 2)
+    tiles_dist = tiles_distance_to((iso_x, iso_y), (PLAYER.x, PLAYER.y))
+
     blt.layer(1)
+    blt.puts(w,h+1, "Dist: real:" + str(dist) + " tiles: " + str(tiles_dist) + " ft: " + str(tiles_dist*5) + " ft.")
     blt.puts(w, h, get_map_desc(iso_x, iso_y, FOV_MAP, GAME.level.current_explored, GAME.level.map_desc))
     blt.layer(0)
 

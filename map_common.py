@@ -99,6 +99,18 @@ def random_free_tile(inc_map):
     print("Coordinates are " + str(x) + " " + str(y))
     return x, y
 
+
+def tiles_distance_to(start, target):
+    x_diff = start[0] - target[0]
+    y_diff = start[1] - target[1]
+    ##ensure always positive values
+    if x_diff < 0:
+        x_diff = x_diff * -1
+    if y_diff < 0:
+        y_diff = y_diff * -1
+    return max(x_diff, y_diff)
+
+
 def distance_to(start, other):
     # return the distance to another object
     dx = other[0] - start[0]
