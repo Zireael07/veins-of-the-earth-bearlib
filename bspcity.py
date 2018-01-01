@@ -60,9 +60,12 @@ class BspCityGenerator(object):
             #print("Creating door for " + str(x) + " " + str(y))
 
             choices = ["north", "south", "east", "west"]
+            # copy the list so that we don't modify it while iterating (caused some directions to be missed)
+            sel_choices = list(choices)
 
             # check if the door leads anywhere
             for choice in choices:
+                #print(str(choice)+"...")
                 if choice == "north":
                     checkX = x
                     checkY = room.y1-1
@@ -77,14 +80,14 @@ class BspCityGenerator(object):
                     checkY = y
 
                 # if it leads to a wall, remove it from list of choices
-                #print("Checking direction " + str(choice) + ": x:" + str(checkX) + " y:" + str(checkY) + " " + str(self._map[checkX][checkY]))
+                #print("Checking dir " + str(choice) + ": x:" + str(checkX) + " y:" + str(checkY) + " " + str(self._map[checkX][checkY]))
                 if self._map[checkX][checkY] == 0:
-                    #print("Removing direction from list")
-                    choices.remove(choice)
+                    #print("Removing direction from list" + str(choice))
+                    sel_choices.remove(choice)
 
             #print("Choices: " + str(choices))
 
-            wall = random.choice(choices)
+            wall = random.choice(sel_choices)
 
 
             if wall == "north":
@@ -160,7 +163,7 @@ if __name__ == '__main__':
     #test map generation
     test_attempts = 3
     for i in range(test_attempts):
-        map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+1, 2,
+        map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
                                   False, True)
         gen_map = map_gen.generate_map()
         current_map, map_desc = gen_map[0], gen_map[1]
