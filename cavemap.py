@@ -52,7 +52,8 @@ class CaveGenerator(object):
             for x in range(1, self.map_width - 1):
                 #print("(",x,y,") = ",self._map[x][y])
                 if random.random() >= self.wall_chance:
-                    self._map[x][y] = 1
+                    # make it a floor
+                    self._map[x][y] = 2
 
     def create_caves(self):
         # ==== Create distinct caves ====
@@ -66,7 +67,7 @@ class CaveGenerator(object):
                 self._map[tile_x][tile_y] = 0
             # or make it a floor
             elif self.get_adjacent_walls(tile_x, tile_y) < self.neighbors:
-                self._map[tile_x][tile_y] = 1
+                self._map[tile_x][tile_y] = 2
 
         self.smooth()
 
@@ -77,7 +78,7 @@ class CaveGenerator(object):
                 for x in range(1, self.map_width - 1):
                     for y in range(1, self.map_height - 1):
                         if (self._map[x][y] == 0) and (self.get_adjacent_walls_simple(x, y) <= self.smoothing):
-                            self._map[x][y] = 1
+                            self._map[x][y] = 2
 
     def create_tunnel(self, point1, point2, current_cave):
         #print("Creating a tunnel from " + str(point1) + " to " + str(point2))
@@ -131,8 +132,9 @@ class CaveGenerator(object):
             if (0 < drunkard_x + dx < self.map_width - 1) and (0 < drunkard_y + dy < self.map_height - 1):
                 drunkard_x += dx
                 drunkard_y += dy
+                # carve out floor
                 if self._map[drunkard_x][drunkard_y] == 0:
-                    self._map[drunkard_x][drunkard_y] = 1
+                    self._map[drunkard_x][drunkard_y] = 2
 
     # finds the walls in four directions
     def get_adjacent_walls_simple(self, x, y):
@@ -164,12 +166,12 @@ class CaveGenerator(object):
         # locate all the caves within self.level and store them in self.caves
         for x in range(0, self.map_width):
             for y in range(0, self.map_height):
-                if self._map[x][y] == 1:
+                if self._map[x][y] == 2:
                     self.flood_fill(x, y)
 
         for cave_set in self.caves:
             for tile in cave_set:
-                self._map[tile[0]][tile[1]] = 1
+                self._map[tile[0]][tile[1]] = 2
 
 
     def flood_fill(self, x, y):
@@ -199,7 +201,7 @@ class CaveGenerator(object):
 
                 for direction in [north, south, east, west]:
 
-                    if self._map[direction[0]][direction[1]] == 1:
+                    if self._map[direction[0]][direction[1]] == 2:
                         if direction not in to_fill and direction not in cave:
                             to_fill.add(direction)
 
@@ -252,7 +254,7 @@ class CaveGenerator(object):
 
                 for direction in [north, south, east, west]:
 
-                    if self._map[direction[0]][direction[1]] == 1:
+                    if self._map[direction[0]][direction[1]] == 2:
                         if direction not in to_fill and direction not in connectedRegion:
                             to_fill.add(direction)
 
