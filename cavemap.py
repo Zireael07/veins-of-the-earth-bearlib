@@ -2,7 +2,7 @@ import random
 from math import sqrt
 
 import constants
-from map_common import print_map_string
+from map_common import print_map_string, get_free_tiles
 
 # based on http://www.evilscience.co.uk/a-c-algorithm-to-build-roguelike-cave-systems-part-1/
 # implementation from https://github.com/AtTheMatinee/dungeon-generation
@@ -269,10 +269,20 @@ class CaveGenerator(object):
 if __name__ == '__main__':
 
     #test map generation
-    test_attempts = 3
+    test_attempts = 5
+
+    max_tiles = constants.MAP_WIDTH*constants.MAP_WIDTH
+
     for i in range(test_attempts):
         map_gen = CaveGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT)
 
         current_map = map_gen.generate_map()
+        # catch degenerate instances
+        while len(get_free_tiles(current_map)) < max_tiles/8: #50:
+            print("Free tiles check failed, regenerating...")
+            current_map = map_gen.generate_map()
+
         print("Next try:")
         print_map_string(current_map)
+        num_free = len(get_free_tiles(current_map))
+        print("Free tiles: " + str(num_free) + " out of " + str(max_tiles))
