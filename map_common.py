@@ -99,6 +99,18 @@ def random_free_tile(inc_map):
     print("Coordinates are " + str(x) + " " + str(y))
     return x, y
 
+def random_free_tile_away(inc_map, dist, away_from):
+    away_tiles = []
+    for tile in get_free_tiles(inc_map):
+        if tiles_distance_to(away_from, tile) > dist:
+            away_tiles.append(tile)
+
+    index = libtcod.random_get_int(0,0, len(away_tiles)-1)
+    x = away_tiles[index][0]
+    y = away_tiles[index][1]
+    print("[Free tile away] Coordinates are " + str(x) + " " + str(y))
+    return x, y
+
 
 def tiles_distance_to(start, target):
     x_diff = start[0] - target[0]

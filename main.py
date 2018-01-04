@@ -13,7 +13,7 @@ import constants
 import renderer
 import components
 import generators
-from map_common import map_make_fov, random_free_tile, Rect, print_map_string, get_map_desc,\
+from map_common import map_make_fov, random_free_tile, random_free_tile_away, Rect, print_map_string, get_map_desc,\
     map_check_for_creature, find_grid_in_range, find_free_grid_in_range, distance_to, tiles_distance_to
 from bspmap import BspMapGenerator
 from bspcity import BspCityGenerator
@@ -90,6 +90,7 @@ class obj_Game(object):
 
 class obj_Level(object):
     def __init__(self, type="dungeon"):
+        self.type = type
         # map gen
         if type == "dungeon":
             map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
@@ -139,22 +140,30 @@ class obj_Level(object):
         self.add_entity(generators.generate_monster("human", *random_free_tile(self.current_map)))
         # test generating monsters
         self.add_entity(
-            generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+            generators.generate_monster(generators.generate_random_mon(),
+                    *random_free_tile_away(self.current_map, 6, (self.player_start_x, self.player_start_y))))
         self.add_entity(
-            generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+            generators.generate_monster(generators.generate_random_mon(),
+                    *random_free_tile_away(self.current_map, 6, (self.player_start_x, self.player_start_y))))
         self.add_entity(
-            generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+            generators.generate_monster(generators.generate_random_mon(),
+                    *random_free_tile_away(self.current_map, 6, (self.player_start_x, self.player_start_y))))
         self.add_entity(
-            generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+            generators.generate_monster(generators.generate_random_mon(),
+                    *random_free_tile_away(self.current_map, 6, (self.player_start_x, self.player_start_y))))
         self.add_entity(
-            generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+            generators.generate_monster(generators.generate_random_mon(),
+                    *random_free_tile_away(self.current_map, 6, (self.player_start_x, self.player_start_y))))
         self.add_entity(
-            generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+            generators.generate_monster(generators.generate_random_mon(),
+                    *random_free_tile_away(self.current_map, 6, (self.player_start_x, self.player_start_y))))
         self.add_entity(
-            generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+            generators.generate_monster(generators.generate_random_mon(),
+                    *random_free_tile_away(self.current_map, 6, (self.player_start_x, self.player_start_y))))
 
         # test: force spawn a monster on top of the player
-        self.add_entity(generators.generate_monster("goblin", self.player_start_x, self.player_start_y))
+        if self.type == "dungeon":
+            self.add_entity(generators.generate_monster("goblin", self.player_start_x, self.player_start_y))
 
 class obj_Camera(object):
     def __init__(self):
