@@ -172,7 +172,7 @@ class obj_Camera(object):
         self.x, self.y = (0,0)
         self.top_x, self.top_y = (0,0)
         self.offset = (0,0)
-        self.rectangle = Rect(self.top_x, self.top_y, self.width, self.height)
+        #self.rectangle = Rect(self.top_x, self.top_y, self.width, self.height)
 
     def start_update(self, player):
         target_pos = (80,20)
@@ -184,7 +184,7 @@ class obj_Camera(object):
         self.x, self.y = PLAYER.x, PLAYER.y  # renderer.draw_iso(PLAYER.x, PLAYER.y)
         self.top_x, self.top_y = self.x - self.width/2, self.y - self.height/2
         # update rect
-        self.rectangle.update(self.top_x, self.top_y, self.width, self.height)
+        #self.rectangle.update(self.top_x, self.top_y, self.width, self.height)
 
     def move(self, dx, dy):
         # print("Moving the camera by " + str(dx) + ", " + str(dy))
@@ -228,16 +228,6 @@ class obj_Camera(object):
             return self.top_y + self.height
         else:
             return constants.MAP_HEIGHT
-
-    
-def death_monster(monster):
-    if monster.visible:
-        GAME.game_message(monster.creature.name_instance + " is dead!", "gray")
-    # clean up components
-    monster.creature = None
-    monster.ai = None
-    # remove from map
-    GAME.current_entities.remove(monster)
 
 def death_player(player):
     GAME.game_message(player.creature.name_instance + " is dead!", "dark red")
