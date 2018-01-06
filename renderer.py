@@ -5,7 +5,7 @@ import libtcodpy as libtcod
 
 import time
 
-from map_common import tile_types
+from map_common import tile_types, get_map_string
 
 import constants
 
@@ -396,6 +396,32 @@ def help_menu():
                 "\n" + "? to bring up this menu again")
     # restore drawing
     blt.set("0x003E: gfx/stairs_down.png, align=center")
+
+
+def debug_menu():
+
+    options = ["Reveal map", "Map overview"]
+
+    key = options_menu("DEBUG", options, 50, "Debug menu")
+
+    print("key: " + str(key))
+
+    if key == 0:
+        print("Debug mode on")
+        constants.DEBUG = True
+    if key == 1:
+
+        # make possible drawing the characters
+        blt.set("0x003E: none")
+        blt.set("0x3002: none")
+        blt.set("0x23: none")
+
+        text_menu("Map", 50, "MAP OVERVIEW", get_map_string(GAME.level.current_map))
+
+        # restore drawing
+        blt.set("0x003E: gfx/stairs_down.png, align=center")
+        blt.set("0x3002: gfx/floor_cave.png, align=center")
+        blt.set("0x23: gfx/wall_stone.png, align=center")
 
 def character_stats_menu_outer(player):
     ret = character_stats_menu(player)

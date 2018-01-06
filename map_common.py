@@ -204,6 +204,19 @@ def print_map_string(inc_map):
         #our row ended, add a line break
         sys.stdout.write("\n")
 
+def get_map_string(inc_map):
+    list = []
+    for y in range(len(inc_map)):
+        for x in range(len(inc_map[0])):
+            list.append(tile_types[inc_map[x][y]].map_str)
+
+        # our row ended, add a line break
+        list.append("\n")
+
+    string = ''.join(list)
+    #print string
+    return string
+
 def convert_to_box_drawing(inc_map):
     for y in range(len(inc_map)):
         for x in range(len(inc_map[0])):

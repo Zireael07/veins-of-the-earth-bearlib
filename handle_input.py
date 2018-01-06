@@ -169,8 +169,9 @@ def game_handle_keys():
 
     # Debugging
     if key == blt.TK_GRAVE and blt.check(blt.TK_SHIFT):
-        print("Debug mode on")
-        constants.DEBUG = True
+        # print("Debug mode on")
+        # constants.DEBUG = True
+        renderer.debug_menu()
 
     game_handle_mouse_input(key)
 
