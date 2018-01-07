@@ -400,7 +400,7 @@ def help_menu():
 
 def debug_menu():
 
-    options = ["Reveal map", "Map overview"]
+    options = ["Reveal map", "Map overview", "Creatures list"]
 
     key = options_menu("DEBUG", options, 50, "Debug menu")
 
@@ -422,6 +422,15 @@ def debug_menu():
         blt.set("0x003E: gfx/stairs_down.png, align=center")
         blt.set("0x3002: gfx/floor_cave.png, align=center")
         blt.set("0x23: gfx/wall_stone.png, align=center")
+
+    if key == 2:
+
+        opt = []
+        for ent in GAME.level.current_entities:
+            if ent.creature:
+                opt.append(ent.creature.name_instance + " X: " + str(ent.x) + " Y: " + str(ent.y))
+
+        options_menu("Creature list", opt, 50, "List")
 
 def character_stats_menu_outer(player):
     ret = character_stats_menu(player)
