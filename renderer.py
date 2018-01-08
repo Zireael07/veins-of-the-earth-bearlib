@@ -687,6 +687,9 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
                 item = equipped_items[i]
                 char = item.char
                 draw_slot(x,y, char)
+                # draw the letter
+                text = '(' + chr(letter_index + i) + ') '
+                blt.puts(x - 2, y - 2, text)
             else:
                 draw_slot(x,y,None)
         else:
@@ -700,7 +703,7 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
     x = menu_x + 2
     blt.puts(x, y, '─' * 40)
 
-    y = y + 2
+    y = y + 3
 
     # draw inventory slots
     for i in range(0,10):
@@ -710,7 +713,10 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
                 if not item.equipment or not item.equipment.equipped:
                     char = item.char
                     draw_slot(x, y, char)
-                    letter_index += 1
+                    # draw the letter
+                    text = '(' + chr(letter_index + i) + ') '
+                    blt.puts(x - 2, y - 2, text)
+                    #letter_index += 1
                 else:
                     draw_slot(x,y, None)
             else:
