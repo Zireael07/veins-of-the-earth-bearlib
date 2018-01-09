@@ -8,6 +8,7 @@ import time
 from map_common import tile_types, get_map_string
 
 import constants
+from equipment_slots import EquipmentSlots
 
 def initialize_camera(camera):
     global CAMERA
@@ -680,22 +681,27 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
     letter_index = ord('a')
 
     # draw equipped items
-    # draw two slots (mainhand and body)
-    for i in range(0, 2):
-        if len(equipped_items) > 0:
-            if len(equipped_items) > i:
-                item = equipped_items[i]
-                char = item.char
-                draw_slot(x,y, char)
-                # draw the letter
-                text = '(' + chr(letter_index + i) + ') '
-                blt.puts(x - 2, y - 2, text)
-            else:
-                draw_slot(x,y,None)
-        else:
-            draw_slot(x,y,None)
+    # reverse mapping of a custom enum is a dict that we can iterate on
+    for slot in EquipmentSlots.reverse_mapping:
+        name = str(EquipmentSlots.reverse_mapping[slot]).lower()
+        # slot label
+        blt.puts(x-1,y+2, name.capitalize())
 
-        x = x + 4 # 2 wide + 2 spacing
+        if len(equipped_items) > 0:
+            for i in range (len(equipped_items)):
+                item = equipped_items[i]
+                if item.equipment.slot == name:
+                    char = item.char
+                    draw_slot(x, y, char)
+                    # draw the letter
+                    text = '(' + chr(letter_index + i) + ') '
+                    blt.puts(x-1, y - 2, text)
+                else:
+                    draw_slot(x,y, None)
+        else:
+            draw_slot(x,y, None)
+
+        x = x + 10
 
     y = y + 3
 
@@ -715,7 +721,7 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
                     draw_slot(x, y, char)
                     # draw the letter
                     text = '(' + chr(letter_index + i) + ') '
-                    blt.puts(x - 2, y - 2, text)
+                    blt.puts(x - 1, y - 2, text)
                     #letter_index += 1
                 else:
                     draw_slot(x,y, None)
