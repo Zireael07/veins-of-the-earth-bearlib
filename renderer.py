@@ -691,10 +691,11 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
             for i in range (len(equipped_items)):
                 item = equipped_items[i]
                 if item.equipment.slot == name:
+                    #print("Item " + str(item.name) + " index is " + str(inventory.index(item)))
                     char = item.char
                     draw_slot(x, y, char)
-                    # draw the letter
-                    text = '(' + chr(letter_index + i) + ') '
+                    # draw the inventory letter
+                    text = '(' + chr(letter_index + inventory.index(item)) + ') '
                     blt.puts(x-1, y - 2, text)
                 else:
                     draw_slot(x,y, None)
@@ -722,10 +723,11 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
                 item = slots[i]
                 #item = inventory[i]
                 if not item.equipment or not item.equipment.equipped:
+                    #print("Item " + str(item.name) + " index is " + str(inventory.index(item)))
                     char = item.char
                     draw_slot(x, y, char)
-                    # draw the letter
-                    text = '(' + chr(letter_index + i) + ') '
+                    # draw the inventory letter
+                    text = '(' + chr(letter_index + inventory.index(item)) + ') '
                     blt.puts(x - 1, y - 2, text)
                     #letter_index += 1
                 else:
