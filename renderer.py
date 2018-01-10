@@ -711,11 +711,16 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
 
     y = y + 3
 
-    # draw inventory slots
+    # draw inventory slots (ignoring the items that are equipped)
+    slots = [item for item in inventory if item.equipment and not item.equipment.equipped or not item.equipment]
+
+
     for i in range(0,10):
         if len(inventory) > 0:
-            if len(inventory) > i:
-                item = inventory[i]
+            if len(slots) > i:
+            #if len(inventory) > i:
+                item = slots[i]
+                #item = inventory[i]
                 if not item.equipment or not item.equipment.equipped:
                     char = item.char
                     draw_slot(x, y, char)
