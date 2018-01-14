@@ -63,10 +63,10 @@ def get_char_type(val):
     return val[1].tile_put
 
 def get_char(i):
-    return tile_from_index(i).tile_put
+    return TileTypes.test[i].tile_put
 
 def get_block_path(i):
-    return tile_from_index(i).block_path
+    return TileTypes.test[i].block_path
 
 
 
