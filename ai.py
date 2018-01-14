@@ -3,6 +3,7 @@ import math
 
 import constants
 from map_common import tile_types
+from tile_lookups import tile_from_index
 
 
 # need a reference to global GAME %^$@
@@ -74,8 +75,11 @@ def move_astar(actor, target, inc_map):
     for y1 in range(constants.MAP_HEIGHT):
         for x1 in range(constants.MAP_WIDTH):
             libtcod.map_set_properties(fov, x1, y1,
-                                       not tile_types[inc_map[x1][y1]].block_path,
-                                       not tile_types[inc_map[x1][y1]].block_path)
+                                       not tile_from_index(inc_map[x1][y1]).block_path,
+                                       not tile_from_index(inc_map[x1][y1]).block_path)
+                                       #not tile_types[inc_map[x1][y1]].block_path,
+                                       #not tile_types[inc_map[x1][y1]].block_path)
+
 
     #Scan all the entities to see if there are objects that must be navigated around
     #Check also that the entity isn't self or the target (so that the start and the end points are free)
