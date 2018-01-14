@@ -5,7 +5,7 @@ import libtcodpy as libtcod
 
 import time
 
-from map_common import tile_types, get_map_string
+from map_common import get_map_string
 from tile_lookups import get_char
 
 import constants
@@ -89,7 +89,6 @@ def draw_map(map_draw, map_explored, fov_map):
 
                 tile_x, tile_y = draw_iso(x, y)
 
-                #blt.put(tile_x, tile_y, tile_types[map_draw[x][y]].tile_put)
                 blt.put(tile_x, tile_y, get_char(map_draw[x][y]))
 
 
@@ -102,7 +101,6 @@ def draw_map(map_draw, map_explored, fov_map):
 
                 tile_x, tile_y = draw_iso(x, y)
 
-                #blt.put(tile_x, tile_y, tile_types[map_draw[x][y]].tile_put)
                 blt.put(tile_x, tile_y, get_char(map_draw[x][y]))
 
 

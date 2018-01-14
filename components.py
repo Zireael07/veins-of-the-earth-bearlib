@@ -3,7 +3,6 @@ import libtcodpy as libtcod
 import math
 
 from renderer import draw_iso, draw_blood_splatter, draw_shield, draw_floating_text, draw_floating_text_step, dialogue_window
-from map_common import tile_types
 from tile_lookups import tile_from_index
 
 # import constants
@@ -387,7 +386,6 @@ class com_Creature(object):
                 if target.creature.chat is not None:
                     dialogue_window(target.creature)
 
-        #tile_is_wall = (tile_types[game_map[self.owner.x+dx][self.owner.y+dy]].block_path == True)  #.block_path == True)
         tile_is_wall = (tile_from_index(game_map[self.owner.x+dx][self.owner.y+dy]).block_path == True)
 
         if not tile_is_wall and target is None:

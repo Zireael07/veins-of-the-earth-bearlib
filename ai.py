@@ -2,7 +2,6 @@ import libtcodpy as libtcod
 import math
 
 import constants
-from map_common import tile_types
 from tile_lookups import tile_from_index
 
 
@@ -77,8 +76,6 @@ def move_astar(actor, target, inc_map):
             libtcod.map_set_properties(fov, x1, y1,
                                        not tile_from_index(inc_map[x1][y1]).block_path,
                                        not tile_from_index(inc_map[x1][y1]).block_path)
-                                       #not tile_types[inc_map[x1][y1]].block_path,
-                                       #not tile_types[inc_map[x1][y1]].block_path)
 
 
     #Scan all the entities to see if there are objects that must be navigated around
