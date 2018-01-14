@@ -65,6 +65,9 @@ def get_char_type(val):
 def get_char(i):
     return tile_from_index(i).tile_put
 
+def get_block_path(i):
+    return tile_from_index(i).block_path
+
 
 
 TileTypes = Tile_Lookups(WALL=(1,struc_Tile("wall", "#", "#", True)),

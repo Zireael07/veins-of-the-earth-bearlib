@@ -6,7 +6,7 @@ import math
 from operator import itemgetter
 
 import constants
-from tile_lookups import TileTypes, get_map_str, get_index, tile_from_index
+from tile_lookups import TileTypes, get_map_str, get_index, get_block_path
 
 room_desc = [
     "",
@@ -59,8 +59,8 @@ def map_make_fov(incoming_map):
         for x in range(constants.MAP_WIDTH):
             #libtcod.map_set_properties(FOV_MAP, x,y,
             libtcod.map_set_properties(fov_map, x,y,
-                                        not tile_from_index(incoming_map[x][y]).block_path,
-                                       not tile_from_index(incoming_map[x][y]).block_path)
+                                        not get_block_path(incoming_map[x][y]),
+                                       not get_block_path(incoming_map[x][y]))
 
     return fov_map
 
@@ -68,7 +68,7 @@ def get_free_tiles(inc_map):
     free_tiles = []
     for y in range(len(inc_map)):
         for x in range(len(inc_map[0])):
-            if not tile_from_index(inc_map[x][y]).block_path:
+            if not get_block_path(inc_map[x][y]):
                 free_tiles.append((x,y))
     return free_tiles
 
