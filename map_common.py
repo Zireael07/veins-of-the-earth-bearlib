@@ -6,6 +6,7 @@ import math
 from operator import itemgetter
 
 import constants
+from tile_lookups import TileTypes, get_map_str, get_index, tile_from_index
 
 class struc_Tile(object):
     def __init__(self, name, tile_put, map_str, block_path):
@@ -77,8 +78,10 @@ def map_make_fov(incoming_map):
             #libtcod.map_set_properties(FOV_MAP, x,y,
             libtcod.map_set_properties(fov_map, x,y,
                                       # not incoming_map[x][y].block_path, not incoming_map[x][y].block_path)
-                                        not tile_types[incoming_map[x][y]].block_path,
-                                       not tile_types[incoming_map[x][y]].block_path)
+                                      #  not tile_types[incoming_map[x][y]].block_path,
+                                      # not tile_types[incoming_map[x][y]].block_path)
+                                        not tile_from_index(incoming_map[x][y]).block_path,
+                                       not tile_from_index(incoming_map[x][y]).block_path)
 
     return fov_map
 
@@ -86,7 +89,8 @@ def get_free_tiles(inc_map):
     free_tiles = []
     for y in range(len(inc_map)):
         for x in range(len(inc_map[0])):
-            if not tile_types[inc_map[x][y]].block_path:
+            #if not tile_types[inc_map[x][y]].block_path:
+            if not tile_from_index(inc_map[x][y]).block_path:
                 free_tiles.append((x,y))
     return free_tiles
 
@@ -199,7 +203,8 @@ def map_check_for_creature(x, y, game, exclude_entity = None):
 def print_map_string(inc_map):
     for y in range(len(inc_map)):
         for x in range(len(inc_map[0])):
-            sys.stdout.write(tile_types[inc_map[x][y]].map_str)
+            #sys.stdout.write(tile_types[inc_map[x][y]].map_str)
+            sys.stdout.write(get_map_str(inc_map[x][y]))
         
         #our row ended, add a line break
         sys.stdout.write("\n")
@@ -208,7 +213,8 @@ def get_map_string(inc_map):
     list = []
     for y in range(len(inc_map)):
         for x in range(len(inc_map[0])):
-            list.append(tile_types[inc_map[x][y]].map_str)
+            #list.append(tile_types[inc_map[x][y]].map_str)
+            list.append(get_map_str(inc_map[x][y]))
 
         # our row ended, add a line break
         list.append("\n")
@@ -266,23 +272,23 @@ def convert_to_box_drawing(inc_map):
 def convert_walls(inc_map):
     for y in range(len(inc_map)):
         for x in range(len(inc_map[0])):
-            tile = tile_types[inc_map[x][y]]
+            tile_str = get_map_str(inc_map[x][y]) #tile_types[inc_map[x][y]]
 
             #print("Checking neighbors of " + str(x) + " " + str(y))
 
-            north = y-1 > 0 and tile_types[inc_map[x][y-1]].map_str == "#"
-            south = y+1 < len(inc_map) and tile_types[inc_map[x][y+1]].map_str == "#"
-            west = x-1 > 0 and tile_types[inc_map[x-1][y]].map_str == "#"
-            east = x+1 < len(inc_map[0]) and tile_types[inc_map[x+1][y]].map_str == "#"
+            north = y-1 > 0 and get_map_str(inc_map[x][y-1]) == "#" #and tile_types[inc_map[x][y-1]].map_str == "#"
+            south = y+1 < len(inc_map) and get_map_str(inc_map[x][y+1]) == "#" #and tile_types[inc_map[x][y+1]].map_str == "#"
+            west = x-1 > 0 and get_map_str(inc_map[x-1][y]) == "#" #and tile_types[inc_map[x-1][y]].map_str == "#"
+            east = x+1 < len(inc_map[0]) and get_map_str(inc_map[x+1][y]) == "#" #and tile_types[inc_map[x+1][y]].map_str == "#"
 
-            if tile.map_str == "#":
+            if tile_str == "#":
                 # detect direction
                 if west and east:
-                    inc_map[x][y] = 0
+                    inc_map[x][y] = get_index(TileTypes.WALL) #0
                 elif north and south:
-                    inc_map[x][y] = 1
+                    inc_map[x][y] = get_index(TileTypes.WALL_V) #1
                 else:
-                    inc_map[x][y] = 0
+                    inc_map[x][y] = get_index(TileTypes.WALL) #0
             else:
                 inc_map[x][y] = inc_map[x][y]
 

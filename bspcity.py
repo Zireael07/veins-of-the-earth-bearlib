@@ -3,6 +3,7 @@ import random
 
 import constants
 from map_common import Rect, print_map_string, room_desc, convert_walls
+from tile_lookups import TileTypes, get_index
 
 class BspCityGenerator(object):
     def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms, wall=False):
@@ -41,11 +42,11 @@ class BspCityGenerator(object):
             # Make walls
             for x in range(minx, maxx + 1):
                 for y in range(miny, maxy + 1):
-                    self._map[x][y] = 0
+                    self._map[x][y] = get_index(TileTypes.WALL) #0
             #Make floors
             for x in range(minx+1, maxx):
                 for y in range(miny+1, maxy):
-                    self._map[x][y] = 2
+                    self._map[x][y] = get_index(TileTypes.FLOOR) #2
 
             self._rooms_centers.append(((minx + maxx) // 2, (miny + maxy) // 2))
 
@@ -81,7 +82,7 @@ class BspCityGenerator(object):
 
                 # if it leads to a wall, remove it from list of choices
                 #print("Checking dir " + str(choice) + ": x:" + str(checkX) + " y:" + str(checkY) + " " + str(self._map[checkX][checkY]))
-                if self._map[checkX][checkY] == 0:
+                if self._map[checkX][checkY] == get_index(TileTypes.WALL): #0:
                     #print("Removing direction from list" + str(choice))
                     sel_choices.remove(choice)
 
@@ -103,17 +104,17 @@ class BspCityGenerator(object):
                 wallX = room.x1
                 wallY = y
 
-            self._map[wallX][wallY] = 2
+            self._map[wallX][wallY] = get_index(TileTypes.FLOOR) #2
 
     def create_walls(self):
         # walls around the map
         for x in range(constants.MAP_WIDTH):
-            self._map[x][0] = 0  # .block_path = True
-            self._map[x][constants.MAP_WIDTH - 1] = 0  # .block_path = True
+            self._map[x][0] = get_index(TileTypes.WALL) #0  # .block_path = True
+            self._map[x][constants.MAP_WIDTH - 1] = get_index(TileTypes.WALL) #0  # .block_path = True
 
         for y in range(constants.MAP_HEIGHT):
-            self._map[0][y] = 0  # .block_path = True
-            self._map[constants.MAP_HEIGHT - 1][y] = 0  # .block_path = True
+            self._map[0][y] = get_index(TileTypes.WALL) #0  # .block_path = True
+            self._map[constants.MAP_HEIGHT - 1][y] = get_index(TileTypes.WALL) #0  # .block_path = True
 
     def generate_build_desc(self):
         for room in self._rooms:
@@ -122,7 +123,7 @@ class BspCityGenerator(object):
                     self.map_desc[x][y] = 2
 
     def _generate_empty_map(self):
-        self._map = [[2 for _ in range(self.map_height)] for _ in range(self.map_width)]
+        self._map = [[get_index(TileTypes.FLOOR) for _ in range(self.map_height)] for _ in range(self.map_width)]
         return self._map
 
     def generate_map(self):
@@ -151,7 +152,7 @@ class BspCityGenerator(object):
 
         self.generate_build_desc()
 
-        self._map[stairs_x][stairs_y] = 4 #.stairs = True
+        self._map[stairs_x][stairs_y] = get_index(TileTypes.STAIRS) #4 #.stairs = True
 
         self._map = convert_walls(self._map)
 
