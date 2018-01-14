@@ -386,7 +386,7 @@ def game_main_loop():
 
         if not GAME.game_state == GameStates.MAIN_MENU:
             blt.layer(1)
-            blt.puts(2,1, "[color=white]FPS: %d" % (fps_value))
+            blt.puts(2,1, "[color=white]FPS: %d ms %.3f" % (fps_value, 1000/(fps_value * 1.0) if fps_value else 0) )
 
             #mouse
             pix_x, pix_y, m_x, m_y = game_handle_mouse()

@@ -361,10 +361,10 @@ class com_Creature(object):
 
         if target and target.creature.faction != self.faction:
 
-            is_enemy_faction = GAME.get_faction_reaction(self.faction, target.creature.faction, True) < 0
+            is_enemy_faction = GAME.get_faction_reaction(self.faction, target.creature.faction, False) < 0
 
             if is_enemy_faction:
-                print "Target faction " + target.creature.faction + " is enemy!"
+                #print "Target faction " + target.creature.faction + " is enemy!"
                 damage_dealt = self.attack_mod
                 self.attack(target, damage_dealt)
             else:
