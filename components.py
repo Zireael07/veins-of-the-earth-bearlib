@@ -5,21 +5,14 @@ import math
 from renderer import draw_iso, draw_blood_splatter, draw_shield, draw_floating_text, draw_floating_text_step, dialogue_window
 from tile_lookups import get_block_path
 
+from generators import roll
+
 # import constants
 
 # need a reference to global GAME %^$@
 def initialize_game(game):
     global GAME
     GAME = game
-
-def roll(dice, sides):
-    result = 0
-    for _ in range(0, dice, 1):
-        roll = libtcod.random_get_int(0, 1, sides)
-        result += roll
-
-    print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
-    return result
 
 def map_check_for_creature(x, y, exclude_entity = None):
 

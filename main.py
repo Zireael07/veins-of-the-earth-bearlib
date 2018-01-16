@@ -289,22 +289,13 @@ def iso_pos(x,y):
     return tile_x, tile_y
 
 
-def roll(dice, sides):
-    result = 0
-    for _ in range(0, dice, 1):
-        roll = libtcod.random_get_int(0, 1, sides)
-        result += roll
-
-    print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
-    return result
-
 # item use effects
 def cast_heal(actor):
     if actor.creature.hp == actor.creature.max_hp:
         GAME.game_message("You are already fully healed!", "red")
         return 'cancelled'
 
-    heal = roll(1,8)
+    heal = generators.roll(1,8)
     GAME.game_message("You healed " + str(heal) + " damage", "violet")
     actor.creature.heal(heal)
 
