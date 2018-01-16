@@ -30,11 +30,16 @@ def roll(dice, sides):
 
 
 # based on STI library for LOVE2D
-def draw_iso(x,y):
+def draw_iso(x,y, pos):
+    # moved to main.py for precalculating
     # isometric
-    offset_x = constants.MAP_WIDTH * 4
-    tile_x = (x - y) * constants.TILE_WIDTH / 2 + offset_x
-    tile_y = (x + y) * constants.TILE_HEIGHT / 2
+    # offset_x = constants.CAMERA_OFFSET
+    # hw = constants.HALF_TILE_WIDTH
+    # hh = constants.HALF_TILE_HEIGHT
+    # tile_x = (x - y) * constants.HALF_TILE_WIDTH + offset_x
+    # tile_y = (x + y) * constants.HALF_TILE_HEIGHT
+    tile_x, tile_y = pos[x][y]
+
     return tile_x + CAMERA.offset[0], tile_y + CAMERA.offset[1]
 
 def cell_to_pix(val, width):
@@ -59,7 +64,7 @@ def pix_to_iso(x,y):
     return int(iso_x), int(iso_y)
 
 
-def draw_map(map_draw, map_explored, fov_map):
+def draw_map(map_draw, map_explored, fov_map, render_positions):
     #width = constants.MAP_WIDTH
     #height = constants.MAP_HEIGHT
     debug = constants.DEBUG
@@ -76,7 +81,20 @@ def draw_map(map_draw, map_explored, fov_map):
             else:
                 is_visible = libtcod.map_is_in_fov(fov_map, x, y)
 
-            if is_visible:
+            if not is_visible:
+
+                if map_explored[x][y]:
+                    # blt.color("gray")
+                    blt.color(4286545791)
+                    # cartesian
+                    # tile_x = x * constants.TILE_WIDTH
+                    # tile_y = y * constants.TILE_HEIGHT
+
+                    tile_x, tile_y = draw_iso(x, y, render_positions)
+
+                    blt.put(tile_x, tile_y, get_char(map_draw[x][y]))
+
+            else:
                 # blt.color("white")
                 blt.color(4294967295)
 
@@ -87,29 +105,18 @@ def draw_map(map_draw, map_explored, fov_map):
                 # tile_x = x*constants.TILE_WIDTH
                 # tile_y = y*constants.TILE_HEIGHT
 
-                tile_x, tile_y = draw_iso(x, y)
+                tile_x, tile_y = draw_iso(x, y, render_positions)
 
                 blt.put(tile_x, tile_y, get_char(map_draw[x][y]))
+            #elif map_explored[x][y]:  # map_draw[x][y].explored:
 
 
-            elif map_explored[x][y]:  # map_draw[x][y].explored:
-                # blt.color("gray")
-                blt.color(4286545791)
-                # cartesian
-                # tile_x = x * constants.TILE_WIDTH
-                # tile_y = y * constants.TILE_HEIGHT
-
-                tile_x, tile_y = draw_iso(x, y)
-
-                blt.put(tile_x, tile_y, get_char(map_draw[x][y]))
-
-
-def draw_mouseover(x,y):
+def draw_mouseover(x,y, render_pos):
     tile_x, tile_y = pix_to_iso(x, y)
-    draw_x, draw_y = draw_iso(tile_x, tile_y)
-
-    blt.color("light yellow")
-    blt.put(draw_x, draw_y, 0x2317)
+    if 0 < tile_x < constants.MAP_WIDTH and 0 < tile_y < constants.MAP_HEIGHT:
+        draw_x, draw_y = draw_iso(tile_x, tile_y, render_pos)
+        blt.color("light yellow")
+        blt.put(draw_x, draw_y, 0x2317)
 
 
 def draw_messages(msg_history):
@@ -173,7 +180,7 @@ def create_window(x, y, w, h, title=None, border=True):
 
 
 def options_menu(header, options, width, title=None):
-    GAME.fov_recompute = True
+    #GAME.fov_recompute = True
 
     menu_x = int((120 - width) / 2)
 
@@ -257,7 +264,7 @@ def menu_colored(header, options_tuples, width, title=None, menu_x=None, border=
 
 # scrolling version of the above
 def menu_colored_scrolled(header, options_tuples, width, begin, end, title=None):
-    GAME.fov_recompute = True
+    #GAME.fov_recompute = True
 
     menu_x = int((120 - width) / 2)
 
@@ -521,7 +528,7 @@ def multicolumn_menu(title, columns, width):
         return ret[1]
 
 def multicolumn_menu_inner(title, columns, width, current, values):
-    GAME.fov_recompute = True
+    #GAME.fov_recompute = True
 
     menu_x = int((120 - width) / 2)
 
@@ -908,3 +915,7 @@ def draw_floating_text_step(x,y, string):
         w += 1
 
     draw_effects(effects, 2, x, y, w, 1)
+
+if __name__ == "__main__":
+    # use it for testing
+    pass

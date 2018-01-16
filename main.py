@@ -120,6 +120,10 @@ class obj_Level(object):
 
         self.current_entities = []
 
+        # cache the isometric calculations instead of doing them every frame
+        # this wouldn't be necessary for a non-iso game since the calculations would be almost nonexistent
+        self.render_positions = [[iso_pos(x,y) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
+
     def add_entity(self, entity):
         if entity is not None:
             self.current_entities.append(entity)
@@ -176,7 +180,7 @@ class obj_Camera(object):
 
     def start_update(self, player):
         target_pos = (80,20)
-        cur_pos_x, cur_pos_y = renderer.draw_iso(player.x, player.y)
+        cur_pos_x, cur_pos_y = iso_pos(player.x, player.y)
         self.offset = (target_pos[0] - cur_pos_x, target_pos[1] - cur_pos_y)
     
     def update(self):
@@ -249,14 +253,14 @@ def map_calculate_fov():
 
 # the core drawing function
 def draw_game(x,y):
-    renderer.draw_map(GAME.level.current_map, GAME.level.current_explored, FOV_MAP)
+    renderer.draw_map(GAME.level.current_map, GAME.level.current_explored, FOV_MAP, GAME.level.render_positions)
 
-    renderer.draw_mouseover(x,y)
+    renderer.draw_mouseover(x,y, GAME.level.render_positions)
 
     #blt.color("white")
     blt.color(4294967295)
     for ent in GAME.level.current_entities:
-        ent.draw(fov_map=FOV_MAP)
+        ent.draw(fov_map=FOV_MAP, render_pos=GAME.level.render_positions)
 
     # on top of map
     blt.layer(1)
@@ -275,6 +279,14 @@ def cell_to_iso(x,y):
     iso_y = y / constants.TILE_HEIGHT - (x - offset_x) / constants.TILE_WIDTH - CAMERA.offset[1]
     return iso_x, iso_y
 
+def iso_pos(x,y):
+    # isometric
+    offset_x = constants.CAMERA_OFFSET
+    #hw = constants.HALF_TILE_WIDTH
+    #hh = constants.HALF_TILE_HEIGHT
+    tile_x = (x - y) * constants.HALF_TILE_WIDTH + offset_x
+    tile_y = (x + y) * constants.HALF_TILE_HEIGHT
+    return tile_x, tile_y
 
 
 def roll(dice, sides):

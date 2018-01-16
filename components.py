@@ -95,13 +95,13 @@ class obj_Actor(object):
             else:
                 return self.name
 
-    def draw(self, fov_map):
+    def draw(self, fov_map, render_pos):
         is_visible = libtcod.map_is_in_fov(fov_map, self.x, self.y)
 
         self.visible = is_visible
 
         if self.visible:
-            tile_x, tile_y = draw_iso(self.x,self.y) #this is the top(?) corner of our tile
+            tile_x, tile_y = draw_iso(self.x,self.y, render_pos) #this is the top(?) corner of our tile
             # this works for ASCII mode
             #blt.put_ext(tile_x, tile_y, 0, blt.state(blt.TK_CELL_HEIGHT), self.char)
 
@@ -320,7 +320,7 @@ class com_Creature(object):
                 target.creature.take_damage(damage)
         else:
             if self.owner.visible:
-                tile_x, tile_y = draw_iso(target.x, target.y)
+                tile_x, tile_y = draw_iso(target.x, target.y, GAME.level.render_positions)
                 draw_shield(tile_x, tile_y)
                 GAME.game_message(self.name_instance + " misses " + target.creature.name_instance + "!", "lighter blue")
 
@@ -332,7 +332,7 @@ class com_Creature(object):
         if self.owner.visible:
             if self.defense > 0:
                 GAME.game_message(self.name_instance + " blocks " + str(self.defense) + " damage", "gray")
-            tile_x, tile_y = draw_iso(self.owner.x, self.owner.y)
+            tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, GAME.level.render_positions)
             draw_blood_splatter(tile_x, tile_y, change)
             GAME.game_message(self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp), "white")
 
@@ -369,12 +369,12 @@ class com_Creature(object):
                 self.attack(target, damage_dealt)
             else:
                 if self.text is not None and self.owner.visible:
-                    tile_x, tile_y = draw_iso(self.owner.x, self.owner.y)
+                    tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, GAME.level.render_positions)
                     draw_floating_text(tile_x, tile_y-1, self.text)
                     #draw_floating_text_step(tile_x, tile_y-1, self.text)
                     GAME.game_message(self.name_instance + " says: " + self.text, "yellow")
                 if target.creature.text is not None and target.visible:
-                    tile_x, tile_y = draw_iso(target.x, target.y)
+                    tile_x, tile_y = draw_iso(target.x, target.y, GAME.level.render_positions)
                     draw_floating_text(tile_x, tile_y - 1, target.creature.text)
                     # draw_floating_text_step(tile_x, tile_y-1, target.creature.text)
                     GAME.game_message(target.creature.name_instance + " says: " + target.creature.text, "yellow")
