@@ -322,7 +322,7 @@ def character_sheet_menu(header, player):
                ("CON: " + str(player.creature.constitution), "white"), ("INT: " + str(player.creature.intelligence), "white"),
                 ("WIS: " + str(player.creature.wisdom), "white"), ("CHA: " + str(player.creature.charisma), "white"),
                ("Attack: " + str(player.creature.melee), "white"), ("Dodge: " + str(player.creature.dodge), "white"),
-               ("Armor defense: " + str(player.creature.defense), "white")
+               ("Armor defense: " + str(player.creature.defense) + str(player.creature.defense_str), "white")
                ]
 
     index = menu_colored(header, options, 50, 'CHARACTER SHEET')

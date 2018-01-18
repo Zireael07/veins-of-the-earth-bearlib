@@ -228,6 +228,27 @@ class com_Creature(object):
         return total_attack
 
     @property
+    def attack_mod_str(self):
+
+        if self.owner.container:
+            # get weapon
+            weapon = self.get_weapon()
+
+            # get weapon dice
+            if weapon is not None:
+                attack_str = "Weapon " + str(weapon.equipment.num_dice)+"d"+str(weapon.equipment.damage_dice)
+            else:
+                attack_str = str(self.num_dice)+"d"+str(self.damage_dice)
+
+            object_bonuses = ["Bonus " + str(obj.equipment.attack_bonus)
+                              for obj in self.owner.container.equipped_items]
+
+            for bonus in object_bonuses:
+                attack_str.join(bonus)
+
+        return attack_str
+
+    @property
     def defense(self):
         total_def = self.base_def
 
@@ -240,6 +261,19 @@ class com_Creature(object):
                 total_def += bonus
 
         return total_def
+
+    @property
+    def defense_str(self):
+        defense_str = ""
+        if self.owner.container:
+            # get bonuses
+            object_bonuses = ["Bonus " + str(obj.name) + " " + str(obj.equipment.defense_bonus)
+                              for obj in self.owner.container.equipped_items if obj.equipment.defense_bonus > 0]
+
+            for bonus in object_bonuses:
+                defense_str = defense_str + " " + bonus
+
+        return defense_str
 
     def get_weapon(self):
         for obj in self.owner.container.equipped_items:
@@ -266,7 +300,7 @@ class com_Creature(object):
             return "blue"
 
     def skill_test(self, skill):
-        print("Making a test for " + skill + " target: " + str(getattr(self, skill)))
+        GAME.game_message("Making a test for " + skill + " target: " + str(getattr(self, skill)), "green")
         result = roll(1,100)
 
         if result < getattr(self, skill):
