@@ -59,6 +59,7 @@ def death_monster(monster):
             item.x = monster.x
             item.y = monster.y
             GAME.level.current_entities.append(item)
+            item.send_to_back()
 
     # clean up components
     monster.creature = None

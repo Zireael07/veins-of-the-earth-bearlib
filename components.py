@@ -112,6 +112,10 @@ class obj_Actor(object):
             #cartesian
             #blt.put_ext(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, 10, 10, self.char)
 
+    def send_to_back(self):
+        GAME.level.current_entities.remove(self)
+        GAME.level.current_entities.insert(0, self)
+
 
 class com_Creature(object):
     ''' Name_instance is the name of an individual, e.g. "Agrk"'''
@@ -466,7 +470,10 @@ class com_Item(object):
     def drop(self, actor):
         GAME.game_message(actor.creature.name_instance + " dropped " + self.owner.name, "white")
         self.current_container.inventory.remove(self.owner)
+
         GAME.level.current_entities.append(self.owner)
+        self.owner.send_to_back()
+
         self.owner.x = actor.x
         self.owner.y = actor.y
 
