@@ -201,8 +201,8 @@ class com_Creature(object):
         self.base_cha = value
 
     @property
-    def attack_mod(self):
-        total_attack = 0 #self.base_atk
+    def damage(self):
+        total_damage = 0 #self.base_atk
 
         if self.owner.container:
 
@@ -211,28 +211,28 @@ class com_Creature(object):
 
             # get weapon dice
             if weapon is not None:
-                total_attack = roll(weapon.equipment.num_dice, weapon.equipment.damage_dice)
+                total_damage = roll(weapon.equipment.num_dice, weapon.equipment.damage_dice)
             else:
-                total_attack = roll(self.num_dice, self.damage_dice)
+                total_damage = roll(self.num_dice, self.damage_dice)
 
-            #print self.name_instance + ": Total attack after rolling is " + str(total_attack)
+            #print self.name_instance + ": Total damage after rolling is " + str(total_damage)
             # get bonuses
             object_bonuses = [ obj.equipment.attack_bonus
                                for obj in self.owner.container.equipped_items]
 
             for bonus in object_bonuses:
-                total_attack += bonus
+                total_damage += bonus
                 # print "Adding bonus of " + str(bonus)
 
         # if we don't have an inventory (NPC)
         else:
-            total_attack = roll(self.num_dice, self.damage_dice)
+            total_damage = roll(self.num_dice, self.damage_dice)
             # print self.name_instance + ": NPC total attack after rolling is " + str(total_attack)
 
-        return total_attack
+        return total_damage
 
     @property
-    def attack_mod_str(self):
+    def damage_str(self):
 
         if self.owner.container:
             # get weapon
@@ -240,17 +240,17 @@ class com_Creature(object):
 
             # get weapon dice
             if weapon is not None:
-                attack_str = "Weapon " + str(weapon.equipment.num_dice)+"d"+str(weapon.equipment.damage_dice)
+                damage_str = "Weapon " + str(weapon.equipment.num_dice)+"d"+str(weapon.equipment.damage_dice)
             else:
-                attack_str = str(self.num_dice)+"d"+str(self.damage_dice)
+                damage_str = str(self.num_dice)+"d"+str(self.damage_dice)
 
             object_bonuses = ["Bonus " + str(obj.equipment.attack_bonus)
                               for obj in self.owner.container.equipped_items]
 
             for bonus in object_bonuses:
-                attack_str.join(bonus)
+                damage_str.join(bonus)
 
-        return attack_str
+        return damage_str
 
     @property
     def defense(self):
@@ -271,7 +271,7 @@ class com_Creature(object):
         defense_str = ""
         if self.owner.container:
             # get bonuses
-            object_bonuses = ["Bonus " + str(obj.name) + " " + str(obj.equipment.defense_bonus)
+            object_bonuses = ["Bonus:  " + str(obj.name) + " " + str(obj.equipment.defense_bonus)
                               for obj in self.owner.container.equipped_items if obj.equipment.defense_bonus > 0]
 
             for bonus in object_bonuses:
@@ -304,7 +304,8 @@ class com_Creature(object):
             return "blue"
 
     def skill_test(self, skill):
-        GAME.game_message("Making a test for " + skill + " target: " + str(getattr(self, skill)), "green")
+        if self.owner.visible:
+            GAME.game_message("Making a test for " + skill + " target: " + str(getattr(self, skill)), "green")
         result = roll(1,100)
 
         if result < getattr(self, skill):
@@ -396,7 +397,7 @@ class com_Creature(object):
 
             if is_enemy_faction:
                 #print "Target faction " + target.creature.faction + " is enemy!"
-                damage_dealt = self.attack_mod
+                damage_dealt = self.damage
                 self.attack(target, damage_dealt)
             else:
                 if self.text is not None and self.owner.visible:
