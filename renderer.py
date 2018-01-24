@@ -485,13 +485,13 @@ def character_creation_menu(player):
 
     key = multicolumn_menu("CHARACTER CREATION", columns, 80)
 
-    if key[0] == 0 and key[1] == 2:
+    if 0 in key and 2 in key:
         select = tiles[0]
-    if key[0] == 0 and key[1] == 3:
+    if 0 in key and 3 in key:
         select = tiles[2]
-    if key[0] == 1 and key[1] == 2:
+    if 1 in key and 2 in key:
         select = tiles[1]
-    if key[0] == 1 and key[1] == 3:
+    if 1 in key and 3 in key:
         select = tiles[3]
 
     blt.set("0x40: " + select + ", align=center")  # "@"
