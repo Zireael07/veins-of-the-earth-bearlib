@@ -309,3 +309,21 @@ def get_map_desc(x,y, fov_map, explored_map, desc_map=None):
                     return ""
             else:
                 return ""
+
+# desc is an int corresponding to the description
+def get_tiles_with_desc(desc_map, desc):
+    filtered_tiles = []
+    for y in range(len(desc_map)):
+        for x in range(len(desc_map[0])):
+            if desc_map[x][y] == desc:
+                filtered_tiles.append((x,y))
+    return filtered_tiles
+
+def random_tile_with_desc(desc_map, desc):
+    free_tiles = get_tiles_with_desc(desc_map, desc)
+    index = libtcod.random_get_int(0, 0, len(free_tiles)-1)
+    #print("Index is " + str(index))
+    x = free_tiles[index][0]
+    y = free_tiles[index][1]
+    print("[Random tile with desc " + str(desc) + " Coordinates are " + str(x) + " " + str(y))
+    return x, y

@@ -13,7 +13,8 @@ import constants
 import renderer
 import components
 import generators
-from map_common import map_make_fov, random_free_tile, random_free_tile_away, Rect, print_map_string, get_map_desc,\
+from map_common import map_make_fov, random_free_tile, random_free_tile_away, random_tile_with_desc, \
+    Rect, print_map_string, get_map_desc,\
     map_check_for_creature, find_grid_in_range, find_free_grid_in_range, distance_to, tiles_distance_to
 from bspmap import BspMapGenerator
 from bspcity import BspCityGenerator
@@ -159,6 +160,11 @@ class obj_Level(object):
             self.spawn_random_monster_dist(6)
             self.spawn_random_monster_dist(6)
             self.spawn_random_monster_dist(6)
+
+            # test spawning on tiles with desc
+            self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
+            self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
+            self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
 
         else:
             # test: force spawn a monster on top of the player
