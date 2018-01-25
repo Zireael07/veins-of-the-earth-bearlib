@@ -697,13 +697,13 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
 
         if len(equipped_items) > 0:
             for i in range (len(equipped_items)):
-                item = equipped_items[i]
-                if item.equipment.slot == name:
+                item_eq = equipped_items[i]
+                if item_eq.equipment.slot == name:
                     #print("Item " + str(item.name) + " index is " + str(inventory.index(item)))
-                    char = item.char
+                    char = item_eq.char
                     draw_slot(x, y, char)
                     # draw the inventory letter
-                    text = '(' + chr(letter_index + inventory.index(item)) + ') '
+                    text = '(' + chr(letter_index + inventory.index(item_eq)) + ') '
                     blt.puts(x-1, y - 2, text)
                 else:
                     draw_slot(x,y, None)

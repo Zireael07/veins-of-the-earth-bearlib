@@ -188,16 +188,16 @@ def print_map_string(inc_map):
         sys.stdout.write("\n")
 
 def get_map_string(inc_map):
-    list = []
+    list_str = []
     for y in range(len(inc_map)):
         for x in range(len(inc_map[0])):
             #list.append(tile_types[inc_map[x][y]].map_str)
-            list.append(get_map_str(inc_map[x][y]))
+            list_str.append(get_map_str(inc_map[x][y]))
 
         # our row ended, add a line break
-        list.append("\n")
+        list_str.append("\n")
 
-    string = ''.join(list)
+    string = ''.join(list_str)
     #print string
     return string
 
