@@ -128,6 +128,13 @@ class obj_Level(object):
         if entity is not None:
             self.current_entities.append(entity)
 
+    def spawn_random_monster(self):
+        self.add_entity(generators.generate_monster(generators.generate_random_mon(), *random_free_tile(self.current_map)))
+
+    def spawn_random_monster_dist(self, dist):
+        self.add_entity(generators.generate_monster(generators.generate_random_mon(),
+                                *random_free_tile_away(self.current_map, dist, (self.player_start_x, self.player_start_y))))
+
     def generate_items_monsters(self):
         # test potion
         x, y = random_free_tile(self.current_map)
@@ -136,62 +143,34 @@ class obj_Level(object):
         self.current_entities.append(item)
 
         # test generating items
-        self.current_entities.append(generators.generate_item("longsword", *random_free_tile(self.current_map)))
-        self.current_entities.append(generators.generate_item("dagger", *random_free_tile(self.current_map)))
-        self.current_entities.append(generators.generate_item("studded armor", *random_free_tile(self.current_map)))
-        self.current_entities.append(generators.generate_item("chainmail", *random_free_tile(self.current_map)))
+        self.add_entity(generators.generate_item("longsword", *random_free_tile(self.current_map)))
+        self.add_entity(generators.generate_item("dagger", *random_free_tile(self.current_map)))
+        self.add_entity(generators.generate_item("studded armor", *random_free_tile(self.current_map)))
+        self.add_entity(generators.generate_item("chainmail", *random_free_tile(self.current_map)))
 
         self.add_entity(generators.generate_monster("human", *random_free_tile(self.current_map)))
 
         if self.gen_type != "dungeon":
             # test generating monsters
-            self.add_entity(
-                generators.generate_monster(generators.generate_random_mon(),
-                        *random_free_tile_away(self.current_map, 6, (self.player_start_x, self.player_start_y))))
-            self.add_entity(
-                generators.generate_monster(generators.generate_random_mon(),
-                        *random_free_tile_away(self.current_map, 6, (self.player_start_x, self.player_start_y))))
-            self.add_entity(
-                generators.generate_monster(generators.generate_random_mon(),
-                        *random_free_tile_away(self.current_map, 6, (self.player_start_x, self.player_start_y))))
-            self.add_entity(
-                generators.generate_monster(generators.generate_random_mon(),
-                        *random_free_tile_away(self.current_map, 6, (self.player_start_x, self.player_start_y))))
-            self.add_entity(
-                generators.generate_monster(generators.generate_random_mon(),
-                        *random_free_tile_away(self.current_map, 6, (self.player_start_x, self.player_start_y))))
-            self.add_entity(
-                generators.generate_monster(generators.generate_random_mon(),
-                        *random_free_tile_away(self.current_map, 6, (self.player_start_x, self.player_start_y))))
-            self.add_entity(
-                generators.generate_monster(generators.generate_random_mon(),
-                        *random_free_tile_away(self.current_map, 6, (self.player_start_x, self.player_start_y))))
+            self.spawn_random_monster_dist(6)
+            self.spawn_random_monster_dist(6)
+            self.spawn_random_monster_dist(6)
+            self.spawn_random_monster_dist(6)
+            self.spawn_random_monster_dist(6)
+            self.spawn_random_monster_dist(6)
+            self.spawn_random_monster_dist(6)
 
         else:
             # test: force spawn a monster on top of the player
             self.add_entity(generators.generate_monster("goblin", self.player_start_x, self.player_start_y))
 
-            self.add_entity(
-                generators.generate_monster(generators.generate_random_mon(),
-                        *random_free_tile(self.current_map))) #, 6, (self.player_start_x, self.player_start_y))))
-            self.add_entity(
-                generators.generate_monster(generators.generate_random_mon(),
-                        *random_free_tile(self.current_map))) #, 6, (self.player_start_x, self.player_start_y))))
-            self.add_entity(
-                generators.generate_monster(generators.generate_random_mon(),
-                        *random_free_tile(self.current_map))) #, 6, (self.player_start_x, self.player_start_y))))
-            self.add_entity(
-                generators.generate_monster(generators.generate_random_mon(),
-                         *random_free_tile(self.current_map))) #, 6, (self.player_start_x, self.player_start_y))))
-            self.add_entity(
-                generators.generate_monster(generators.generate_random_mon(),
-                        *random_free_tile(self.current_map))) #, 6, (self.player_start_x, self.player_start_y))))
-            self.add_entity(
-                generators.generate_monster(generators.generate_random_mon(),
-                        *random_free_tile_away(self.current_map, 4, (self.player_start_x, self.player_start_y))))
-            self.add_entity(
-                generators.generate_monster(generators.generate_random_mon(),
-                        *random_free_tile_away(self.current_map, 4, (self.player_start_x, self.player_start_y))))
+            self.spawn_random_monster()
+            self.spawn_random_monster()
+            self.spawn_random_monster()
+            self.spawn_random_monster()
+            self.spawn_random_monster()
+            self.spawn_random_monster_dist(4)
+            self.spawn_random_monster_dist(4)
 
 class obj_Camera(object):
     def __init__(self):
