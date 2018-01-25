@@ -3,6 +3,7 @@ from math import sqrt
 
 import constants
 from map_common import print_map_string, get_free_tiles
+from tile_lookups import TileTypes, get_index
 
 # based on http://www.evilscience.co.uk/a-c-algorithm-to-build-roguelike-cave-systems-part-1/
 # implementation from https://github.com/AtTheMatinee/dungeon-generation
@@ -26,7 +27,7 @@ class CaveGenerator(object):
         self.smoothing = 1
 
     def _generate_empty_map(self):
-        self._map = [[0 for _ in range(self.map_height)] for _ in range(self.map_width)]
+        self._map = [[get_index(TileTypes.WALL) for _ in range(self.map_height)] for _ in range(self.map_width)]
         return self._map
 
     def generate_map(self):
@@ -53,7 +54,7 @@ class CaveGenerator(object):
                 #print("(",x,y,") = ",self._map[x][y])
                 if random.random() >= self.wall_chance:
                     # make it a floor
-                    self._map[x][y] = 2
+                    self._map[x][y] = get_index(TileTypes.FLOOR) #2
 
     def create_caves(self):
         # ==== Create distinct caves ====
@@ -64,10 +65,10 @@ class CaveGenerator(object):
 
             # if the cell's neighboring walls > self.neighbors, make it a wall
             if self.get_adjacent_walls(tile_x, tile_y) > self.neighbors:
-                self._map[tile_x][tile_y] = 0
+                self._map[tile_x][tile_y] = get_index(TileTypes.WALL) #0
             # or make it a floor
             elif self.get_adjacent_walls(tile_x, tile_y) < self.neighbors:
-                self._map[tile_x][tile_y] = 2
+                self._map[tile_x][tile_y] = get_index(TileTypes.FLOOR) #2
 
         self.smooth()
 
@@ -77,8 +78,8 @@ class CaveGenerator(object):
                 # Look at each cell individually and check for smoothness
                 for x in range(1, self.map_width - 1):
                     for y in range(1, self.map_height - 1):
-                        if (self._map[x][y] == 0) and (self.get_adjacent_walls_simple(x, y) <= self.smoothing):
-                            self._map[x][y] = 2
+                        if (self._map[x][y] == get_index(TileTypes.WALL)) and (self.get_adjacent_walls_simple(x, y) <= self.smoothing):
+                            self._map[x][y] = get_index(TileTypes.FLOOR) #2
 
     def create_tunnel(self, point1, point2, current_cave):
         #print("Creating a tunnel from " + str(point1) + " to " + str(point2))
@@ -133,31 +134,31 @@ class CaveGenerator(object):
                 drunkard_x += dx
                 drunkard_y += dy
                 # carve out floor
-                if self._map[drunkard_x][drunkard_y] == 0:
-                    self._map[drunkard_x][drunkard_y] = 2
+                if self._map[drunkard_x][drunkard_y] == get_index(TileTypes.WALL): #0:
+                    self._map[drunkard_x][drunkard_y] = get_index(TileTypes.FLOOR) #2
 
     # finds the walls in four directions
     def get_adjacent_walls_simple(self, x, y):
         wall_count = 0
         # print("(",x,",",y,") = ",self._map[x][y])
-        if self._map[x][y - 1] == 0:  # Check north
+        if self._map[x][y - 1] == get_index(TileTypes.WALL): #0:  # Check north
             wall_count += 1
-        if self._map[x][y + 1] == 0:  # Check south
+        if self._map[x][y + 1] == get_index(TileTypes.WALL): #0:  # Check south
             wall_count += 1
-        if self._map[x - 1][y] == 0:  # Check west
+        if self._map[x - 1][y] == get_index(TileTypes.WALL): #0:  # Check west
             wall_count += 1
-        if self._map[x + 1][y] == 0:  # Check east
+        if self._map[x + 1][y] == get_index(TileTypes.WALL): #0:  # Check east
             wall_count += 1
 
         return wall_count
 
     # finds the walls in 8 directions
     def get_adjacent_walls(self, tile_x, tile_y):
-        pass
+
         wall_count = 0
         for x in range(tile_x - 1, tile_x + 2):
             for y in range(tile_y - 1, tile_y + 2):
-                if self._map[x][y] == 0:
+                if self._map[x][y] == get_index(TileTypes.WALL): #0:
                     if (x != tile_x) or (y != tile_y):  # exclude (tile_x,tile_y)
                         wall_count += 1
         return wall_count
@@ -166,12 +167,12 @@ class CaveGenerator(object):
         # locate all the caves within self.level and store them in self.caves
         for x in range(0, self.map_width):
             for y in range(0, self.map_height):
-                if self._map[x][y] == 2:
+                if self._map[x][y] == get_index(TileTypes.FLOOR): #2:
                     self.flood_fill(x, y)
 
         for cave_set in self.caves:
             for tile in cave_set:
-                self._map[tile[0]][tile[1]] = 2
+                self._map[tile[0]][tile[1]] = get_index(TileTypes.FLOOR) #2
 
 
     def flood_fill(self, x, y):
@@ -189,7 +190,7 @@ class CaveGenerator(object):
             if tile not in cave:
                 cave.add(tile)
 
-                self._map[tile[0]][tile[1]] = 0
+                self._map[tile[0]][tile[1]] = get_index(TileTypes.WALL) #0
 
                 # check adjacent cells
                 x = tile[0]
@@ -201,7 +202,7 @@ class CaveGenerator(object):
 
                 for direction in [north, south, east, west]:
 
-                    if self._map[direction[0]][direction[1]] == 2:
+                    if self._map[direction[0]][direction[1]] == get_index(TileTypes.FLOOR): #2:
                         if direction not in to_fill and direction not in cave:
                             to_fill.add(direction)
 
@@ -254,7 +255,7 @@ class CaveGenerator(object):
 
                 for direction in [north, south, east, west]:
 
-                    if self._map[direction[0]][direction[1]] == 2:
+                    if self._map[direction[0]][direction[1]] == get_index(TileTypes.FLOOR): #2:
                         if direction not in to_fill and direction not in connectedRegion:
                             to_fill.add(direction)
 
