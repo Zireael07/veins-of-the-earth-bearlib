@@ -89,16 +89,16 @@ class obj_Game(object):
         self.fov_recompute = True
 
 class obj_Level(object):
-    def __init__(self, type="dungeon"):
-        self.type = type
+    def __init__(self, gen_type="dungeon"):
+        self.gen_type = gen_type
         # map gen
-        if type == "dungeon":
+        if gen_type == "dungeon":
             map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
                                   constants.FULL_ROOMS)
-        elif type == "encampment":
+        elif gen_type == "encampment":
             map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
                                 False)
-        elif type == "city":
+        elif gen_type == "city":
             map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
                                 False, True)
         # fallback
@@ -143,7 +143,7 @@ class obj_Level(object):
 
         self.add_entity(generators.generate_monster("human", *random_free_tile(self.current_map)))
 
-        if self.type != "dungeon":
+        if self.gen_type != "dungeon":
             # test generating monsters
             self.add_entity(
                 generators.generate_monster(generators.generate_random_mon(),
