@@ -439,6 +439,12 @@ class com_Creature(object):
         dy = int(round(dy / distance))
         return self.move(dx, dy, game_map), dx, dy
 
+    def move_to_target(self, x, y, game_map):
+        # vector from this object to the target, and distance
+        dx = x - self.owner.x
+        dy = y - self.owner.y
+        return self.move(dx, dy, game_map)
+
 
 class com_Container(object):
     def __init__(self, inventory = None):

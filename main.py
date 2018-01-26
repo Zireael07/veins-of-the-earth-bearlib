@@ -78,6 +78,9 @@ class obj_Game(object):
         # add player
         self.level.current_entities.append(PLAYER)
 
+        # place player in sensible place
+        PLAYER.creature.move_to_target(self.level.player_start_x, self.level.player_start_y, self.level.current_map)
+
         # add stuff
         self.level.generate_items_monsters()
 
