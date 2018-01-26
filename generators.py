@@ -207,6 +207,11 @@ def generate_item(i_id, x,y):
     logger.info("Generating item with id " + i_id + " at " + str(x) + " " + str(y))
     #print "Generating item with id " + i_id + " at " + str(x) + " " + str(y)
 
+    # catch typos
+    if not i_id in items_data:
+        print("Wanted a bad item id " + str(i_id))
+        return
+
     # set values
     item_name = items_data[i_id]['name']
     item_slot = items_data[i_id]['slot']
