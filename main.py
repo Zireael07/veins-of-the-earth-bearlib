@@ -14,10 +14,11 @@ import renderer
 import components
 import generators
 from map_common import map_make_fov, random_free_tile, random_free_tile_away, random_tile_with_desc, \
-    Rect, print_map_string, get_map_desc,\
+    Rect, print_map_string, get_map_desc, get_free_tiles, \
     map_check_for_creature, find_grid_in_range, find_free_grid_in_range, distance_to, tiles_distance_to
 from bspmap import BspMapGenerator
 from bspcity import BspCityGenerator
+from cavemap import CaveGenerator
 import handle_input
 from game_states import GameStates
 
@@ -72,7 +73,7 @@ class obj_Game(object):
         self.game_message("You descend deeper in the dungeon", "violet")
 
         # make next level
-        self.level = obj_Level("dungeon")
+        self.level = obj_Level("cavern")
 
         # add player
         self.level.current_entities.append(PLAYER)
@@ -102,14 +103,29 @@ class obj_Level(object):
         elif gen_type == "city":
             map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
                                 False, True)
+        elif gen_type == "cavern":
+            map_gen = CaveGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT)
         # fallback
         else:
             map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
                                       constants.FULL_ROOMS)
+
         gen_map = map_gen.generate_map()
-        self.current_map, self.map_desc = gen_map[0], gen_map[1]
+        # catch degenerate instances
+        if gen_type == "cavern":
+            max_tiles = constants.MAP_WIDTH * constants.MAP_WIDTH
+            while len(get_free_tiles(gen_map[0])) < max_tiles / 8:  # 50:
+                print("Free tiles check failed, regenerating...")
+                gen_map = map_gen.generate_map()
+
+        if len(gen_map) > 1:
+            self.current_map, self.map_desc = gen_map[0], gen_map[1]
+        else:
+            self.current_map, self.map_desc = gen_map[0], [[ 0 for _ in range(constants.MAP_HEIGHT)] for _ in range(constants.MAP_WIDTH)]
         if len(gen_map) > 2:
             self.player_start_x, self.player_start_y = gen_map[2], gen_map[3]
+        else:
+            self.player_start_x, self.player_start_y = random_free_tile(self.current_map)
         if len(gen_map) > 4:
             self.rooms = gen_map[4]
 
@@ -151,7 +167,7 @@ class obj_Level(object):
 
         self.add_entity(generators.generate_monster("human", *random_free_tile(self.current_map)))
 
-        if self.gen_type != "dungeon":
+        if self.gen_type == "encampment" or self.gen_type == "city":
             # test generating monsters
             self.spawn_random_monster_dist(6)
             self.spawn_random_monster_dist(6)

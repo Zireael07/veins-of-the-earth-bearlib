@@ -46,7 +46,7 @@ class CaveGenerator(object):
         self.connect_caves()
 
         self.smooth()
-        return self._map
+        return [self._map]
 
     def random_fill(self):
         for y in range(1, self.map_height - 1):
