@@ -155,18 +155,27 @@ class obj_Level(object):
         self.add_entity(generators.generate_monster(generators.generate_random_mon(),
                                 *random_free_tile_away(self.current_map, dist, (self.player_start_x, self.player_start_y))))
 
+    def spawn_item_by_id(self, id):
+        item = generators.generate_item(id, *random_free_tile(self.current_map))
+        self.add_entity(item)
+        if item:
+            item.send_to_back()
+
+
+
     def generate_items_monsters(self):
         # test potion
         x, y = random_free_tile(self.current_map)
         item_com = components.com_Item(use_function=cast_heal)
         item = components.obj_Actor(x, y, 0x2762, "potion", item=item_com)
         self.current_entities.append(item)
+        item.send_to_back()
 
         # test generating items
-        self.add_entity(generators.generate_item("longsword", *random_free_tile(self.current_map)))
-        self.add_entity(generators.generate_item("dagger", *random_free_tile(self.current_map)))
-        self.add_entity(generators.generate_item("studded armor", *random_free_tile(self.current_map)))
-        self.add_entity(generators.generate_item("chainmail", *random_free_tile(self.current_map)))
+        self.spawn_item_by_id("longsword")
+        self.spawn_item_by_id("dagger")
+        self.spawn_item_by_id("studded armor")
+        self.spawn_item_by_id("chainmail")
 
         self.add_entity(generators.generate_monster("human", *random_free_tile(self.current_map)))
 
