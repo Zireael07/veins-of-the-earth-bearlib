@@ -1,3 +1,5 @@
+import json
+
 import constants
 import components
 import generators
@@ -87,7 +89,11 @@ class obj_Level(object):
 
 
 
-    def generate_items_monsters(self):
+    def generate_items_monsters(self, num=0, dists=None):
+        # default
+        if dists is None:
+            dists = []
+
         # test potion
         x, y = random_free_tile(self.current_map)
         item_com = components.com_Item(use_function=cast_heal)
@@ -103,32 +109,38 @@ class obj_Level(object):
 
         self.add_entity(generators.generate_monster("human", *random_free_tile(self.current_map)))
 
-        if self.gen_type == "encampment" or self.gen_type == "city":
-            # test generating monsters
-            self.spawn_random_monster_dist(6)
-            self.spawn_random_monster_dist(6)
-            self.spawn_random_monster_dist(6)
-            self.spawn_random_monster_dist(6)
-            self.spawn_random_monster_dist(6)
-            self.spawn_random_monster_dist(6)
-            self.spawn_random_monster_dist(6)
+        for i in range(num):
+            self.spawn_random_monster()
 
-            # test spawning on tiles with desc
-            self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
-            self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
-            self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
+        for d in dists:
+            self.spawn_random_monster_dist(d)
 
-        else:
-            # test: force spawn a monster on top of the player
-            self.add_entity(generators.generate_monster("goblin", self.player_start_x, self.player_start_y))
-
-            self.spawn_random_monster()
-            self.spawn_random_monster()
-            self.spawn_random_monster()
-            self.spawn_random_monster()
-            self.spawn_random_monster()
-            self.spawn_random_monster_dist(4)
-            self.spawn_random_monster_dist(4)
+        # if self.gen_type == "encampment" or self.gen_type == "city":
+        #     # test generating monsters
+        #     self.spawn_random_monster_dist(6)
+        #     self.spawn_random_monster_dist(6)
+        #     self.spawn_random_monster_dist(6)
+        #     self.spawn_random_monster_dist(6)
+        #     self.spawn_random_monster_dist(6)
+        #     self.spawn_random_monster_dist(6)
+        #     self.spawn_random_monster_dist(6)
+        #
+        #     # test spawning on tiles with desc
+        #     self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
+        #     self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
+        #     self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
+        #
+        # else:
+        #     # test: force spawn a monster on top of the player
+        #     self.add_entity(generators.generate_monster("goblin", self.player_start_x, self.player_start_y))
+        #
+        #     self.spawn_random_monster()
+        #     self.spawn_random_monster()
+        #     self.spawn_random_monster()
+        #     self.spawn_random_monster()
+        #     self.spawn_random_monster()
+        #     self.spawn_random_monster_dist(4)
+        #     self.spawn_random_monster_dist(4)
 
 # item use effects
 def cast_heal(actor):
@@ -148,3 +160,36 @@ def iso_pos(x,y):
     tile_x = (x - y) * constants.HALF_TILE_WIDTH + offset_x
     tile_y = (x + y) * constants.HALF_TILE_HEIGHT
     return tile_x, tile_y
+
+def load_level_data(l_id):
+    if not l_id in levels_data:
+        print("Wanted bad level: " + str(l_id))
+        return
+
+    # values
+    gen_type = levels_data[l_id]['type']
+    if 'random_spawn_num' in levels_data[l_id]:
+        rnd_spawns = levels_data[l_id]['random_spawn_num']
+    else:
+        rnd_spawns = 0
+    if 'random_spawn_dist' in levels_data[l_id]:
+        rnd_spawn_dist = levels_data[l_id]['random_spawn_dist']
+    else:
+        rnd_spawn_dist = []
+
+    return [gen_type, rnd_spawns, rnd_spawn_dist]
+
+
+# Execute
+# Load JSON
+with open("data/levels-test.json") as json_data:
+    levels_data = json.load(json_data)
+    generators.logger.debug(levels_data)
+
+if __name__ == '__main__':
+    with open("data/levels-test.json") as json_data:
+        levels_data = json.load(json_data)
+        generators.logger.debug(levels_data)
+
+    print(load_level_data("cave"))
+    print(load_level_data("encampment"))

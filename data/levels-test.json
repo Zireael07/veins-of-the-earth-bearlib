@@ -1,0 +1,15 @@
+{
+ "city": {
+           "type": "city",
+           "random_spawn_dist": [6, 6, 6, 6, 6]
+ },
+ "encampment": {
+           "type": "encampment",
+           "random_spawn_dist": [6, 6, 6]
+ },
+ "cavern": {
+           "type": "cavern",
+           "random_spawn_num": 6,
+           "random_spawn_dist": [4,4,4]
+ }
+}

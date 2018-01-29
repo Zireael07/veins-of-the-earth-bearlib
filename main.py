@@ -24,7 +24,8 @@ from game_states import GameStates
 class obj_Game(object):
     def __init__(self, basic):
         if not basic:
-            self.level = level.obj_Level("city")
+            data = level.load_level_data("city")
+            self.level = level.obj_Level(data[0]) #level.obj_Level("city")
 
             # init game for submodules
             components.initialize_game(self)
@@ -34,7 +35,7 @@ class obj_Game(object):
 
             self.message_history = []
 
-            self.level.generate_items_monsters()
+            self.level.generate_items_monsters(data[1], data[2])
             global FOV_MAP
             FOV_MAP = map_make_fov(self.level.current_map)
             global AI_FOV_MAP
