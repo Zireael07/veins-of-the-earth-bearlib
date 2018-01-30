@@ -115,32 +115,16 @@ class obj_Level(object):
         for d in dists:
             self.spawn_random_monster_dist(d)
 
-        # if self.gen_type == "encampment" or self.gen_type == "city":
-        #     # test generating monsters
-        #     self.spawn_random_monster_dist(6)
-        #     self.spawn_random_monster_dist(6)
-        #     self.spawn_random_monster_dist(6)
-        #     self.spawn_random_monster_dist(6)
-        #     self.spawn_random_monster_dist(6)
-        #     self.spawn_random_monster_dist(6)
-        #     self.spawn_random_monster_dist(6)
-        #
-        #     # test spawning on tiles with desc
-        #     self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
-        #     self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
-        #     self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
-        #
-        # else:
-        #     # test: force spawn a monster on top of the player
-        #     self.add_entity(generators.generate_monster("goblin", self.player_start_x, self.player_start_y))
-        #
-        #     self.spawn_random_monster()
-        #     self.spawn_random_monster()
-        #     self.spawn_random_monster()
-        #     self.spawn_random_monster()
-        #     self.spawn_random_monster()
-        #     self.spawn_random_monster_dist(4)
-        #     self.spawn_random_monster_dist(4)
+        if self.gen_type == "encampment" or self.gen_type == "city":
+             # test spawning on tiles with desc
+             self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
+             self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
+             self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
+
+        else:
+             # test: force spawn a monster on top of the player
+             self.add_entity(generators.generate_monster("goblin", self.player_start_x, self.player_start_y))
+
 
 # item use effects
 def cast_heal(actor):
