@@ -93,7 +93,10 @@ class obj_Actor(object):
 
         self.visible = is_visible
 
-        if self.visible:
+        draw_item = self.item and GAME.level.current_explored[self.x][self.y]
+
+
+        if self.visible or draw_item:
             tile_x, tile_y = draw_iso(self.x,self.y, render_pos) #this is the top(?) corner of our tile
             # this works for ASCII mode
             #blt.put_ext(tile_x, tile_y, 0, blt.state(blt.TK_CELL_HEIGHT), self.char)
