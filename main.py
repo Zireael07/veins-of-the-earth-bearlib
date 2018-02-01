@@ -185,8 +185,15 @@ def draw_game(x,y):
 
     #blt.color("white")
     blt.color(4294967295)
+    width_start = CAMERA.get_width_start()
+    width_end = CAMERA.get_width_end()
+    height_start = CAMERA.get_height_start()
+    height_end = CAMERA.get_height_end()
+
     for ent in GAME.level.current_entities:
-        ent.draw(fov_map=FOV_MAP, render_pos=GAME.level.render_positions)
+        if ent.x >= width_start and ent.x < width_end:
+            if ent.y >= height_start and ent.y < height_end:
+                ent.draw(fov_map=FOV_MAP, render_pos=GAME.level.render_positions)
 
     # on top of map
     blt.layer(1)
