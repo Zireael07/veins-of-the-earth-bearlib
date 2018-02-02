@@ -343,7 +343,7 @@ def generate_monster(m_id, x,y):
         #print "Wanted id of None, aborting"
         return
 
-    logger.info("Generating monster with id " + m_id + " at " + str(x) + " " + str(y))
+    logger.info("Generating monster with id " + str(m_id) + " at " + str(x) + " " + str(y))
     #print "Generating monster with id " + m_id + " at " + str(x) + " " + str(y)
 
     # Set values

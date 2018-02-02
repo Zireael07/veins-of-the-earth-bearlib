@@ -4,6 +4,7 @@ from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 
 import time
+import json
 
 from map_common import get_map_string
 from tile_lookups import get_char
@@ -407,9 +408,9 @@ def help_menu():
     blt.set("0x003E: gfx/stairs_down.png, align=center")
 
 
-def debug_menu():
+def debug_menu(player):
 
-    options = ["Reveal map", "Map overview", "Creatures list"]
+    options = ["Reveal map", "Map overview", "Creatures list", "Spawn creature"]
 
     key = options_menu("DEBUG", options, 50, "Debug menu")
 
@@ -440,6 +441,22 @@ def debug_menu():
                 opt.append(ent.creature.name_instance + " X: " + str(ent.x) + " Y: " + str(ent.y))
 
         options_menu("Creature list", opt, 50, "List")
+
+    if key == 3:
+        import generators
+        # load
+        with open(constants.NPC_JSON_PATH) as json_data:
+            monster_data = json.load(json_data)
+
+
+        opt = []
+        for m_id in monster_data:
+            opt.append(m_id)
+
+        sel = options_menu("Spawn creature:", opt, 50, "List")
+
+        if sel is not None:
+            GAME.level.add_entity(generators.generate_monster(opt[sel], player.x, player.y))
 
 def character_stats_menu_outer(player):
     ret = character_stats_menu(player)
