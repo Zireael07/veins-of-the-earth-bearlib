@@ -14,6 +14,8 @@ import renderer
 import components
 import generators
 import level
+import gui_menus
+
 from map_common import map_make_fov, get_map_desc, map_check_for_creature, \
      find_free_grid_in_range, distance_to, tiles_distance_to
 
@@ -31,6 +33,7 @@ class obj_Game(object):
             components.initialize_game(self)
             generators.initialize_game(self)
             renderer.initialize_game(self)
+            gui_menus.initialize_game(self)
             level.initialize_game(self)
 
             self.message_history = []
@@ -627,7 +630,7 @@ def game_initialize():
     GAME.game_state = GameStates.MAIN_MENU
     renderer.initialize_game(GAME)
     blt.put(10,0, 0xE100)
-    action = renderer.main_menu()
+    action = gui_menus.main_menu()
 
     # if we have a savegame, load it
     if action == 2 and os.path.isfile('savegame.json'):
@@ -648,6 +651,7 @@ def game_initialize():
         generators.initialize_game(GAME)
         level.initialize_game(GAME)
         renderer.initialize_game(GAME)
+        gui_menus.initialize_game(GAME)
 
         # init camera for renderer
         renderer.initialize_camera(CAMERA)
@@ -679,7 +683,7 @@ def game_initialize():
 
         # show character creation
         blt.clear()
-        renderer.character_creation_menu(PLAYER)
+        gui_menus.character_creation_menu(PLAYER)
 
     else:
         #quit

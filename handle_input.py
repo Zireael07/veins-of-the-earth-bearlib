@@ -2,7 +2,8 @@ from bearlibterminal import terminal as blt
 
 import constants
 from game_states import GameStates
-import renderer
+import gui_menus
+from renderer import pix_to_iso
 from map_common import map_check_for_item
 
 def initialize_camera(camera):
@@ -42,24 +43,24 @@ def click_on_msg_log(m_y):
         check = get_top_log_string_index()
         if check is not None:
             print(GAME.message_history[check])
-            renderer.display_dmg_window(check)
+            gui_menus.display_dmg_window(check)
 
     elif m_y == log_h + 1:
         check = get_top_log_string_index()
         if check is not None:
             print(GAME.message_history[check + 1])
-            renderer.display_dmg_window(check + 1)
+            gui_menus.display_dmg_window(check + 1)
 
     elif m_y == log_h + 2:
         check = get_top_log_string_index()
         if check is not None:
             print(GAME.message_history[check + 2])
-            renderer.display_dmg_window(check + 2)
+            gui_menus.display_dmg_window(check + 2)
     elif m_y == log_h + 3:
         check = get_top_log_string_index()
         if check is not None:
             print(GAME.message_history[check + 3])
-            renderer.display_dmg_window(check + 3)
+            gui_menus.display_dmg_window(check + 3)
 
 
 # player input
@@ -84,7 +85,7 @@ def game_handle_mouse_input(key):
             # fake an offset of camera offset * cell height
             pix_y = pix_y - CAMERA.offset[1] * blt.state(blt.TK_CELL_HEIGHT)
 
-            click_x, click_y = renderer.pix_to_iso(pix_x, pix_y)
+            click_x, click_y = pix_to_iso(pix_x, pix_y)
 
             if click_x > 0 and click_x < constants.MAP_WIDTH - 1:
                 if click_y > 0 and click_y < constants.MAP_HEIGHT - 1:
@@ -102,7 +103,7 @@ def game_handle_mouse_input(key):
     if key == blt.TK_MOUSE_RIGHT:
         pix_x = blt.state(blt.TK_MOUSE_PIXEL_X)
         pix_y = blt.state(blt.TK_MOUSE_PIXEL_Y)
-        print "Right clicked on tile " + str(renderer.pix_to_iso(pix_x, pix_y))
+        print "Right clicked on tile " + str(pix_to_iso(pix_x, pix_y))
 
         return "mouse_click"
 
@@ -153,25 +154,25 @@ def game_handle_keys():
                 PLAYER.container.inventory[-1].item.drop(PLAYER)
 
         if key == blt.TK_I:
-            chosen_item = renderer.inventory_menu("Inventory", PLAYER)
+            chosen_item = gui_menus.inventory_menu("Inventory", PLAYER)
             if chosen_item is not None:
                 if chosen_item.item:
                     chosen_item.item.use(PLAYER)
 
         if key == blt.TK_C:
-            renderer.character_sheet_menu("Character sheet", PLAYER)
+            gui_menus.character_sheet_menu("Character sheet", PLAYER)
 
     if key == blt.TK_L:
-        renderer.log_menu("Log history", 0, 26)
+        gui_menus.log_menu("Log history", 0, 26)
 
     if key == blt.TK_SLASH and blt.check(blt.TK_SHIFT):
-        renderer.help_menu()
+        gui_menus.help_menu()
 
     # Debugging
     if key == blt.TK_GRAVE and blt.check(blt.TK_SHIFT):
         # print("Debug mode on")
         # constants.DEBUG = True
-        renderer.debug_menu(PLAYER)
+        gui_menus.debug_menu(PLAYER)
 
     game_handle_mouse_input(key)
 

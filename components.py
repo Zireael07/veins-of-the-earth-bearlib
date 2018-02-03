@@ -2,7 +2,8 @@ from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 import math
 
-from renderer import draw_iso, draw_blood_splatter, draw_shield, draw_floating_text, draw_floating_text_step, dialogue_window
+from renderer import draw_iso, draw_blood_splatter, draw_shield, draw_floating_text
+from gui_menus import dialogue_window
 from tile_lookups import get_block_path
 
 from generators import roll
