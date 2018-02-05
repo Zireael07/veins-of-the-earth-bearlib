@@ -15,6 +15,7 @@ import components
 import generators
 import level
 import gui_menus
+import calendar
 
 from map_common import map_make_fov, get_map_desc, map_check_for_creature, \
      find_free_grid_in_range, distance_to, tiles_distance_to
@@ -45,7 +46,7 @@ class obj_Game(object):
             AI_FOV_MAP = map_make_fov(self.level.current_map)
 
             self.factions = []
-
+            self.calendar = calendar.obj_Calendar(1371)
 
 
         self.fov_recompute = False
@@ -382,6 +383,9 @@ def game_main_loop():
 
 
             if player_action != "no-action" and player_action != "mouse_click":
+                # advance time
+                GAME.calendar.turn += 1
+
                 #toggle game state to enemy turn
                 GAME.game_state = GameStates.ENEMY_TURN
 
@@ -397,6 +401,8 @@ def game_main_loop():
 
                 if not GAME.game_state == GameStates.PLAYER_DEAD:
                     GAME.game_state = GameStates.PLAYER_TURN
+                    # test passage of time
+                    print(GAME.calendar.get_time_date(GAME.calendar.turn))
 
             if GAME.game_state == GameStates.PLAYER_DEAD:
                 print("PLAYER DEAD")
