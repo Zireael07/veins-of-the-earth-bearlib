@@ -318,7 +318,7 @@ class com_Creature(object):
 
         if result < getattr(self, skill):
             # player only
-            if self.player:
+            if self.player and not self.player.resting:
                 # check how much we gain in the skill
                 tick = roll(1, 100)
                 # roll OVER the current skill
@@ -334,7 +334,7 @@ class com_Creature(object):
             return True
         else:
             # player only
-            if self.player:
+            if self.player and not self.player.resting:
                 # if we failed, the check for gain is different
                 tick = roll(1,100)
                 # roll OVER the current skill
@@ -350,8 +350,8 @@ class com_Creature(object):
         if self.skill_test("melee"):
             if self.owner.visible:
                 GAME.game_message(self.name_instance + " hits " + target.creature.name_instance +"!", "white")
-            # assume target can try to dodge
-            if target.creature.skill_test("dodge"):
+            # assume target can try to dodge (i.e. not sleeping)
+            if (target.creature.player is not None and not target.creature.player.resting) and target.creature.skill_test("dodge"):
                 if self.owner.visible:
                     GAME.game_message(target.creature.name_instance + " dodges!", "green")
             else:
@@ -422,6 +422,9 @@ class com_Creature(object):
                 # test
                 if self.chat is not None:
                     dialogue_window(self)
+                    # wake player if he's sleeping
+                    if target.creature.player.resting:
+                        target.creature.player.resting = False
 
                 if target.creature.chat is not None:
                     dialogue_window(target.creature)
