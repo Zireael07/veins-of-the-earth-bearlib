@@ -5,6 +5,7 @@ import math
 from renderer import draw_iso, draw_blood_splatter, draw_shield, draw_floating_text
 from gui_menus import dialogue_window
 from tile_lookups import get_block_path
+import calendar
 
 from generators import roll
 
@@ -128,7 +129,7 @@ class com_Creature(object):
                  base_str = 8, base_dex = 8, base_con = 8, base_int = 8, base_wis = 8, base_cha = 8,
                  dodge=25, melee=55,
                  faction = "enemy",
-                 player = False,
+                 player = None,
                  text = None,
                  chat = None,
                  death_function=None):
@@ -149,8 +150,11 @@ class com_Creature(object):
         self.dodge = dodge
         self.melee = melee
 
-        # flag for player
+        # player
         self.player = player
+        if self.player:
+            player.owner = self
+
         self.faction = faction
         self.text = text
         self.chat = chat
@@ -525,3 +529,53 @@ class com_Equipment(object):
         self.equipped = False
         GAME.game_message(actor.creature.name_instance + " took off " + self.owner.name, "white")
 
+
+class com_Player(object):
+    def __init__(self):
+        self.resting = False
+        self.rest_cnt = 0
+        self.rest_turns = 0
+
+    def act(self):
+        if self.resting:
+            self.resting_step()
+
+
+    def rest_start(self, turns):
+        self.rest_cnt = 0
+        self.resting = True
+        self.rest_turns = turns
+        GAME.game_message("Resting starts...", "blue")
+
+        if self.resting and self.rest_cnt >= turns:
+            self.rest_stop()
+        else:
+            # toggle game state to enemy turn
+            GAME.end_player_turn()
+            self.rest_cnt += 1
+
+    def resting_step(self):
+        if not self.resting:
+            return
+
+        if self.resting and self.rest_cnt >= self.rest_turns:
+            self.rest_stop()
+        else:
+            # actual resting stuff (actually only done once for simplicity)
+            if self.rest_cnt == 6:
+                # I think this formula dates back to Incursion
+                heal = ((1+3)*self.owner.constitution)/5
+
+                self.owner.hp = int(min(self.owner.max_hp, self.owner.hp+heal))
+
+
+            # toggle game state to enemy turn
+            GAME.end_player_turn()
+            self.rest_cnt += 1
+
+    def rest_stop(self):
+        self.resting = False
+        # passage of time
+        GAME.calendar.turn += calendar.HOUR*8
+        GAME.game_message("Rested for " + str(self.rest_cnt) + " turns", "blue")
+        GAME.game_message(GAME.calendar.get_time_date(GAME.calendar.turn), "blue")

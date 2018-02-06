@@ -162,6 +162,10 @@ def game_handle_keys():
         if key == blt.TK_C:
             gui_menus.character_sheet_menu("Character sheet", PLAYER)
 
+        if key == blt.TK_R:
+            PLAYER.creature.player.rest_start(30)
+
+
     if key == blt.TK_L:
         gui_menus.log_menu("Log history", 0, 26)
 

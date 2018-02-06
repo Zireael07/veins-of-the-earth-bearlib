@@ -73,6 +73,10 @@ class obj_Game(object):
                     print("Faction reaction of " + fact[0] + " to " + fact[1] + " is " + str(fact[2]))
                 return fact[2]
 
+    def end_player_turn(self):
+        # toggle game state to enemy turn
+        GAME.game_state = GameStates.ENEMY_TURN
+
     def next_level(self):
         self.game_message("You descend deeper in the dungeon", "violet")
 
@@ -401,6 +405,8 @@ def game_main_loop():
 
                 if not GAME.game_state == GameStates.PLAYER_DEAD:
                     GAME.game_state = GameStates.PLAYER_TURN
+                    # test
+                    PLAYER.creature.player.act()
                     # test passage of time
                     print(GAME.calendar.get_time_date(GAME.calendar.turn))
 
@@ -512,12 +518,14 @@ def wait(wait_time):
 def generate_player(game):
     container_com1 = components.com_Container()
     player_array = generators.generate_stats("heroic")
+
+    player_com1 = components.com_Player()
     creature_com1 = components.com_Creature("Player", hp=20,
                                             base_str=player_array[0], base_dex=player_array[1],
                                             base_con=player_array[2],
                                             base_int=player_array[3], base_wis=player_array[4],
                                             base_cha=player_array[5],
-                                            player=True, faction="player", death_function=death_player)
+                                            player=player_com1, faction="player", death_function=death_player)
 
     # check that x,y isn't taken
     x,y = game.level.player_start_x, game.level.player_start_y
