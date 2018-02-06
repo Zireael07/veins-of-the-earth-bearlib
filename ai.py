@@ -47,7 +47,8 @@ class AI_test(object):
                     #self.owner.creature.move_towards(player.x, player.y, GAME.level.current_map)
 
 def death_monster(monster):
-    GAME.game_message(monster.creature.name_instance + " is dead!", "gray")
+    if monster.visible:
+        GAME.game_message(monster.creature.name_instance + " is dead!", "gray")
 
     # spawn loot
     #GAME.level.current_entities.append(generate_item("dagger", monster.x, monster.y))

@@ -229,18 +229,6 @@ def iso_pos(x,y):
     tile_y = (x + y) * constants.HALF_TILE_HEIGHT
     return tile_x, tile_y
 
-
-# item use effects
-# def cast_heal(actor):
-#     if actor.creature.hp == actor.creature.max_hp:
-#         GAME.game_message("You are already fully healed!", "red")
-#         return 'cancelled'
-#
-#     heal = generators.roll(1,8)
-#     GAME.game_message("You healed " + str(heal) + " damage", "violet")
-#     actor.creature.heal(heal)
-
-
 # debugging rooms
 def get_room_index():
     room_index = -1
@@ -405,7 +393,7 @@ def game_main_loop():
 
                 if not GAME.game_state == GameStates.PLAYER_DEAD:
                     GAME.game_state = GameStates.PLAYER_TURN
-                    # test
+                    # resting (potentially other stuff)
                     PLAYER.creature.player.act()
                     # test passage of time
                     print(GAME.calendar.get_time_date(GAME.calendar.turn))
