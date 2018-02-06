@@ -187,25 +187,27 @@ def map_calculate_fov():
 
 # the core drawing function
 def draw_game(x,y):
-    renderer.draw_map(GAME.level.current_map, GAME.level.current_explored, FOV_MAP, GAME.level.render_positions)
+    # don't draw map and NPCs if sleeping
+    if not PLAYER.creature.player.resting:
+        renderer.draw_map(GAME.level.current_map, GAME.level.current_explored, FOV_MAP, GAME.level.render_positions)
 
-    renderer.draw_mouseover(x,y, GAME.level.render_positions)
+        renderer.draw_mouseover(x,y, GAME.level.render_positions)
 
-    #blt.color("white")
-    blt.color(4294967295)
-    width_start = CAMERA.get_width_start()
-    width_end = CAMERA.get_width_end()
-    height_start = CAMERA.get_height_start()
-    height_end = CAMERA.get_height_end()
+        #blt.color("white")
+        blt.color(4294967295)
+        width_start = CAMERA.get_width_start()
+        width_end = CAMERA.get_width_end()
+        height_start = CAMERA.get_height_start()
+        height_end = CAMERA.get_height_end()
 
-    for ent in GAME.level.current_entities:
-        if ent.x >= width_start and ent.x < width_end:
-            if ent.y >= height_start and ent.y < height_end:
-                ent.draw(fov_map=FOV_MAP, render_pos=GAME.level.render_positions)
+        for ent in GAME.level.current_entities:
+            if ent.x >= width_start and ent.x < width_end:
+                if ent.y >= height_start and ent.y < height_end:
+                    ent.draw(fov_map=FOV_MAP, render_pos=GAME.level.render_positions)
 
-    # on top of map
-    blt.layer(1)
-    renderer.draw_messages(GAME.message_history)
+        # on top of map
+        blt.layer(1)
+        renderer.draw_messages(GAME.message_history)
 
     renderer.draw_bar(2, 15, 20, "HP", PLAYER.creature.hp, PLAYER.creature.max_hp, "red", "darker red", str(PLAYER.creature.hp))
     blt.color(4294967295)
