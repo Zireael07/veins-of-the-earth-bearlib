@@ -87,7 +87,8 @@ class obj_Level(object):
         if item:
             item.send_to_back()
 
-
+    def spawn_monster_by_id(self, id):
+        mon = generators.generate_monster(id, *random_free_tile(self.current_map))
 
     def generate_items_monsters(self, num=0, dists=None):
         # default
@@ -100,6 +101,14 @@ class obj_Level(object):
         item = components.obj_Actor(x, y, 0x2762, "potion", item=item_com)
         self.current_entities.append(item)
         item.send_to_back()
+
+        # test potion 2
+        x,y = random_free_tile(self.current_map)
+        item_com = components.com_Item(use_function=cast_strength)
+        item = components.obj_Actor(x, y, 0x2762, "potion 2", item=item_com)
+        self.current_entities.append(item)
+        item.send_to_back()
+
 
         # test generating items
         self.spawn_item_by_id("longsword")
@@ -135,6 +144,11 @@ def cast_heal(actor):
     heal = generators.roll(1,8)
     GAME.game_message("You healed " + str(heal) + " damage", "violet")
     actor.creature.heal(heal)
+
+def cast_strength(actor):
+    str_buff = components.Effect("Strength", "green", 4, 2)
+    str_buff.apply_effect(actor.creature)
+    GAME.game_message("You cast strength!", "pink")
 
 def iso_pos(x,y):
     # isometric

@@ -132,7 +132,8 @@ class com_Creature(object):
                  player = None,
                  text = None,
                  chat = None,
-                 death_function=None):
+                 death_function=None,
+                 effects=None):
         self.name_instance = name_instance
         self.max_hp = hp
         self.hp = hp
@@ -159,6 +160,10 @@ class com_Creature(object):
         self.text = text
         self.chat = chat
         self.death_function = death_function
+
+        if effects is None:
+            effects = []
+        self.effects = effects
 
     @property
     def strength(self):
@@ -533,6 +538,28 @@ class com_Equipment(object):
         GAME.game_message(actor.creature.name_instance + " took off " + self.owner.name, "white")
 
 
+class Effect(object):
+    def __init__(self, name, color="green", duration=1,strength=0):
+        self.name = name
+        self.color = color
+        self.duration = duration
+        self.strength_bonus = strength
+
+    def apply_effect(self, target):
+        GAME.game_message(target.name_instance + " is now affected by " + str(self.name), self.color)
+
+        target.effects.append(self)
+        self.owner = target
+
+    def remove_effect(self):
+        self.owner.effects.remove(self)
+        GAME.game_message(self.owner.name_instance + " is no longer affected by " + str(self.name), self.color)
+
+    def countdown(self):
+        self.duration -= 1
+        if self.duration <= 0:
+            self.remove_effect()
+
 class com_Player(object):
     def __init__(self):
         self.resting = False
@@ -543,6 +570,10 @@ class com_Player(object):
         if self.resting:
             self.resting_step()
 
+        # general stuff
+        # count down effects
+        for ef in self.owner.effects:
+            ef.countdown()
 
     def rest_start(self, turns):
         self.rest_cnt = 0
