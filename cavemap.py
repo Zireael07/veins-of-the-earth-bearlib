@@ -2,7 +2,7 @@ import random
 from math import sqrt
 
 import constants
-from map_common import print_map_string, get_free_tiles
+from map_common import print_map_string, get_free_tiles, Directions
 from tile_lookups import TileTypes, get_index
 
 # based on http://www.evilscience.co.uk/a-c-algorithm-to-build-roguelike-cave-systems-part-1/
@@ -116,17 +116,13 @@ class CaveGenerator(object):
             # choose the direction
             choice = random.random()
             if 0 <= choice < north:
-                dx = 0
-                dy = -1
+                dx, dy = Directions.NORTH
             elif north <= choice < (north + south):
-                dx = 0
-                dy = 1
+                dx, dy = Directions.SOUTH
             elif (north + south) <= choice < (north + south + east):
-                dx = 1
-                dy = 0
+                dx, dy = Directions.EAST
             else:
-                dx = -1
-                dy = 0
+                dx, dy = Directions.WEST
 
             # ==== Walk ====
             # check colision at edges
@@ -141,13 +137,13 @@ class CaveGenerator(object):
     def get_adjacent_walls_simple(self, x, y):
         wall_count = 0
         # print("(",x,",",y,") = ",self._map[x][y])
-        if self._map[x][y - 1] == get_index(TileTypes.WALL): #0:  # Check north
+        if self._map[x+Directions.NORTH[0]][y +Directions.NORTH[1]] == get_index(TileTypes.WALL): #0:  # Check north
             wall_count += 1
-        if self._map[x][y + 1] == get_index(TileTypes.WALL): #0:  # Check south
+        if self._map[x+Directions.SOUTH[0]][y + Directions.SOUTH[1]] == get_index(TileTypes.WALL): #0:  # Check south
             wall_count += 1
-        if self._map[x - 1][y] == get_index(TileTypes.WALL): #0:  # Check west
+        if self._map[x +Directions.WEST[0]][y+ Directions.WEST[1]] == get_index(TileTypes.WALL): #0:  # Check west
             wall_count += 1
-        if self._map[x + 1][y] == get_index(TileTypes.WALL): #0:  # Check east
+        if self._map[x + Directions.EAST[0]][y+Directions.EAST[1]] == get_index(TileTypes.WALL): #0:  # Check east
             wall_count += 1
 
         return wall_count
@@ -195,10 +191,10 @@ class CaveGenerator(object):
                 # check adjacent cells
                 x = tile[0]
                 y = tile[1]
-                north = (x, y - 1)
-                south = (x, y + 1)
-                east = (x + 1, y)
-                west = (x - 1, y)
+                north = (x+Directions.NORTH[0], y + Directions.NORTH[1])
+                south = (x+Directions.SOUTH[0], y + Directions.SOUTH[1])
+                east = (x + Directions.EAST[0], y + Directions.EAST[1])
+                west = (x + Directions.WEST[0], y + Directions.WEST[1])
 
                 for direction in [north, south, east, west]:
 
@@ -248,10 +244,10 @@ class CaveGenerator(object):
                 # check adjacent cells
                 x = tile[0]
                 y = tile[1]
-                north = (x, y - 1)
-                south = (x, y + 1)
-                east = (x + 1, y)
-                west = (x - 1, y)
+                north = (x+Directions.NORTH[0], y + Directions.NORTH[1])
+                south = (x+Directions.SOUTH[0], y + Directions.SOUTH[1])
+                east = (x + Directions.EAST[0], y + Directions.EAST[1])
+                west = (x + Directions.WEST[0], y + Directions.WEST[1])
 
                 for direction in [north, south, east, west]:
 
