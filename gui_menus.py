@@ -31,6 +31,9 @@ def character_sheet_menu(header, player):
                ("Armor defense: " + str(player.creature.defense) + str(player.creature.defense_str), "white")
                ]
 
+    for ef in player.creature.effects:
+        options.append((ef.name, "green"))
+
     index = renderer.menu_colored(header, options, 50, 'CHARACTER SHEET')
 
     if index is None:
