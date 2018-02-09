@@ -210,6 +210,11 @@ def draw_game(x,y):
         renderer.draw_messages(GAME.message_history)
 
     renderer.draw_bar(2, 15, 20, "HP", PLAYER.creature.hp, PLAYER.creature.max_hp, "red", "darker red", str(PLAYER.creature.hp))
+
+    renderer.draw_bar(2, 17, 20, "Nutrition", PLAYER.creature.player.nutrition, 500, "green", "darker green")
+    renderer.draw_bar(2, 19, 20, "Thirst", PLAYER.creature.player.thirst, 300, "blue", "darker blue")
+
+
     blt.color(4294967295)
 
     if GAME.game_state == GameStates.PLAYER_DEAD:

@@ -565,10 +565,21 @@ class com_Player(object):
         self.resting = False
         self.rest_cnt = 0
         self.rest_turns = 0
+        self.nutrition = 500
+        self.thirst = 300
 
     def act(self):
         if self.resting:
             self.resting_step()
+
+        # count down nutrition/thirst
+        # halve hunger rate when sleeping
+        if self.resting:
+            self.nutrition -= 0.5
+            self.thirst -= 0.5
+        else:
+            self.nutrition -= 1
+            self.thirst -= 1
 
         # general stuff
         # count down effects

@@ -133,7 +133,7 @@ def draw_messages(msg_history):
         i += 1
 
 def draw_bar(x, y, total_width, name, value, maximum, bar_color, bg_color, label=None):
-
+    blt.color("white")
     blt.puts(x, y-1, name)
 
     bar_width = int(float(value) / maximum * total_width)
