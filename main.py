@@ -631,6 +631,8 @@ def game_initialize():
     blt.set("0xFF09: gfx/armor_leather.png, align=center") # ")"
     blt.set("0xFF08: gfx/armor_studded.png, align=center") # "("
     blt.set("0x2762: gfx/potion.png, align=center") # "❢"
+    blt.set("0x1F35E: gfx/food.png, align=center") # bread unicode symbol
+    blt.set("0x2615: gfx/flask.png, align=center") # hot beverage symbol
 
     # gfx
     blt.set("0x2317: gfx/mouseover.png, align=center") # "⌗"

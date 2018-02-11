@@ -90,24 +90,27 @@ class obj_Level(object):
     def spawn_monster_by_id(self, id):
         mon = generators.generate_monster(id, *random_free_tile(self.current_map))
 
+    def spawn_usable_item(self, tile, name, use_func):
+        x, y = random_free_tile(self.current_map)
+        item_com = components.com_Item(use_function=use_func)
+        item = components.obj_Actor(x,y, tile, name, item=item_com)
+        self.current_entities.append(item)
+        item.send_to_back()
+
     def generate_items_monsters(self, num=0, dists=None):
         # default
         if dists is None:
             dists = []
 
         # test potion
-        x, y = random_free_tile(self.current_map)
-        item_com = components.com_Item(use_function=cast_heal)
-        item = components.obj_Actor(x, y, 0x2762, "potion", item=item_com)
-        self.current_entities.append(item)
-        item.send_to_back()
+        self.spawn_usable_item(0x2762, "potion", cast_heal)
 
         # test potion 2
-        x,y = random_free_tile(self.current_map)
-        item_com = components.com_Item(use_function=cast_strength)
-        item = components.obj_Actor(x, y, 0x2762, "potion 2", item=item_com)
-        self.current_entities.append(item)
-        item.send_to_back()
+        self.spawn_usable_item(0x2762, "potion 2", cast_strength)
+
+        # food/drink
+        self.spawn_usable_item(0x1F35E, "rations", eat_food)
+        self.spawn_usable_item(0x2615, "water flask", drink)
 
 
         # test generating items
@@ -149,6 +152,23 @@ def cast_strength(actor):
     str_buff = components.Effect("Strength", "green", 4, 2)
     str_buff.apply_effect(actor.creature)
     GAME.game_message("You cast strength!", "pink")
+
+def eat_food(actor):
+    if actor.creature.player and actor.creature.player.nutrition < 500:
+        GAME.game_message("You ate your food", "light green")
+        actor.creature.player.nutrition += 150
+
+    else:
+        GAME.game_message("You are full, you cannot eat any more", "light yellow")
+
+def drink(actor):
+    if actor.creature.player and actor.creature.player.thirst < 300:
+        GAME.game_message("You drank from the flask", "light blue")
+        actor.creature.player.thirst += 150
+
+    else:
+        GAME.game_message("You are full, you cannot drink any more", "light yellow")
+
 
 def iso_pos(x,y):
     # isometric
