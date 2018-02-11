@@ -81,14 +81,14 @@ class obj_Level(object):
         self.add_entity(generators.generate_monster(generators.generate_random_mon(),
                                 *random_free_tile_away(self.current_map, dist, (self.player_start_x, self.player_start_y))))
 
-    def spawn_item_by_id(self, id):
-        item = generators.generate_item(id, *random_free_tile(self.current_map))
+    def spawn_item_by_id(self, i_id):
+        item = generators.generate_item(i_id, *random_free_tile(self.current_map))
         self.add_entity(item)
         if item:
             item.send_to_back()
 
-    def spawn_monster_by_id(self, id):
-        mon = generators.generate_monster(id, *random_free_tile(self.current_map))
+    def spawn_monster_by_id(self, m_id):
+        generators.generate_monster(m_id, *random_free_tile(self.current_map))
 
     def spawn_usable_item(self, tile, name, use_func):
         x, y = random_free_tile(self.current_map)

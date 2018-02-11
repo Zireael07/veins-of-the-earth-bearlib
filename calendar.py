@@ -49,10 +49,10 @@ class obj_Calendar():
 
     def get_time(self, turn):
         turn = turn + self.start_hour * HOUR
-        min = int(math.floor((turn % DAY) / MINUTE))
-        hour = int(math.floor(min / 60))
-        min = int(math.floor(min % 60))
-        return hour, min
+        minute = int(math.floor((turn % DAY) / MINUTE))
+        hour = int(math.floor(minute / 60))
+        minute = int(math.floor(minute % 60))
+        return hour, minute
 
     def get_day(self, turn):
         turn = turn + self.start_hour * HOUR
@@ -76,5 +76,5 @@ class obj_Calendar():
     def get_time_date(self, turn):
         date, year = self.get_day(turn)
         month = self.get_month_name(date)
-        hour, min = self.get_time(turn)
-        return "Today is %s %s of %s DR. The time is %d:%d" % (date, month, year, hour, min)
+        hour, minute = self.get_time(turn)
+        return "Today is %s %s of %s DR. The time is %d:%d" % (date, month, year, hour, minute)
