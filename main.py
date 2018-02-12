@@ -5,9 +5,8 @@ import libtcodpy as libtcod
 from time import time
 
 # save/load
-import jsonpickle
-import json
 import os
+import game_loaders
 
 import constants
 import tileset
@@ -284,33 +283,6 @@ def get_top_log_string_index():
     if GAME.message_history[check]:
         return check
 
-# save/load
-def save_game():
-    data = {
-        'serialized_player_index': jsonpickle.encode(GAME.level.current_entities.index(PLAYER)),
-        'serialized_cam': jsonpickle.encode(CAMERA),
-        'serialized_game': jsonpickle.encode(GAME),
-    }
-
-    #test
-    print data['serialized_player_index']
-
-    # write to file
-    with open('savegame.json', 'w') as save_file:
-        json.dump(data, save_file, indent=4)
-
-def load_game():
-    with open('savegame.json', 'r') as save_file:
-        data = json.load(save_file)
-
-    game = jsonpickle.decode(data['serialized_game'])
-    player_index = jsonpickle.decode(data['serialized_player_index'])
-    camera = jsonpickle.decode(data['serialized_cam'])
-
-    player = game.level.current_entities[player_index]
-
-    return game, player, camera
-
 
 # main loop
 def game_main_loop():
@@ -414,7 +386,7 @@ def game_main_loop():
     #save if not dead
     if not GAME.game_state == GameStates.PLAYER_DEAD and not GAME.game_state == GameStates.MAIN_MENU:
         #print(str(GAME.game_state) + " we should save game")
-        save_game()
+        game_loaders.save_game(GAME, CAMERA, PLAYER)
 
     # quit the game
     blt.close()
@@ -624,7 +596,7 @@ def game_initialize():
 
     # if we have a savegame, load it
     if action == 2 and os.path.isfile('savegame.json'):
-        GAME, PLAYER, CAMERA = load_game()
+        GAME, PLAYER, CAMERA = game_loaders.load_game()
 
         # handle FOV
         GAME.fov_recompute = True
