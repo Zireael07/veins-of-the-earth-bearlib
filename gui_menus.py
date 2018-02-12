@@ -28,10 +28,13 @@ def character_sheet_menu(header, player):
                ("CON: " + str(player.creature.constitution), "white"), ("INT: " + str(player.creature.intelligence), "white"),
                 ("WIS: " + str(player.creature.wisdom), "white"), ("CHA: " + str(player.creature.charisma), "white"),
                ("Attack: " + str(player.creature.melee), "white"), ("Dodge: " + str(player.creature.dodge), "white"),
-               ("Armor defense: " + str(player.creature.defense) + str(player.creature.defense_str), "white")
+               ("Armor defense: " + str(player.creature.defense) + str(player.creature.defense_str), "white"),
+               ("", "white"),
+               (str(GAME.calendar.get_time_date(GAME.calendar.turn)), "yellow")
                ]
 
     for ef in player.creature.effects:
+        options.append(("", "white"))
         options.append((ef.name, "green"))
 
     index = renderer.menu_colored(header, options, 50, 'CHARACTER SHEET')

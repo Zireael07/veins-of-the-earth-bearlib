@@ -209,6 +209,9 @@ def draw_game(x,y):
         blt.layer(1)
         renderer.draw_messages(GAME.message_history)
 
+    else:
+        blt.puts(80,20, "SLEEPING...")
+
     renderer.draw_bar(2, 15, 20, "HP", PLAYER.creature.hp, PLAYER.creature.max_hp, "red", "darker red", str(PLAYER.creature.hp))
 
     renderer.draw_bar(2, 17, 20, "Nutrition", PLAYER.creature.player.nutrition, 500, "green", "darker green")
@@ -376,7 +379,7 @@ def game_main_loop():
                     # resting (potentially other stuff)
                     PLAYER.creature.player.act()
                     # test passage of time
-                    print(GAME.calendar.get_time_date(GAME.calendar.turn))
+                    #print(GAME.calendar.get_time_date(GAME.calendar.turn))
 
             if GAME.game_state == GameStates.PLAYER_DEAD:
                 print("PLAYER DEAD")
