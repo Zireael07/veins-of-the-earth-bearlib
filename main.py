@@ -15,10 +15,10 @@ import components
 import generators
 import level
 import gui_menus
+import hud
 import calendar
 
-from map_common import map_make_fov, get_map_desc, map_check_for_creature, \
-     find_free_grid_in_range, distance_to, tiles_distance_to
+from map_common import map_make_fov, map_check_for_creature, find_free_grid_in_range
 
 import handle_input
 from game_states import GameStates
@@ -239,39 +239,6 @@ def iso_pos(x,y):
     tile_y = (x + y) * constants.HALF_TILE_HEIGHT
     return tile_x, tile_y
 
-# debugging rooms
-def get_room_index():
-    room_index = -1
-    for r in GAME.level.rooms:
-
-        if r.contains((PLAYER.x, PLAYER.y)):
-            room_index = GAME.level.rooms.index(r)
-            break
-
-    return room_index
-
-def room_index_str():
-    index = get_room_index()
-
-    if index != -1:
-        return str(index)
-    else:
-        return "None"
-
-def get_room_from_index(index):
-    if index != -1:
-        return GAME.level.rooms[index]
-
-def get_room_data():
-    index = get_room_index()
-    if index != -1:
-        room = get_room_from_index(index)
-        return "Center: " + str(room.center()) + " x " + str(room.x1) + " y " + str(room.y1) +\
-               " x2 " + str(room.x2) + " y2 " + str(room.y2) +\
-               " width " + str(room.x2-room.x1) + " height " + str(room.y2-room.y1)
-    else:
-        return "None"
-
 def get_top_log_string_index():
     # msg_num = -constants.NUM_MESSAGES
     check = -4
@@ -325,8 +292,8 @@ def game_main_loop():
             blt.layer(0)
             #mouse_picking(m_x, m_y)
             # this works on map tiles
-            show_tile_desc(pix_x, pix_y)
-            show_npc_desc(pix_x, pix_y)
+            hud.show_tile_desc(pix_x, pix_y, FOV_MAP)
+            hud.show_npc_desc(pix_x, pix_y)
 
         # refresh term
         blt.refresh()
@@ -450,37 +417,7 @@ def mouse_picking(m_x, m_y):
         if n == 0:
             blt.puts(w, h, "Empty cell")
 
-def show_npc_desc(pix_x, pix_y):
-    w = 4
-    h = 10
-    iso_x, iso_y = renderer.pix_to_iso(pix_x, pix_y)
-    taken = map_check_for_creature(iso_x, iso_y, GAME)
-    if taken is not None and taken.creature.player is None:
-        hp_perc = (taken.creature.hp*100.0/taken.creature.max_hp) # *100.0
-        blt.layer(1)
-        # draw the npc
-        blt.puts(w, h, u"%c  %s" % (taken.char, taken.creature.name_instance) )
-        blt.puts(w,h+2, "Enemy hp: " + str(taken.creature.hp) + " " + str(hp_perc) + "%")
-        # chance to hit
-        melee = PLAYER.creature.melee*1.0/100.0
-        not_dodged = (100-taken.creature.dodge)*1.0/100.0
-        blt.puts(w, h+3, "Chance to hit: %.2f + %.2f = %.2f " % (melee, not_dodged, melee*not_dodged) )
-        blt.layer(0)
 
-def show_tile_desc(pix_x, pix_y):
-    if not hasattr(GAME.level, 'map_desc'):
-        return
-    w = 4
-    h = 8
-    iso_x, iso_y = renderer.pix_to_iso(pix_x, pix_y)
-
-    dist = round(distance_to((iso_x, iso_y), (PLAYER.x, PLAYER.y)), 2)
-    tiles_dist = tiles_distance_to((iso_x, iso_y), (PLAYER.x, PLAYER.y))
-
-    blt.layer(1)
-    blt.puts(w,h+1, "Dist: real:" + str(dist) + " tiles: " + str(tiles_dist) + " ft: " + str(tiles_dist*5) + " ft.")
-    blt.puts(w, h, get_map_desc(iso_x, iso_y, FOV_MAP, GAME.level.current_explored, GAME.level.map_desc))
-    blt.layer(0)
 
 def wait(wait_time):
     wait_time = wait_time * 0.01
@@ -554,6 +491,9 @@ def start_new_game():
     handle_input.initialize_player(player)
     handle_input.initialize_camera(camera)
 
+    hud.initialize_game(game)
+    hud.initialize_player(player)
+
     # adjust camera position so that player is centered
     camera.start_update(player)
 
@@ -620,6 +560,9 @@ def game_initialize():
 
         # init camera for renderer
         renderer.initialize_camera(CAMERA)
+
+        hud.initialize_game(GAME)
+        hud.initialize_player(PLAYER)
 
         #handle input needs all three
         handle_input.initialize_game(GAME)
