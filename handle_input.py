@@ -118,6 +118,43 @@ def game_key_move(key):
 
     return "player-moved"
 
+def game_player_turn_input(key):
+    if key == blt.TK_UP:
+        return game_key_move('UP')
+    if key == blt.TK_DOWN:
+        return game_key_move('DOWN')
+    if key == blt.TK_LEFT:
+        return game_key_move('LEFT')
+    if key == blt.TK_RIGHT:
+        return game_key_move('RIGHT')
+
+    if key == blt.TK_PERIOD and blt.check(blt.TK_SHIFT):
+        if GAME.level.current_map[PLAYER.x][PLAYER.y] == 4:  # .stairs:
+            GAME.next_level()
+
+    # items
+    if key == blt.TK_G:
+        ent = map_check_for_item(PLAYER.x, PLAYER.y, GAME)
+        if ent is not None:
+            ent.item.pick_up(PLAYER)
+
+    if key == blt.TK_D:
+        if len(PLAYER.container.inventory) > 0:
+            # drop the last item
+            PLAYER.container.inventory[-1].item.drop(PLAYER)
+
+    if key == blt.TK_I:
+        chosen_item = gui_menus.inventory_menu("Inventory", PLAYER)
+        if chosen_item is not None:
+            if chosen_item.item:
+                chosen_item.item.use(PLAYER)
+
+    if key == blt.TK_C:
+        gui_menus.character_sheet_menu("Character sheet", PLAYER)
+
+    if key == blt.TK_R:
+        PLAYER.creature.player.rest_start(30)
+
 
 def game_handle_keys():
     key = blt.read()
@@ -127,44 +164,6 @@ def game_handle_keys():
     if GAME.game_state == GameStates.MAIN_MENU:
         if key not in (blt.TK_S, blt.TK_L):
             return "QUIT"
-
-    if GAME.game_state == GameStates.PLAYER_TURN:
-        if key == blt.TK_UP:
-            return game_key_move('UP')
-        if key == blt.TK_DOWN:
-            return game_key_move('DOWN')
-        if key == blt.TK_LEFT:
-            return game_key_move('LEFT')
-        if key == blt.TK_RIGHT:
-            return game_key_move('RIGHT')
-
-        if key == blt.TK_PERIOD and blt.check(blt.TK_SHIFT):
-            if GAME.level.current_map[PLAYER.x][PLAYER.y] == 4: #.stairs:
-                GAME.next_level()
-
-        # items
-        if key == blt.TK_G:
-            ent = map_check_for_item(PLAYER.x, PLAYER.y, GAME)
-            if ent is not None:
-                ent.item.pick_up(PLAYER)
-
-        if key == blt.TK_D:
-            if len(PLAYER.container.inventory) > 0:
-                #drop the last item
-                PLAYER.container.inventory[-1].item.drop(PLAYER)
-
-        if key == blt.TK_I:
-            chosen_item = gui_menus.inventory_menu("Inventory", PLAYER)
-            if chosen_item is not None:
-                if chosen_item.item:
-                    chosen_item.item.use(PLAYER)
-
-        if key == blt.TK_C:
-            gui_menus.character_sheet_menu("Character sheet", PLAYER)
-
-        if key == blt.TK_R:
-            PLAYER.creature.player.rest_start(30)
-
 
     if key == blt.TK_L:
         gui_menus.log_menu("Log history", 0, 26)
@@ -177,6 +176,11 @@ def game_handle_keys():
         # print("Debug mode on")
         # constants.DEBUG = True
         gui_menus.debug_menu(PLAYER)
+
+
+    if GAME.game_state == GameStates.PLAYER_TURN:
+        return game_player_turn_input(key)
+
 
     game_handle_mouse_input(key)
 
