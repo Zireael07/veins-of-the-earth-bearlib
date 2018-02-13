@@ -239,23 +239,17 @@ def iso_pos(x,y):
     tile_y = (x + y) * constants.HALF_TILE_HEIGHT
     return tile_x, tile_y
 
-def get_top_log_string_index():
-    # msg_num = -constants.NUM_MESSAGES
-    check = -4
-    # print("Checking " + str(check))
-
-    if not GAME.message_history:
-        return None
-
-    if len(GAME.message_history) < 4:
-        check = -len(GAME.message_history)
-
-    if GAME.message_history[check]:
-        return check
-
 
 # main loop
 def game_main_loop():
+    """
+    Main loop:
+    1. fps
+    2. mouse
+    3. draw (including things dependent on mouse position)
+    4. handle input
+    5. process turns
+    """
     game_quit = False
 
     fps_update_time = time()
@@ -416,16 +410,6 @@ def mouse_picking(m_x, m_y):
         #
         if n == 0:
             blt.puts(w, h, "Empty cell")
-
-
-
-def wait(wait_time):
-    wait_time = wait_time * 0.01
-    start_time = time()
-
-
-    while time() - start_time < wait_time:
-        blt.refresh()
 
 def generate_player(game):
     container_com1 = components.com_Container()
