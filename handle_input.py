@@ -139,9 +139,9 @@ def game_player_turn_input(key):
             ent.item.pick_up(PLAYER)
 
     if key == blt.TK_D:
-        if len(PLAYER.container.inventory) > 0:
-            # drop the last item
-            PLAYER.container.inventory[-1].item.drop(PLAYER)
+        chosen_item = gui_menus.drop_menu(PLAYER)
+        if chosen_item is not None:
+            PLAYER.container.inventory[chosen_item].item.drop(PLAYER)
 
     if key == blt.TK_I:
         chosen_item = gui_menus.inventory_menu("Inventory", PLAYER)

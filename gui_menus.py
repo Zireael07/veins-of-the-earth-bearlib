@@ -237,3 +237,13 @@ def inventory_menu(header, player):
     if index is None or len(player.container.inventory) == 0:
          return None
     return player.container.inventory[index]
+
+def drop_menu(player):
+    if len(player.container.inventory) == 0:
+        options = ['Inventory is empty.']
+    else:
+        options = [item.display_name() for item in player.container.inventory]
+
+    index = renderer.options_menu("Drop item", options, 50, "DROP")
+
+    return index
