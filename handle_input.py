@@ -184,11 +184,12 @@ def game_handle_keys():
         gui_menus.debug_menu(PLAYER)
 
 
-    if GAME.game_state == GameStates.PLAYER_TURN:
-        return game_player_turn_input(key)
-
-
+    #print("Mouse: " + str(game_handle_mouse_input(key)))
     game_handle_mouse_input(key)
+
+    if GAME.game_state == GameStates.PLAYER_TURN:
+        #print (game_player_turn_input(key))
+        return game_player_turn_input(key)
 
 
     return "no-action"

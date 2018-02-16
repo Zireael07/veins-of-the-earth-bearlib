@@ -318,7 +318,8 @@ def game_main_loop():
                 print "Click"
 
 
-            if player_action != "no-action" and player_action != "mouse_click":
+            if player_action is not None and player_action != "no-action" and player_action != "mouse_click":
+               # print("Advancing time")
                 # advance time
                 GAME.calendar.turn += 1
 
