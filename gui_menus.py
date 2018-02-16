@@ -89,7 +89,7 @@ def display_dmg_window(index):
         dmg_menu(dmg)
 
 def dialogue_window(creature):
-    blt.layer(0)
+    blt.layer(1)
     index = renderer.dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat['chat'], creature.chat['answer'])
 
     if index is not None and creature.chat['answer'][index]:

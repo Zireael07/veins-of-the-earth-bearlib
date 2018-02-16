@@ -151,13 +151,26 @@ def draw_bar(x, y, total_width, name, value, maximum, bar_color, bg_color, label
 # GUI
 # based on https://github.com/FirstAidKitten/Roguelike-Sandbox
 def create_window(x, y, w, h, title=None, border=True):
-    #test
-    blt.composition(False)
+    # test
+    blt.composition(True)
 
-    last_bg = blt.state(blt.TK_BKCOLOR)
-    blt.bkcolor(blt.color_from_argb(200, 0, 0, 0))
-    blt.clear_area(x - 2, y - 2, w + 2, h + 2)
-    blt.bkcolor(last_bg)
+    blt.layer(1)
+
+    # fill the background
+    blt.color("black")
+    for i in range(w):
+        for j in range(h):
+            blt.put(x + i, y + j, 0x2588)
+
+    # last_bg = blt.state(blt.TK_BKCOLOR)
+    # blt.bkcolor(blt.color_from_argb(200, 0, 0, 0))
+    # blt.clear_area(x - 2, y - 2, w + 2, h + 2)
+    # blt.bkcolor(last_bg)
+
+    blt.color("white")
+
+    # otherwise border overlaps header text
+    blt.composition(False)
 
     if border:
         # upper border
@@ -176,6 +189,7 @@ def create_window(x, y, w, h, title=None, border=True):
         offset = (w + 2 - leng) // 2
         blt.puts(x + offset, y - 1, title)
 
+    blt.composition(True)
 
 def options_menu(header, options, width, title=None):
     #GAME.fov_recompute = True
@@ -453,6 +467,7 @@ def draw_box(x,y,w,h):
 
 
 def draw_slot(x,y,char=None):
+    blt.layer(2)
     draw_box(x, y, 2, 1)
     if char is not None:
         blt.put_ext(x, y, 2, -1, char)
