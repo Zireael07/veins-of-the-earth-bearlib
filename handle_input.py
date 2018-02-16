@@ -4,7 +4,7 @@ import constants
 from game_states import GameStates
 import gui_menus
 from renderer import pix_to_iso
-from map_common import map_check_for_item
+from map_common import map_check_for_items
 
 def initialize_camera(camera):
     global CAMERA
@@ -134,9 +134,15 @@ def game_player_turn_input(key):
 
     # items
     if key == blt.TK_G:
-        ent = map_check_for_item(PLAYER.x, PLAYER.y, GAME)
-        if ent is not None:
-            ent.item.pick_up(PLAYER)
+        ents = map_check_for_items(PLAYER.x, PLAYER.y, GAME.level.current_entities)
+        #ent = map_check_for_item(PLAYER.x, PLAYER.y, GAME)
+        if ents is not None:
+            if len(ents) > 1:
+                chosen_item = gui_menus.pickup_menu(ents)
+                if chosen_item is not None:
+                    chosen_item.item.pick_up(PLAYER)
+            else:
+                ents[0].item.pick_up(PLAYER)
 
     if key == blt.TK_D:
         chosen_item = gui_menus.drop_menu(PLAYER)

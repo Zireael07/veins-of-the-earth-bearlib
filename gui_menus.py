@@ -247,3 +247,13 @@ def drop_menu(player):
     index = renderer.options_menu("Drop item", options, 50, "DROP")
 
     return index
+
+def pickup_menu(entities):
+    options = [ent.name for ent in entities]
+
+    index = renderer.options_menu("Pick item", options, 50, "Pick up")
+
+    if index is None:
+        return None
+    else:
+        return entities[index]

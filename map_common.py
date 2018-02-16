@@ -184,6 +184,19 @@ def map_check_for_item(x,y, game):
         if target:
             return target
 
+def map_check_for_items(x,y,entities):
+    items = []
+    for ent in entities:
+        if (ent.x == x
+            and ent.y == y
+            and ent.item):
+                items.append(ent)
+
+    if len(items) > 0:
+        return items
+    else:
+        return None
+
 def map_check_for_creature(x, y, game, exclude_entity = None):
     #print("Checking for creatures at " + str(x) + " " + str(y))
     target = None
