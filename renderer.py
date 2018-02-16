@@ -227,7 +227,7 @@ def options_menu(header, options, width, title=None):
 # this one doesn't show keys and conversely doesn't have the 26 entries limit
 # it takes tuples instead of strings
 def menu_colored(header, options_tuples, width, title=None, menu_x=None, border=True):
-    GAME.fov_recompute = True
+    #GAME.fov_recompute = True
 
     if menu_x is None:
         menu_x = int((120 - width) / 2)
@@ -458,7 +458,7 @@ def draw_slot(x,y,char=None):
         blt.put_ext(x, y, 2, -1, char)
 
 def inventory_menu_test(header, width, title, equipped_items, inventory):
-    GAME.fov_recompute = True
+    #GAME.fov_recompute = True
 
     menu_x = int((120 - width) / 2)
 
@@ -558,7 +558,7 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
             return None
 
 def dialogue_menu(header, width, title, text, answers):
-    GAME.fov_recompute = True
+    #GAME.fov_recompute = True
 
     menu_x = int((120 - width) / 2)
 
@@ -607,7 +607,7 @@ def dialogue_menu(header, width, title, text, answers):
             return None
 
 def text_menu(header, width, title, text):
-    GAME.fov_recompute = True
+    #GAME.fov_recompute = True
 
     menu_x = int((120 - width) / 2)
 
