@@ -141,25 +141,30 @@ def game_player_turn_input(key):
                 chosen_item = gui_menus.pickup_menu(ents)
                 if chosen_item is not None:
                     chosen_item.item.pick_up(PLAYER)
+                    return "player-moved"
             else:
                 ents[0].item.pick_up(PLAYER)
+                return "player-moved"
 
     if key == blt.TK_D:
         chosen_item = gui_menus.drop_menu(PLAYER)
         if chosen_item is not None:
             PLAYER.container.inventory[chosen_item].item.drop(PLAYER)
+            return "player-moved"
 
     if key == blt.TK_I:
         chosen_item = gui_menus.inventory_menu("Inventory", PLAYER)
         if chosen_item is not None:
             if chosen_item.item:
                 chosen_item.item.use(PLAYER)
+                return "player-moved"
 
     if key == blt.TK_C:
         gui_menus.character_sheet_menu("Character sheet", PLAYER)
 
     if key == blt.TK_R:
         PLAYER.creature.player.rest_start(30)
+        return "player-moved"
 
 
 def game_handle_keys():
