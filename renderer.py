@@ -4,6 +4,8 @@ from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 
 import time
+import itertools
+
 from tile_lookups import get_char
 
 import constants
