@@ -64,10 +64,10 @@ def pix_to_iso(x,y):
     return int(iso_x), int(iso_y)
 
 
-def draw_map(map_draw, map_explored, fov_map, render_positions):
+def draw_map(map_draw, map_explored, fov_map, render_positions, debug=False):
     #width = constants.MAP_WIDTH
     #height = constants.MAP_HEIGHT
-    debug = constants.DEBUG
+    #debug = constants.DEBUG
 
     width_start = CAMERA.get_width_start()
     width_end = CAMERA.get_width_end()

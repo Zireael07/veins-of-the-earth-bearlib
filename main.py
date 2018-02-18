@@ -452,6 +452,12 @@ def generate_player(game):
 
 
 def start_new_game():
+    # in case we want to visualize the first level as it's generated
+    camera = obj_Camera()
+    # init camera for renderer
+    renderer.initialize_camera(camera)
+
+
     game = obj_Game(False)
 
     # init game for submodules (moved to the game init itself)
@@ -466,10 +472,7 @@ def start_new_game():
     # spawn player
     player = generate_player(game)
 
-    camera = obj_Camera()
 
-    # init camera for renderer
-    renderer.initialize_camera(camera)
 
     # handle input needs all three
     handle_input.initialize_game(game)

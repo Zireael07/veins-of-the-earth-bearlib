@@ -8,6 +8,10 @@ from operator import itemgetter
 import constants
 from tile_lookups import TileTypes, get_map_str, get_index, get_block_path
 
+# used by the debugging
+from bearlibterminal import terminal as blt
+import renderer
+
 room_desc = [
     "",
     "This is a room.",
@@ -382,3 +386,20 @@ def random_tile_with_desc(desc_map, desc):
     y = free_tiles[index][1]
     print("[Random tile with desc " + str(desc) + " Coordinates are " + str(x) + " " + str(y))
     return x, y
+
+#debugging
+def debug_pause(mapgen):
+    if mapgen.debug:
+        blt.clear()
+        unpaused = True
+
+        # stub out the renderer
+        renderer.draw_map(mapgen._map, [[False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)], [], mapgen.render_positions, True)
+
+        # redraw and wait for input
+        blt.refresh()
+        blt.set('input: filter = [keyboard]')
+        while unpaused:
+            key = blt.read()
+            if key:
+                unpaused = False
