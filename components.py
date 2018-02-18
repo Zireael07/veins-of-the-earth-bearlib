@@ -9,7 +9,7 @@ import calendar
 
 from generators import roll
 
-# import constants
+import constants
 
 # need a reference to global GAME %^$@
 def initialize_game(game):
@@ -567,6 +567,7 @@ class com_Player(object):
         self.rest_turns = 0
         self.nutrition = 500
         self.thirst = 300
+        self.autoexplore = False
 
     def act(self):
         if self.resting:
@@ -586,6 +587,29 @@ class com_Player(object):
         for ef in self.owner.effects:
             ef.countdown()
 
+    def move_towards_autoexplore(self, target_x, target_y, inc_map):
+        # Create a FOV map that has the dimensions of the map
+        fov = libtcod.map_new(constants.MAP_WIDTH, constants.MAP_HEIGHT)
+
+        # Scan the current map each turn and set all the walls as unwalkable
+        for y1 in range(constants.MAP_HEIGHT):
+            for x1 in range(constants.MAP_WIDTH):
+                libtcod.map_set_properties(fov, x1, y1,
+                                           not get_block_path(inc_map[x1][y1]),
+                                           not get_block_path(inc_map[x1][y1]))
+
+
+        my_path = libtcod.path_new_using_map(fov, 1.41)
+        libtcod.path_compute(my_path, self.owner.owner.x, self.owner.owner.y, target_x, target_y)
+        if not libtcod.path_is_empty(my_path):
+            x, y = libtcod.path_walk(my_path, True)
+            if x or y:
+                # Move to next path
+                return self.owner.move_towards(x, y, inc_map)
+        libtcod.path_delete(my_path)
+
+
+    # resting
     def rest_start(self, turns):
         self.rest_cnt = 0
         self.resting = True

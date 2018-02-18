@@ -4,7 +4,7 @@ import constants
 from game_states import GameStates
 import gui_menus
 from renderer import pix_to_iso
-from map_common import map_check_for_items
+from map_common import map_check_for_items, find_unexplored_closest
 
 def initialize_camera(camera):
     global CAMERA
@@ -165,6 +165,23 @@ def game_player_turn_input(key):
     if key == blt.TK_R:
         PLAYER.creature.player.rest_start(30)
         return "player-moved"
+
+    if key == blt.TK_E:
+        # toggle
+        if not PLAYER.creature.player.autoexplore:
+            PLAYER.creature.player.autoexplore = True
+        else:
+            PLAYER.creature.player.autoexplore = False
+
+        if PLAYER.creature.player.autoexplore:
+            x,y = find_unexplored_closest(PLAYER.x, PLAYER.y, GAME.level.current_map, GAME.level.current_explored)
+            print("Closest unexplored is " + str(x) + " " + str(y))
+            moved = PLAYER.creature.player.move_towards_autoexplore(x,y, GAME.level.current_map)
+            if (moved[0]):
+                CAMERA.move(moved[1], moved[2])
+                GAME.fov_recompute = True
+
+            return "player-moved"
 
 
 def game_handle_keys():

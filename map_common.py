@@ -175,6 +175,22 @@ def find_free_grid_in_range(dist, x, y, game):
 
     return out
 
+def find_unexplored_closest(x, y, inc_map, explored):
+    free_tiles = get_free_tiles(inc_map)
+    out = []
+
+    for tile in free_tiles:
+        if not explored[tile[0]][tile[1]]:
+            distance = distance_to((x,y), (tile[0], tile[1]))
+            out.append((tile[0], tile[1], distance))
+
+    # sort
+    out = sorted(out, key=itemgetter(2))
+
+
+    # return first item's coords
+    return out[0][0], out[0][1]
+
 # admittedly not ideal here due to the reliance on game... but /shrug
 def map_check_for_item(x,y, game):
     target = None
