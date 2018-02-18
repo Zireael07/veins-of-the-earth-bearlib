@@ -403,3 +403,5 @@ def debug_pause(mapgen):
             key = blt.read()
             if key:
                 unpaused = False
+                # accidentally disabled mouse input
+                blt.set('input: filter = [keyboard, mouse+]')

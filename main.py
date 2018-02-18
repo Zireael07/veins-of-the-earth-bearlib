@@ -97,9 +97,10 @@ class obj_Game(object):
         global AI_FOV_MAP
         AI_FOV_MAP = map_make_fov(self.level.current_map)
 
-
         # force fov recompute
         self.fov_recompute = True
+
+        CAMERA.start_update(PLAYER)
 
 
 
@@ -189,7 +190,7 @@ def map_calculate_fov():
 def draw_game(x,y):
     # don't draw map and NPCs if sleeping
     if not PLAYER.creature.player.resting:
-        renderer.draw_map(GAME.level.current_map, GAME.level.current_explored, FOV_MAP, GAME.level.render_positions)
+        renderer.draw_map(GAME.level.current_map, GAME.level.current_explored, FOV_MAP, GAME.level.render_positions, constants.DEBUG)
 
         renderer.draw_mouseover(x,y, GAME.level.render_positions)
 
