@@ -1,17 +1,19 @@
 import libtcodpy as libtcod
 
 import constants
-from map_common import Rect, print_map_string, convert_to_box_drawing, convert_walls, print_converted
+from map_common import Rect, print_map_string, convert_to_box_drawing, convert_walls, print_converted, debug_pause
 from tile_lookups import TileTypes, get_index
 
 class BspMapGenerator(object):
-    def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms):
+    def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms, render_positions, debug):
         self.map_width = map_width
         self.map_height = map_height
         self.min_room_size = min_room_size
         self.generation_depth = generation_depth
         self.full_rooms = full_rooms
         self._map = []
+        self.debug = debug
+        self.render_positions = render_positions
 
     def _vline(self, x, y1, y2):
         print("Generating a corridor from " + str(x) + " " + str(y1) + " to " + str(x) + " " + str(y2))
@@ -159,12 +161,14 @@ class BspMapGenerator(object):
 
     def generate_map(self):
         self._map = self._generate_empty_map()
+        debug_pause(self)
         self._rooms_centers = []
         self._rooms = []
         bsp = libtcod.bsp_new_with_size(0, 0, self.map_width, self.map_height)
         libtcod.bsp_split_recursive(bsp, 0, self.generation_depth, self.min_room_size + 1, self.min_room_size + 1, 1.5,
                                     1.5)
         libtcod.bsp_traverse_inverted_level_order(bsp, self._traverse_node)
+        debug_pause(self)
 
         stairs_x = self._rooms_centers[len(self._rooms_centers)-1][0]
         stairs_y = self._rooms_centers[len(self._rooms_centers)-1][1]
@@ -174,6 +178,7 @@ class BspMapGenerator(object):
         self._map[stairs_x][stairs_y] = get_index(TileTypes.STAIRS)#4 #.stairs = True
 
         self._map = convert_walls(self._map)
+        debug_pause(self)
 
         self.map_desc = [[0 for _ in range(self.map_height)] for _ in range(self.map_width)]
 

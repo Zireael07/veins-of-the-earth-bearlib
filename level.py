@@ -21,23 +21,33 @@ def initialize_game(game):
 
 class obj_Level(object):
     def __init__(self, gen_type="dungeon"):
+        # new way of storing explored info
+        self.current_explored = [[False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
+
+        # cache the isometric calculations instead of doing them every frame
+        # this wouldn't be necessary for a non-iso game since the calculations would be almost nonexistent
+        self.render_positions = [[iso_pos(x, y) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
+
+        self.current_entities = []
+
+        # level gen
         self.gen_type = gen_type
         # map gen
         if gen_type == "dungeon":
             map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-                                  constants.FULL_ROOMS)
+                                  False, self.render_positions, True)
         elif gen_type == "encampment":
             map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
-                                False)
+                                False, self.render_positions, True, True)
         elif gen_type == "city":
             map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
-                                False, True)
+                                False, self.render_positions, True, True)
         elif gen_type == "cavern":
-            map_gen = CaveGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT)
+            map_gen = CaveGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, self.render_positions, True)
         # fallback
         else:
             map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-                                      constants.FULL_ROOMS)
+                                      constants.FULL_ROOMS, self.render_positions, True)
 
         gen_map = map_gen.generate_map()
         # catch degenerate instances
@@ -61,14 +71,7 @@ class obj_Level(object):
         # debug
         print_map_string(self.current_map)
 
-        # new way of storing explored info
-        self.current_explored = [[False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
 
-        self.current_entities = []
-
-        # cache the isometric calculations instead of doing them every frame
-        # this wouldn't be necessary for a non-iso game since the calculations would be almost nonexistent
-        self.render_positions = [[iso_pos(x,y) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
 
     def add_entity(self, entity):
         if entity is not None:

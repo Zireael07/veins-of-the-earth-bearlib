@@ -2,14 +2,14 @@ import random
 from math import sqrt
 
 import constants
-from map_common import print_map_string, get_free_tiles, Directions
+from map_common import print_map_string, get_free_tiles, Directions, debug_pause
 from tile_lookups import TileTypes, get_index
 
 # based on http://www.evilscience.co.uk/a-c-algorithm-to-build-roguelike-cave-systems-part-1/
 # implementation from https://github.com/AtTheMatinee/dungeon-generation
 class CaveGenerator(object):
 
-    def __init__(self, map_width, map_height):
+    def __init__(self, map_width, map_height, render_positions, debug):
         self._map = []
         self.caves = []
 
@@ -26,6 +26,10 @@ class CaveGenerator(object):
         self.smooth_edges = True
         self.smoothing = 1
 
+        # debugging
+        self.debug = debug
+        self.render_positions = render_positions
+
     def _generate_empty_map(self):
         self._map = [[get_index(TileTypes.WALL) for _ in range(self.map_height)] for _ in range(self.map_width)]
         return self._map
@@ -36,16 +40,17 @@ class CaveGenerator(object):
 
         # fill with walls
         self._generate_empty_map()
-
+        debug_pause(self)
         self.random_fill()
-
+        debug_pause(self)
         self.create_caves()
-
+        debug_pause(self)
         self.get_caves()
-
+        debug_pause(self)
         self.connect_caves()
-
+        debug_pause(self)
         self.smooth()
+        debug_pause(self)
         return [self._map]
 
     def random_fill(self):

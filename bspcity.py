@@ -2,11 +2,11 @@ import libtcodpy as libtcod
 import random
 
 import constants
-from map_common import Rect, print_map_string, room_desc, convert_walls
+from map_common import Rect, print_map_string, room_desc, convert_walls, debug_pause
 from tile_lookups import TileTypes, get_index
 
 class BspCityGenerator(object):
-    def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms, wall=False):
+    def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms, render_positions, wall=False, debug=False):
         self.map_width = map_width
         self.map_height = map_height
         self.min_room_size = min_room_size
@@ -14,6 +14,8 @@ class BspCityGenerator(object):
         self.full_rooms = full_rooms
         self.wall = wall
         self._map = []
+        self.debug = debug
+        self.render_positions = render_positions
 
     def _traverse_node(self, node, dat):
         # Create room
@@ -126,14 +128,19 @@ class BspCityGenerator(object):
         self._map = [[get_index(TileTypes.FLOOR) for _ in range(self.map_height)] for _ in range(self.map_width)]
         return self._map
 
+
     def generate_map(self):
+        print("Debug: " + str(self.debug))
+
         self._map = self._generate_empty_map()
+        debug_pause(self)
         self._rooms_centers = []
         self._rooms = []
         bsp = libtcod.bsp_new_with_size(0, 0, self.map_width, self.map_height)
         libtcod.bsp_split_recursive(bsp, 0, self.generation_depth, self.min_room_size + 1, self.min_room_size + 1, 1.5,
                                     1.5)
         libtcod.bsp_traverse_inverted_level_order(bsp, self._traverse_node)
+        debug_pause(self)
 
         stairs_x = self._rooms_centers[len(self._rooms_centers)-1][0]
         stairs_y = self._rooms_centers[len(self._rooms_centers)-1][1]
@@ -143,9 +150,11 @@ class BspCityGenerator(object):
         # city wall before doors
         if self.wall:
             self.create_walls()
+        debug_pause(self)
+
 
         self.create_doors()
-
+        debug_pause(self)
 
 
         self.map_desc = [[ 0 for _ in range(self.map_height)] for _ in range(self.map_width)]
@@ -155,6 +164,8 @@ class BspCityGenerator(object):
         self._map[stairs_x][stairs_y] = get_index(TileTypes.STAIRS) #4 #.stairs = True
 
         self._map = convert_walls(self._map)
+
+        debug_pause(self)
 
         # TODO: generate monsters, items, etc.
         return [self._map, self.map_desc, self._rooms_centers[0][0], self._rooms_centers[0][1], self._rooms]
