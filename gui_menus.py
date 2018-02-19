@@ -33,6 +33,10 @@ def character_sheet_menu(header, player):
                (str(GAME.calendar.get_time_date(GAME.calendar.turn)), "yellow")
                ]
 
+    for m in player.creature.player.money:
+        options.append((str(m[0]) + ": " + str(m[1]), "amber"))
+
+
     for ef in player.creature.effects:
         options.append(("", "white"))
         options.append((ef.name, "green"))

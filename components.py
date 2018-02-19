@@ -568,6 +568,10 @@ class com_Player(object):
         self.nutrition = 500
         self.thirst = 300
         self.autoexplore = False
+        self.money = [ ("bronze", 0),
+                       ("silver", 100),
+                       ("gold", 0),
+                       ("platinum", 0)]
 
     def act(self):
         if self.resting:
