@@ -25,10 +25,11 @@ from game_states import GameStates
 
 
 class obj_Game(object):
-    def __init__(self, basic):
+    def __init__(self, basic, init_seed=10):
         if not basic:
+            print("Init seed: " + str(init_seed))
             data = level.load_level_data("city")
-            self.level = level.obj_Level(data[0]) #level.obj_Level("city")
+            self.level = level.obj_Level(data[0], init_seed) #level.obj_Level("city")
 
             # init game for submodules
             components.initialize_game(self)
@@ -452,14 +453,14 @@ def generate_player(game):
     return player
 
 
-def start_new_game():
+def start_new_game(seed):
     # in case we want to visualize the first level as it's generated
     camera = obj_Camera()
     # init camera for renderer
     renderer.initialize_camera(camera)
 
 
-    game = obj_Game(False)
+    game = obj_Game(False, seed)
 
     # init game for submodules (moved to the game init itself)
     #components.initialize_game(game)
@@ -570,7 +571,12 @@ def game_initialize():
         GAME.game_state = GameStates.PLAYER_TURN
 
     elif action == 1:
-        GAME, PLAYER, CAMERA = start_new_game()
+        # seed input
+        blt.clear()
+        seed = gui_menus.seed_input_menu()
+        #print("Seed: "+ str(seed))
+
+        GAME, PLAYER, CAMERA = start_new_game(seed)
         GAME.fov_recompute = True
         # fix issue where the map is black on turn 1
         map_calculate_fov()

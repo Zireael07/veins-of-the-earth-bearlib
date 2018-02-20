@@ -261,3 +261,8 @@ def pickup_menu(entities):
         return None
     else:
         return entities[index]
+
+def seed_input_menu():
+    seed = renderer.input_menu("Seed", 50)
+    print("Inputed seed: " + str(seed))
+    return int(seed[1])
