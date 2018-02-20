@@ -20,7 +20,8 @@ def initialize_game(game):
 
 
 class obj_Level(object):
-    def __init__(self, gen_type="dungeon"):
+    def __init__(self, gen_type="dungeon", seed=10):
+        print("Level seed: " + str(seed))
         # new way of storing explored info
         self.current_explored = [[False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
 
@@ -38,10 +39,10 @@ class obj_Level(object):
                                   False, self.render_positions, True)
         elif gen_type == "encampment":
             map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
-                                False, self.render_positions, True, True)
+                                False, self.render_positions, seed, True, True)
         elif gen_type == "city":
             map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
-                                False, self.render_positions, True, True)
+                                False, self.render_positions, seed, True, True)
         elif gen_type == "cavern":
             map_gen = CaveGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, self.render_positions, True)
         # fallback
