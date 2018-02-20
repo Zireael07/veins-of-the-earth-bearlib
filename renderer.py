@@ -655,6 +655,37 @@ def text_menu(header, width, title, text):
         blt.composition(True)
         return key
 
+def input_menu(header, width):
+    menu_x = int((120 - width) / 2)
+
+    header_height = 2
+
+    menu_h = int(header_height + 1 + 5)
+    menu_y = int((50 - menu_h) / 2)
+
+    # create a window
+
+    create_window(menu_x, menu_y, width, menu_h, "")
+
+    blt.puts(menu_x, menu_y, header)
+
+    y = menu_y + header_height + 1
+
+    input_str = ""
+
+    blt.refresh()
+    # present the root console to the player and wait for a key-press
+    blt.set('input: filter = [keyboard]')
+    while True:
+        # take input
+        string = blt.read_str(menu_x, y, input_str, 10)
+        blt.refresh()
+
+        # after confirming with enter, the function returns the string
+        if string > 0:
+            blt.set('input: filter = [keyboard, mouse+]')
+            #print("Str" + str(string))
+            return string
 
 # drawing special effects
 def wait(wait_time):
