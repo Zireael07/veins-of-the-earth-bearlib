@@ -16,6 +16,7 @@ import generators
 import level
 import gui_menus
 import hud
+import main_menu
 import calendar
 
 from map_common import map_make_fov, map_check_for_creature, find_free_grid_in_range
@@ -84,9 +85,9 @@ class obj_Game(object):
         print("Set player turn")
 
     def map_calculate_fov(self):
-        if GAME.fov_recompute:
-            GAME.fov_recompute = False
-            libtcod.map_compute_fov(GAME.fov_map, PLAYER.x, PLAYER.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
+        if self.fov_recompute:
+            self.fov_recompute = False
+            libtcod.map_compute_fov(self.fov_map, PLAYER.x, PLAYER.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
                                     constants.FOV_ALGO)
 
     def next_level(self):
@@ -528,73 +529,16 @@ def game_initialize():
     GAME = obj_Game(True)
     GAME.game_state = GameStates.MAIN_MENU
     renderer.initialize_game(GAME)
-    blt.put(10,0, 0xE100)
-    action = gui_menus.main_menu()
 
-    # if we have a savegame, load it
-    if action == 2 and os.path.isfile('savegame.json'):
-        GAME, PLAYER, CAMERA = game_loaders.load_game()
-
-        # handle FOV
-        GAME.fov_recompute = True
-        # recreate the fov
-        #global FOV_MAP
-        GAME.fov_map = map_make_fov(GAME.level.current_map)
-
-        #global AI_FOV_MAP
-        GAME.ai_fov_map = map_make_fov(GAME.level.current_map)
-
-        # patch in required stuff
-        # init game for submodules
-        components.initialize_game(GAME)
-        generators.initialize_game(GAME)
-        level.initialize_game(GAME)
-        renderer.initialize_game(GAME)
-        gui_menus.initialize_game(GAME)
-
-        # init camera for renderer
-        renderer.initialize_camera(CAMERA)
-
-        hud.initialize_game(GAME)
-        hud.initialize_player(PLAYER)
-
-        #handle input needs all three
-        handle_input.initialize_game(GAME)
-        handle_input.initialize_player(PLAYER)
-        handle_input.initialize_camera(CAMERA)
-
-        # we don't have to reset camera position because it's loaded from the file
-        #CAMERA.start_update(PLAYER)
-
-        # fix issue where the map is black on turn 1
-        GAME.map_calculate_fov()
-
-        print("Game loaded")
-
-        # set state to player turn
-        GAME.game_state = GameStates.PLAYER_TURN
-
-    elif action == 1:
-        # seed input
-        blt.clear()
-        seed = gui_menus.seed_input_menu()
-        #print("Seed: "+ str(seed))
-
-        GAME, PLAYER, CAMERA = start_new_game(seed)
-        GAME.fov_recompute = True
-        # fix issue where the map is black on turn 1
-        GAME.map_calculate_fov()
-
-        #set state to player turn
-        GAME.game_state = GameStates.PLAYER_TURN
-
-        # show character creation
-        blt.clear()
-        gui_menus.character_creation_menu(PLAYER)
-
+    ret = main_menu.main_menu(start_new_game)
+    if ret is not None:
+        GAME, PLAYER, CAMERA = ret[0], ret[1], ret[2]
     else:
-        #quit
+        # quit
         blt.close()
+
+    # fix issue where the map is black on turn 1
+    GAME.map_calculate_fov()
 
 if __name__ == '__main__':
 
