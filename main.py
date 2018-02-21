@@ -41,10 +41,10 @@ class obj_Game(object):
             self.message_history = []
 
             self.level.generate_items_monsters(data[1], data[2])
-            global FOV_MAP
-            FOV_MAP = map_make_fov(self.level.current_map)
-            global AI_FOV_MAP
-            AI_FOV_MAP = map_make_fov(self.level.current_map)
+            #global FOV_MAP
+            self.fov_map = map_make_fov(self.level.current_map)
+            #global AI_FOV_MAP
+            self.ai_fov_map = map_make_fov(self.level.current_map)
 
             self.factions = []
             self.calendar = calendar.obj_Calendar(1371)
@@ -76,7 +76,18 @@ class obj_Game(object):
 
     def end_player_turn(self):
         # toggle game state to enemy turn
-        GAME.game_state = GameStates.ENEMY_TURN
+        self.game_state = GameStates.ENEMY_TURN
+
+    def set_player_turn(self):
+        # set state to player turn
+        self.game_state = GameStates.PLAYER_TURN
+        print("Set player turn")
+
+    def map_calculate_fov(self):
+        if GAME.fov_recompute:
+            GAME.fov_recompute = False
+            libtcod.map_compute_fov(GAME.fov_map, PLAYER.x, PLAYER.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
+                                    constants.FOV_ALGO)
 
     def next_level(self):
         self.game_message("You descend deeper in the dungeon", "violet")
@@ -93,10 +104,10 @@ class obj_Game(object):
         # add stuff
         self.level.generate_items_monsters()
 
-        global FOV_MAP
-        FOV_MAP = map_make_fov(self.level.current_map)
-        global AI_FOV_MAP
-        AI_FOV_MAP = map_make_fov(self.level.current_map)
+        #global FOV_MAP
+        GAME.fov_map = map_make_fov(self.level.current_map)
+        #global AI_FOV_MAP
+        GAME.ai_fov_map = map_make_fov(self.level.current_map)
 
         # force fov recompute
         self.fov_recompute = True
@@ -180,18 +191,11 @@ def death_player(player):
         os.remove('savegame.json')
 
 
-def map_calculate_fov():
-    if GAME.fov_recompute:
-        GAME.fov_recompute = False
-        libtcod.map_compute_fov(FOV_MAP, PLAYER.x, PLAYER.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
-                                constants.FOV_ALGO)
-
-
 # the core drawing function
 def draw_game(x,y):
     # don't draw map and NPCs if sleeping
     if not PLAYER.creature.player.resting:
-        renderer.draw_map(GAME.level.current_map, GAME.level.current_explored, FOV_MAP, GAME.level.render_positions, constants.DEBUG)
+        renderer.draw_map(GAME.level.current_map, GAME.level.current_explored, GAME.fov_map, GAME.level.render_positions, constants.DEBUG)
 
         renderer.draw_mouseover(x,y, GAME.level.render_positions)
 
@@ -205,7 +209,7 @@ def draw_game(x,y):
         for ent in GAME.level.current_entities:
             if ent.x >= width_start and ent.x < width_end:
                 if ent.y >= height_start and ent.y < height_end:
-                    ent.draw(fov_map=FOV_MAP, render_pos=GAME.level.render_positions)
+                    ent.draw(fov_map=GAME.fov_map, render_pos=GAME.level.render_positions)
 
         # on top of map
         blt.layer(1)
@@ -288,7 +292,7 @@ def game_main_loop():
             blt.layer(0)
             #mouse_picking(m_x, m_y)
             # this works on map tiles
-            hud.show_tile_desc(pix_x, pix_y, FOV_MAP)
+            hud.show_tile_desc(pix_x, pix_y, GAME.fov_map)
             hud.show_npc_desc(pix_x, pix_y)
 
         # refresh term
@@ -313,7 +317,7 @@ def game_main_loop():
                 game_quit = True
                 break
             else:
-                map_calculate_fov()
+                GAME.map_calculate_fov()
 
 
             if player_action == "mouse_click":
@@ -332,7 +336,7 @@ def game_main_loop():
             if GAME.game_state == GameStates.ENEMY_TURN:
                 for ent in GAME.level.current_entities:
                     if ent.ai:
-                        ent.ai.take_turn(PLAYER, AI_FOV_MAP)
+                        ent.ai.take_turn(PLAYER, GAME.ai_fov_map)
 
                         if GAME.game_state == GameStates.PLAYER_DEAD:
                             print("Player's dead, breaking the loop")
@@ -534,11 +538,11 @@ def game_initialize():
         # handle FOV
         GAME.fov_recompute = True
         # recreate the fov
-        global FOV_MAP
-        FOV_MAP = map_make_fov(GAME.level.current_map)
+        #global FOV_MAP
+        GAME.fov_map = map_make_fov(GAME.level.current_map)
 
-        global AI_FOV_MAP
-        AI_FOV_MAP = map_make_fov(GAME.level.current_map)
+        #global AI_FOV_MAP
+        GAME.ai_fov_map = map_make_fov(GAME.level.current_map)
 
         # patch in required stuff
         # init game for submodules
@@ -563,7 +567,7 @@ def game_initialize():
         #CAMERA.start_update(PLAYER)
 
         # fix issue where the map is black on turn 1
-        map_calculate_fov()
+        GAME.map_calculate_fov()
 
         print("Game loaded")
 
@@ -579,7 +583,7 @@ def game_initialize():
         GAME, PLAYER, CAMERA = start_new_game(seed)
         GAME.fov_recompute = True
         # fix issue where the map is black on turn 1
-        map_calculate_fov()
+        GAME.map_calculate_fov()
 
         #set state to player turn
         GAME.game_state = GameStates.PLAYER_TURN
