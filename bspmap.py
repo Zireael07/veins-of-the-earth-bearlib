@@ -5,7 +5,7 @@ from map_common import Rect, print_map_string, convert_to_box_drawing, convert_w
 from tile_lookups import TileTypes, get_index
 
 class BspMapGenerator(object):
-    def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms, render_positions, debug):
+    def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms, render_positions, seed, debug):
         self.map_width = map_width
         self.map_height = map_height
         self.min_room_size = min_room_size
@@ -14,6 +14,10 @@ class BspMapGenerator(object):
         self._map = []
         self.debug = debug
         self.render_positions = render_positions
+        self.seed = seed
+
+        # seed
+        self.rnd = libtcod.random_new_from_seed(self.seed)
 
     def _vline(self, x, y1, y2):
         print("Generating a corridor from " + str(x) + " " + str(y1) + " to " + str(x) + " " + str(y2))
@@ -160,12 +164,14 @@ class BspMapGenerator(object):
                     self.map_desc[x][y] = 1
 
     def generate_map(self):
+        print("Mapgen seed: " + str(self.seed))
+
         self._map = self._generate_empty_map()
         debug_pause(self)
         self._rooms_centers = []
         self._rooms = []
         bsp = libtcod.bsp_new_with_size(0, 0, self.map_width, self.map_height)
-        libtcod.bsp_split_recursive(bsp, 0, self.generation_depth, self.min_room_size + 1, self.min_room_size + 1, 1.5,
+        libtcod.bsp_split_recursive(bsp, self.rnd, self.generation_depth, self.min_room_size + 1, self.min_room_size + 1, 1.5,
                                     1.5)
         libtcod.bsp_traverse_inverted_level_order(bsp, self._traverse_node)
         debug_pause(self)

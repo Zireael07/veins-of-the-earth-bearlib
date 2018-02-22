@@ -1,4 +1,5 @@
 import random
+import libtcodpy as libtcod
 from math import sqrt
 
 import constants
@@ -9,7 +10,7 @@ from tile_lookups import TileTypes, get_index
 # implementation from https://github.com/AtTheMatinee/dungeon-generation
 class CaveGenerator(object):
 
-    def __init__(self, map_width, map_height, render_positions, debug):
+    def __init__(self, map_width, map_height, render_positions, seed, debug):
         self._map = []
         self.caves = []
 
@@ -29,6 +30,10 @@ class CaveGenerator(object):
         # debugging
         self.debug = debug
         self.render_positions = render_positions
+        self.seed = seed
+
+        # seed
+        self.rnd = libtcod.random_new_from_seed(self.seed)
 
     def _generate_empty_map(self):
         self._map = [[get_index(TileTypes.WALL) for _ in range(self.map_height)] for _ in range(self.map_width)]
@@ -57,7 +62,7 @@ class CaveGenerator(object):
         for y in range(1, self.map_height - 1):
             for x in range(1, self.map_width - 1):
                 #print("(",x,y,") = ",self._map[x][y])
-                if random.random() >= self.wall_chance:
+                if libtcod.random_get_float(self.rnd, 0, 1) >= self.wall_chance:
                     # make it a floor
                     self._map[x][y] = get_index(TileTypes.FLOOR) #2
 
@@ -65,8 +70,8 @@ class CaveGenerator(object):
         # ==== Create distinct caves ====
         for i in xrange(0, self.iterations):
             # Pick a random point with a buffer around the edges of the map
-            tile_x = random.randint(1, self.map_width - 2)  # (2,mapWidth-3)
-            tile_y = random.randint(1, self.map_height - 2)  # (2,mapHeight-3)
+            tile_x = libtcod.random_get_int(self.rnd, 1, self.map_width - 2)  # (2,mapWidth-3)
+            tile_y = libtcod.random_get_int(self.rnd, 1, self.map_height - 2)  # (2,mapHeight-3)
 
             # if the cell's neighboring walls > self.neighbors, make it a wall
             if self.get_adjacent_walls(tile_x, tile_y) > self.neighbors:
@@ -119,7 +124,7 @@ class CaveGenerator(object):
             west /= total
 
             # choose the direction
-            choice = random.random()
+            choice = libtcod.random_get_float(self.rnd, 0, 1) #random.random()
             if 0 <= choice < north:
                 dx, dy = Directions.NORTH
             elif north <= choice < (north + south):
