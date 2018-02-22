@@ -351,7 +351,6 @@ class com_Creature(object):
             return False
 
     def attack(self, target, damage):
-
         if self.skill_test("melee"):
             if self.owner.visible:
                 GAME.game_message(self.name_instance + " hits " + target.creature.name_instance +"!", "white")
@@ -426,13 +425,22 @@ class com_Creature(object):
 
                 # test
                 if self.chat is not None:
-                    dialogue_window(self)
+                    items = []
+                    item = GAME.level.spawn_item_by_id("chainmail")
+                    items.append(item)
+
+
+                    dialogue_window(self, target.creature, items)
                     # wake player if he's sleeping
                     if target.creature.player.resting:
                         target.creature.player.resting = False
 
                 if target.creature.chat is not None:
-                    dialogue_window(target.creature)
+                    items = []
+                    item = GAME.level.spawn_item_by_id("chainmail")
+                    items.append(item)
+
+                    dialogue_window(target.creature, self, items)
 
         tile_is_wall = (get_block_path(game_map[self.owner.x+dx][self.owner.y+dy]) == True)
 

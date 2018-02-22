@@ -92,14 +92,43 @@ def display_dmg_window(index):
         dmg = filter(str.isdigit, str(GAME.message_history[index][0]))
         dmg_menu(dmg)
 
-def dialogue_window(creature):
+def dialogue_window(creature, player, items):
     blt.layer(1)
     index = renderer.dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat['chat'], creature.chat['answer'])
 
     if index is not None and creature.chat['answer'][index]:
-        print("Index " + str(index) + " " + str(creature.chat['answer'][index]['reply']))
+        #print("Index " + str(index) + " " + str(creature.chat['answer'][index]['reply']))
         reply = creature.chat['answer'][index]['reply']
         index = renderer.dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat[reply], [])
+        # test shop
+        item = shop_window(player, creature, items)
+
+        # transfer item to player
+        if item is not None:
+            item.item.pick_up(player.owner)
+
+
+def shop_window(player, creature, items):
+    player_inv = [item.display_name() for item in player.owner.container.inventory]
+
+    creature.shop = []
+    for item in items:
+        creature.shop.append(item)
+    shop_inv = [item.display_name() for item in creature.shop]
+    columns = [player_inv, shop_inv]
+
+    # we want one item selected (for now)
+    index = renderer.multicolumn_menu("SHOP", columns, 80, 25)
+    print("Ind: " + str(index))
+
+    num = index[0]-len(player_inv)
+    print(num)
+
+    if index is None:
+        return None
+
+    # return item
+    return creature.shop[num]
 
 
 def help_menu():

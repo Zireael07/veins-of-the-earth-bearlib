@@ -90,6 +90,8 @@ class obj_Level(object):
         self.add_entity(item)
         if item:
             item.send_to_back()
+        # in case we need it later
+        return item
 
     def spawn_monster_by_id(self, m_id):
         generators.generate_monster(m_id, *random_free_tile(self.current_map))
