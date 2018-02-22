@@ -205,7 +205,7 @@ def character_creation_menu(player):
 
     tiles = ["gfx/human_m.png", "gfx/drow_m.png", "gfx/human_f.png", "gfx/drow_f.png"]
 
-    key = renderer.multicolumn_menu("CHARACTER CREATION", columns, 80)
+    key = renderer.multicolumn_menu("CHARACTER CREATION", columns, 80, 10, 2)
 
     if 0 in key and 2 in key:
         select = tiles[0]

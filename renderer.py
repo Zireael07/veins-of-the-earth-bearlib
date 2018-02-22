@@ -333,22 +333,24 @@ def menu_colored_scrolled(header, options_tuples, width, begin, end, title=None)
 
 
 # used for character creation
-def multicolumn_menu(title, columns, width):
+def multicolumn_menu(title, columns, width, col_width, wanted_keys_num=1):
     current = 0
-    ret = multicolumn_menu_inner(title, columns, width, current, None)
+    ret = multicolumn_menu_inner(title, columns, width, col_width, current, None)
     if ret is not None:
         #print("Ret is not none " + str(ret))
-        # if we are getting input, keep showing the log
-        while ret is not None and len(ret[1]) < 2:
+        # if we are getting input, keep showing the window
+        while ret is not None and len(ret[1]) < wanted_keys_num:
             #print("Ret is not none " + str(ret[1]))
+            # column selection
             if ret[0] is not None:
-                ret = multicolumn_menu_inner(title, columns, width, ret[0], ret[1])
+                ret = multicolumn_menu_inner(title, columns, width, col_width, ret[0], ret[1])
             else:
-                ret = multicolumn_menu_inner(title, columns, width, 0, ret[1])
+                ret = multicolumn_menu_inner(title, columns, width, col_width, 0, ret[1])
 
+        print("Returning: " + str(ret) + ": " + str(ret[1]))
         return ret[1]
 
-def multicolumn_menu_inner(title, columns, width, current, values):
+def multicolumn_menu_inner(title, columns, width, col_width, current, values):
     #GAME.fov_recompute = True
 
     menu_x = int((120 - width) / 2)
@@ -381,7 +383,7 @@ def multicolumn_menu_inner(title, columns, width, current, values):
     x = menu_x
     for i in range(0, len(columns)):
         #col = columns[i]
-        w = 10
+        w = col_width
         y = menu_y + header_height + 2
         # outline current column
         if i == cur_column:
