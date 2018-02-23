@@ -10,6 +10,9 @@ def set_tiles():
     blt.set("0x2503: gfx/wall_stone_vert_EW.png, align=center")  # "│" #2502 is used by window rendering
     blt.set("0x003E: gfx/stairs_down.png, align=center")  # ">"
     blt.set("0x003C: gfx/stairs_up.png, align=center")  # "<"
+    blt.set("0x2317: gfx/bed.png, align=center")
+    blt.set("0x266F: gfx/crate.png, align=center")
+    # player
     blt.set("0x40: gfx/human_m.png, align=center")  # "@"
     # NPCs (we use Unicode private area here)
     blt.set("0xE000: gfx/kobold.png,  align=center")  # ""
