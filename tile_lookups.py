@@ -74,6 +74,8 @@ TileTypes = Tile_Lookups(WALL=(1,struc_Tile("wall", "#", "#", True)),
                          WALL_V=(2, struc_Tile("wall", 0x2503, "#", True)),
                          FLOOR=(3, struc_Tile("floor", 0x3002, ".", False)),
                          STAIRS=(4,struc_Tile("stairs", ">", ">", False)),
+                         BED=(5, struc_Tile("bed", 0x2317, "}", False)),
+                         CRATE=(6, struc_Tile("crates", 0x266F, "&", False))
                       )
 
 

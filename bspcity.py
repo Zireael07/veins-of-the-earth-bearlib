@@ -122,6 +122,28 @@ class BspCityGenerator(object):
             self._map[0][y] = get_index(TileTypes.WALL) #0  # .block_path = True
             self._map[constants.MAP_HEIGHT - 1][y] = get_index(TileTypes.WALL) #0  # .block_path = True
 
+    def place_decor(self):
+        for room in self._rooms:
+            (x, y) = room.center()
+            choices = ["north", "south", "east", "west"]
+            side = random.choice(choices)
+
+            if side == "north":
+                selX = x +libtcod.random_get_int(0,-1,1)
+                selY = room.y1+1
+            elif side == "south":
+                selX = x +libtcod.random_get_int(0,-1,1)
+                selY = room.y2-2
+            elif side == "east":
+                selX = room.x2-2
+                selY = y +libtcod.random_get_int(0,-1,1)
+            elif side == "west":
+                selX = room.x1+1
+                selY = y +libtcod.random_get_int(0,-1,1)
+
+            self._map[selX][selY] = get_index(TileTypes.CRATE)
+
+
     def generate_build_desc(self):
         for room in self._rooms:
             for x in range(room.x1+1, room.x2-1):
@@ -165,6 +187,9 @@ class BspCityGenerator(object):
         self.map_desc = [[ 0 for _ in range(self.map_height)] for _ in range(self.map_width)]
 
         self.generate_build_desc()
+
+        self.place_decor()
+        debug_pause(self)
 
         self._map[stairs_x][stairs_y] = get_index(TileTypes.STAIRS) #4 #.stairs = True
 
