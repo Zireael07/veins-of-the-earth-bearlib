@@ -31,7 +31,7 @@ class BspMapGenerator(object):
         if x > self.map_width -1:
             return
 
-        while y >= 0 and self._map[x][y] == get_index(TileTypes.WALL): #0: #.block_path == True:
+        while y > 0 and self._map[x][y] == get_index(TileTypes.WALL): #0: #.block_path == True:
             self._map[x][y] = get_index(TileTypes.FLOOR) #2 #.block_path = False
             y -= 1
 
@@ -40,7 +40,7 @@ class BspMapGenerator(object):
         if x > self.map_width -1:
             return
 
-        while y < self.map_height and self._map[x][y] == get_index(TileTypes.WALL): #0: # .block_path == True:
+        while y < self.map_height - 1 and self._map[x][y] == get_index(TileTypes.WALL): #0: # .block_path == True:
             self._map[x][y] = get_index(TileTypes.FLOOR) #2 #.block_path = False
             y += 1
 
@@ -56,7 +56,7 @@ class BspMapGenerator(object):
         if y > self.map_height - 1:
             return
 
-        while x >= 0 and self._map[x][y] == get_index(TileTypes.WALL): #0: #.block_path == True:
+        while x > 0 and self._map[x][y] == get_index(TileTypes.WALL): #0: #.block_path == True:
             self._map[x][y] = get_index(TileTypes.FLOOR) #2 #.block_path = False
             x -= 1
 
@@ -64,7 +64,7 @@ class BspMapGenerator(object):
         print("Generating a corridor from " + str(x) + "  " + str(y) + " right")
         if y > self.map_height - 1:
             return
-        while x < self.map_width and self._map[x][y] == get_index(TileTypes.WALL): #0: #.block_path == True:
+        while x < self.map_width - 1 and self._map[x][y] == get_index(TileTypes.WALL): #0: #.block_path == True:
             self._map[x][y] = get_index(TileTypes.FLOOR) #2 #.block_path = False
             x += 1
 
@@ -100,6 +100,8 @@ class BspMapGenerator(object):
             new_room = Rect(minx, miny, node.w, node.h)
             self._rooms.append(new_room)
 
+            # pause after every room
+            debug_pause(self)
 
         # Create corridor
         else:
@@ -114,15 +116,18 @@ class BspMapGenerator(object):
                     x1 = libtcod.random_get_int(None, left.x, left.x + left.w - 1)
                     x2 = libtcod.random_get_int(None, right.x, right.x + right.w - 1)
                     y = libtcod.random_get_int(None, left.y + left.h, right.y)
-                    print("Generating corridors for " + str(x1) + " " + str(y) + ", " + str(x2) + " " + str(y))
+                    print("Generating corridors horizontal case 1 for " + str(x1) + " " + str(y) + ", " + str(x2) + " " + str(y))
                     self._vline_up(x1, y - 1)
                     self._hline(x1, y, x2)
                     self._vline_down(x2, y + 1)
+
+                    debug_pause(self)
+
                 else:
                     minx = max(left.x, right.x)
                     maxx = min(left.x + left.w - 1, right.x + right.w - 1)
                     x = libtcod.random_get_int(None, minx, maxx)
-                    print("Generating corridors for x " + str(x) + " y " + str(right.y) + " " + str(right.y-1))
+                    print("Generating corridors horizontal case 2 for x " + str(x) + " y " + str(right.y) + " " + str(right.y-1))
 
                     # catch out-of-bounds attempts
                     while x > self.map_width - 2:
@@ -130,20 +135,24 @@ class BspMapGenerator(object):
 
                     self._vline_down(x, right.y)
                     self._vline_up(x, right.y - 1)
+
+                    debug_pause(self)
             else:
                 if left.y + left.h - 1 < right.y or right.y + right.h - 1 < left.y:
                     y1 = libtcod.random_get_int(None, left.y, left.y + left.h - 1)
                     y2 = libtcod.random_get_int(None, right.y, right.y + right.h - 1)
                     x = libtcod.random_get_int(None, left.x + left.w, right.x)
-                    print("Generating corridors for " + str(x) + " " + str(y1) + ", " + str(x) + str(y2))
+                    print("Generating corridors vertical case 1 for " + str(x) + " " + str(y1) + ", " + str(x) + str(y2))
                     self._hline_left(x - 1, y1)
                     self._vline(x, y1, y2)
                     self._hline_right(x + 1, y2)
+
+                    debug_pause(self)
                 else:
                     miny = max(left.y, right.y)
                     maxy = max(left.y + left.h - 1, right.y + right.h - 1)
                     y = libtcod.random_get_int(None, miny, maxy)
-                    print("Generating corridors for y " + str(y) + " x " + str(right.x) + " " + str(right.x-1))
+                    print("Generating corridors vertical case 2 for y " + str(y) + " x " + str(right.x) + " " + str(right.x-1))
 
                     # catch out-of-bounds attempts
                     while y > self.map_height - 2:
@@ -151,6 +160,8 @@ class BspMapGenerator(object):
 
                     self._hline_left(right.x - 1, y)
                     self._hline_right(right.x, y)
+
+                    debug_pause(self)
         return True
 
     def _generate_empty_map(self):

@@ -7,6 +7,10 @@
            "type": "encampment",
            "random_spawn_dist": [6, 6, 6]
  },
+ "dungeon": {
+           "type": "dungeon",
+           "random_spawn_dist": [4,4,4]
+ },
  "cavern": {
            "type": "cavern",
            "random_spawn_num": 6,
