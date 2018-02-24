@@ -271,6 +271,18 @@ def inventory_menu(header, player):
          return None
     return player.container.inventory[index]
 
+
+def item_actions_menu(item):
+    blt.clear()
+    options = ["Use/wear", "Drop"]
+
+    index = renderer.options_menu(item.display_name(), options, 20, "Item actions")
+
+    if index is None:
+        return None
+
+    return index
+
 def drop_menu(player):
     if len(player.container.inventory) == 0:
         options = ['Inventory is empty.']

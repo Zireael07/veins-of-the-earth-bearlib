@@ -156,8 +156,15 @@ def game_player_turn_input(key):
         chosen_item = gui_menus.inventory_menu("Inventory", PLAYER)
         if chosen_item is not None:
             if chosen_item.item:
-                chosen_item.item.use(PLAYER)
-                return "player-moved"
+                action = gui_menus.item_actions_menu(chosen_item)
+                if action is None:
+                    return
+                # actions
+                if action == 0:
+                    chosen_item.item.use(PLAYER)
+                elif action == 1:
+                    chosen_item.item.drop(PLAYER)
+                    return "player-moved"
 
     if key == blt.TK_C:
         gui_menus.character_sheet_menu("Character sheet", PLAYER)
