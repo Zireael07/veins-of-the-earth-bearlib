@@ -417,6 +417,11 @@ class com_Creature(object):
                     draw_floating_text(tile_x, tile_y-1, self.text)
                     #draw_floating_text_step(tile_x, tile_y-1, self.text)
                     GAME.game_message(self.name_instance + " says: " + self.text, "yellow")
+
+                    # wake player if he's sleeping
+                    if target.creature.player.resting:
+                        target.creature.player.resting = False
+
                 if target.creature.text is not None and target.visible:
                     tile_x, tile_y = draw_iso(target.x, target.y, GAME.level.render_positions)
                     draw_floating_text(tile_x, tile_y - 1, target.creature.text)
@@ -424,17 +429,18 @@ class com_Creature(object):
                     GAME.game_message(target.creature.name_instance + " says: " + target.creature.text, "yellow")
 
                 # test
-                if self.chat is not None:
-                    items = []
-                    item = GAME.level.spawn_item_by_id("chainmail")
-                    items.append(item)
+                # if self.chat is not None:
+                #     items = []
+                #     item = GAME.level.spawn_item_by_id("chainmail")
+                #     items.append(item)
+                #
+                #
+                #     dialogue_window(self, target.creature, items)
+                #     # wake player if he's sleeping
+                #     if target.creature.player.resting:
+                #         target.creature.player.resting = False
 
-
-                    dialogue_window(self, target.creature, items)
-                    # wake player if he's sleeping
-                    if target.creature.player.resting:
-                        target.creature.player.resting = False
-
+                # player initiated conversations
                 if target.creature.chat is not None:
                     items = []
                     item = GAME.level.spawn_item_by_id("chainmail")
