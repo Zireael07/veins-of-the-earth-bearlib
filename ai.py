@@ -3,6 +3,7 @@ import math
 
 import constants
 from tile_lookups import get_block_path
+from map_common import random_free_tile_away
 
 
 # need a reference to global GAME %^$@
@@ -13,6 +14,10 @@ def initialize_game(game):
 
 # AI
 class AI_test(object):
+    def __init__(self):
+        self.target = None
+
+
     def take_turn(self, player, fov_map):
         # print("AI taking turn")
         # check distance to player
@@ -39,8 +44,12 @@ class AI_test(object):
             if self.owner.creature.faction != player.creature.faction:
                 is_neutral_faction = GAME.get_faction_reaction(self.owner.creature.faction, player.creature.faction, False) == 0
                 if is_neutral_faction:
-                    self.owner.creature.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1),
-                                             GAME.level.current_map)
+                    if not self.target:
+                        self.target = random_free_tile_away(GAME.level.current_map, 6, (self.owner.x, self.owner.y))
+
+                    move_astar(self.owner, self.target, GAME.level.current_map)
+                    #self.owner.creature.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1),
+                    #                         GAME.level.current_map)
                 else:
                     #print("AI distance less than 5, moving towards player")
                     move_astar(self.owner, player, GAME.level.current_map)
@@ -69,6 +78,10 @@ def death_monster(monster):
     GAME.level.current_entities.remove(monster)
 
 def move_astar(actor, target, inc_map):
+    # convert to tuple if not already one
+    if hasattr(target, "x"):
+        target = (target.x, target.y)
+
     #Create a FOV map that has the dimensions of the map
     fov = libtcod.map_new(constants.MAP_WIDTH, constants.MAP_HEIGHT)
 
@@ -93,7 +106,7 @@ def move_astar(actor, target, inc_map):
     my_path = libtcod.path_new_using_map(fov, 1.41)
 
     #Compute the path between self's coordinates and the target's coordinates
-    libtcod.path_compute(my_path, actor.x, actor.y, target.x, target.y)
+    libtcod.path_compute(my_path, actor.x, actor.y, target[0], target[1])
 
     #Check if the path exists, and in this case, also the path is shorter than 25 tiles
     #The path size matters if you want the monster to use alternative longer paths (for example through other rooms) if for example the player is in a corridor
