@@ -36,19 +36,19 @@ class obj_Level(object):
         # map gen
         if gen_type == "dungeon":
             map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-                                  False, self.render_positions, seed, True)
+                                  False, self.render_positions, seed, constants.DEBUG_MAP)
         elif gen_type == "encampment":
             map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
-                                False, self.render_positions, seed, True, True)
+                                False, self.render_positions, seed, False, constants.DEBUG_MAP)
         elif gen_type == "city":
             map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
-                                False, self.render_positions, seed, True, True)
+                                False, self.render_positions, seed, True, constants.DEBUG_MAP)
         elif gen_type == "cavern":
-            map_gen = CaveGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, self.render_positions, seed, True)
+            map_gen = CaveGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, self.render_positions, seed, constants.DEBUG_MAP)
         # fallback
         else:
             map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-                                      constants.FULL_ROOMS, self.render_positions, seed, True)
+                                      constants.FULL_ROOMS, self.render_positions, seed, constants.DEBUG_MAP)
 
         gen_map = map_gen.generate_map()
         # catch degenerate instances

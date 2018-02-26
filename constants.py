@@ -30,3 +30,7 @@ DEBUG = False
 # Data
 NPC_JSON_PATH = "data/test.json"
 ITEMS_JSON_PATH = "data/items.json"
+
+# Debug map
+DEBUG_MAP = True
+STARTING_MAP = "city"

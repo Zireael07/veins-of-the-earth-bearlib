@@ -29,7 +29,7 @@ class obj_Game(object):
     def __init__(self, basic, init_seed=10):
         if not basic:
             print("Init seed: " + str(init_seed))
-            data = level.load_level_data("city")
+            data = level.load_level_data(constants.STARTING_MAP)
             self.level = level.obj_Level(data[0], init_seed) #level.obj_Level("city")
 
             # init game for submodules
