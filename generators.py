@@ -378,7 +378,12 @@ def generate_monster(m_id, x,y):
                                             text = mon_text,
                                             chat = mon_chat,
                                             death_function=death)
-    ai_comp = ai.AI_test()
+
+    # appropriate AI
+    if mon_faction != "enemy":
+        ai_comp = ai.NeutralAI()
+    else:
+        ai_comp = ai.EnemyAI()
 
     # check that x,y isn't taken
     taken = map_check_for_creature(x,y,GAME)

@@ -13,19 +13,23 @@ def initialize_game(game):
     GAME = game
 
 # AI
-class AI_test(object):
+class AI(object):
     def __init__(self):
         self.target = None
 
-
-    def take_turn(self, player, fov_map):
-        # print("AI taking turn")
+    def distance(self, player):
         # check distance to player
         dx = player.x - self.owner.x
         dy = player.y - self.owner.y
         distance = math.sqrt(dx ** 2 + dy ** 2)
 
-        #print("Distance to player is " + str(distance))
+        # print("Distance to player is " + str(distance))
+
+        return distance
+
+class EnemyAI(AI):
+    def take_turn(self, player, fov_map):
+        #print("AI taking turn")
 
         # if we can see it, it can see us too
         #if libtcod.map_is_in_fov(fov_map, self.owner.x, self.owner.y):
@@ -36,24 +40,32 @@ class AI_test(object):
 
         # if not in fov
         if not libtcod.map_is_in_fov(fov_map, player.x, player.y):
-
-        #if distance > 5:
-            #print("AI distance > 5, random move")
             self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), GAME.level.current_map)
         else:
-            if self.owner.creature.faction != player.creature.faction:
-                is_neutral_faction = GAME.get_faction_reaction(self.owner.creature.faction, player.creature.faction, False) == 0
-                if is_neutral_faction:
-                    if not self.target:
-                        self.target = random_free_tile_away(GAME.level.current_map, 6, (self.owner.x, self.owner.y))
+            print("Player in fov")
+            move_astar(self.owner, player, GAME.level.current_map)
+            #self.owner.creature.move_towards(player.x, player.y, GAME.level.current_map)
 
-                    move_astar(self.owner, self.target, GAME.level.current_map)
-                    #self.owner.creature.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1),
-                    #                         GAME.level.current_map)
-                else:
-                    #print("AI distance less than 5, moving towards player")
-                    move_astar(self.owner, player, GAME.level.current_map)
-                    #self.owner.creature.move_towards(player.x, player.y, GAME.level.current_map)
+class NeutralAI(AI):
+    def take_turn(self, player, fov_map):
+        # print("AI taking turn")
+
+        # ai fov
+        libtcod.map_compute_fov(fov_map, self.owner.x, self.owner.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
+                                constants.FOV_ALGO)
+
+        # if not in fov
+        if not libtcod.map_is_in_fov(fov_map, player.x, player.y):
+            self.owner.creature.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1),
+                                     GAME.level.current_map)
+        else:
+            if not self.target:
+                self.target = random_free_tile_away(GAME.level.current_map, 6, (self.owner.x, self.owner.y))
+
+            move_astar(self.owner, self.target, GAME.level.current_map)
+
+
+
 
 def death_monster(monster):
     if monster.visible:
@@ -78,9 +90,8 @@ def death_monster(monster):
     GAME.level.current_entities.remove(monster)
 
 def move_astar(actor, target, inc_map):
-    # convert to tuple if not already one
-    if hasattr(target, "x"):
-        target = (target.x, target.y)
+    #print("Astar target: " + str(target))
+
 
     #Create a FOV map that has the dimensions of the map
     fov = libtcod.map_new(constants.MAP_WIDTH, constants.MAP_HEIGHT)
@@ -100,6 +111,10 @@ def move_astar(actor, target, inc_map):
         if ent.creature and ent != actor and ent != target:
             #Set the tile as a wall so it must be navigated around
             libtcod.map_set_properties(fov, ent.x, ent.y, True, False)
+
+    # convert to tuple if not already one (we can't do it earlier because of the target exclusion above)
+    if hasattr(target, "x"):
+        target = (target.x, target.y)
 
     #Allocate a A* path
     #The 1.41 is the normal diagonal cost of moving, it can be set as 0.0 if diagonal moves are prohibited
