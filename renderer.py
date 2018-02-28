@@ -225,9 +225,21 @@ def options_menu(header, options, width, title=None):
 
     blt.refresh()
     # present the root console to the player and wait for a key-press
-    blt.set('input: filter = [keyboard]')
+    blt.set('input: filter = [keyboard, mouse-left]')
     while True:
         key = blt.read()
+
+        if key == blt.TK_MOUSE_LEFT:
+            print("Pressed left mouse key")
+            m_x = blt.state(blt.TK_MOUSE_X)
+            m_y = blt.state(blt.TK_MOUSE_Y)
+
+            click_x, click_y = (m_x - menu_x, m_y - menu_y - header_height - 1)
+            # did we click in the menu
+            if click_x >= 0 and click_x <= width and click_y >= 0 and click_y < menu_h - header_height - 1:
+                print("Clicked, returning " + str(click_y))
+                return click_y
+
         if blt.check(blt.TK_CHAR):
             # convert the ASCII code to an index; if it corresponds to an option, return it
             key = blt.state(blt.TK_CHAR)
