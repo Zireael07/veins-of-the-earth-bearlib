@@ -17,9 +17,9 @@ def main_menu():
     key = renderer.menu_colored("MAIN MENU", [("(S)tart new game", "white"), ("(L)oad game", "white"), ("(E)xit game", "white")],
                        50, menu_x = int((180 - 50) / 2), border=False)
 
-    if key == blt.TK_S:
+    if key == blt.TK_S or key == 0:
         return 1
-    if key == blt.TK_L:
+    if key == blt.TK_L or key == 1:
         return 2
 
 # individual menus
