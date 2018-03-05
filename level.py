@@ -7,6 +7,7 @@ import generators
 
 from map_common import get_free_tiles, random_free_tile, random_free_tile_away, random_tile_with_desc, \
     print_map_string
+from tile_lookups import TileTypes, get_index
 
 from bspmap import BspMapGenerator
 from bspcity import BspCityGenerator
@@ -20,7 +21,7 @@ def initialize_game(game):
 
 
 class obj_Level(object):
-    def __init__(self, gen_type="dungeon", seed=10):
+    def __init__(self, gen_type="dungeon", seed=10, starting_stairs=True):
         print("Level seed: " + str(seed))
         # new way of storing explored info
         self.current_explored = [[False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
@@ -68,6 +69,10 @@ class obj_Level(object):
             self.player_start_x, self.player_start_y = random_free_tile(self.current_map)
         if len(gen_map) > 4:
             self.rooms = gen_map[4]
+
+        # place stairs
+        if starting_stairs:
+            self.current_map[self.player_start_x][self.player_start_y] = get_index(TileTypes.STAIRS)
 
         # debug
         print_map_string(self.current_map)

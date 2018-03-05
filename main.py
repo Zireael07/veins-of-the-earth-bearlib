@@ -30,7 +30,7 @@ class obj_Game(object):
         if not basic:
             print("Init seed: " + str(init_seed))
             data = level.load_level_data(constants.STARTING_MAP)
-            self.level = level.obj_Level(data[0], init_seed) #level.obj_Level("city")
+            self.level = level.obj_Level(data[0], init_seed, False) #level.obj_Level("city")
 
             # init game for submodules
             components.initialize_game(self)
