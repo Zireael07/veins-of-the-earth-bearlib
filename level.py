@@ -72,7 +72,7 @@ class obj_Level(object):
 
         # place stairs
         if starting_stairs:
-            self.current_map[self.player_start_x][self.player_start_y] = get_index(TileTypes.STAIRS)
+            self.current_map[self.player_start_x][self.player_start_y] = get_index(TileTypes.STAIRS_UP)
 
         # debug
         print_map_string(self.current_map)

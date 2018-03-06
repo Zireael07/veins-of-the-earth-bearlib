@@ -5,6 +5,7 @@ from game_states import GameStates
 import gui_menus
 from renderer import pix_to_iso
 from map_common import map_check_for_items, find_unexplored_closest
+from tile_lookups import TileTypes, get_index
 
 def initialize_camera(camera):
     global CAMERA
@@ -129,8 +130,12 @@ def game_player_turn_input(key):
         return game_key_move('RIGHT')
 
     if key == blt.TK_PERIOD and blt.check(blt.TK_SHIFT):
-        if GAME.level.current_map[PLAYER.x][PLAYER.y] == 4:  # .stairs:
+        if GAME.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS):  # .stairs:
             GAME.next_level()
+
+    if key == blt.TK_COMMA and blt.check(blt.TK_SHIFT):
+        if GAME.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS_UP):
+            GAME.previous_level()
 
     # items
     if key == blt.TK_G:

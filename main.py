@@ -28,6 +28,7 @@ from game_states import GameStates
 class obj_Game(object):
     def __init__(self, basic, init_seed=10):
         if not basic:
+            self.init_seed = init_seed
             print("Init seed: " + str(init_seed))
             data = level.load_level_data(constants.STARTING_MAP)
             self.level = level.obj_Level(data[0], init_seed, False) #level.obj_Level("city")
@@ -90,12 +91,7 @@ class obj_Game(object):
             libtcod.map_compute_fov(self.fov_map, PLAYER.x, PLAYER.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
                                     constants.FOV_ALGO)
 
-    def next_level(self):
-        self.game_message("You descend deeper in the dungeon", "violet")
-
-        # make next level
-        self.level = level.obj_Level("cavern")
-
+    def new_level_set(self):
         # add player
         self.level.current_entities.append(PLAYER)
 
@@ -105,9 +101,9 @@ class obj_Game(object):
         # add stuff
         self.level.generate_items_monsters()
 
-        #global FOV_MAP
+        # global FOV_MAP
         GAME.fov_map = map_make_fov(self.level.current_map)
-        #global AI_FOV_MAP
+        # global AI_FOV_MAP
         GAME.ai_fov_map = map_make_fov(self.level.current_map)
 
         # force fov recompute
@@ -115,6 +111,22 @@ class obj_Game(object):
 
         CAMERA.start_update(PLAYER)
 
+    def next_level(self):
+        self.game_message("You descend deeper in the dungeon", "violet")
+
+        # make next level
+        self.level = level.obj_Level("cavern")
+
+        self.new_level_set()
+
+    def previous_level(self):
+        self.game_message("You ascend back", "violet")
+
+        # re-make starting level from seed
+        data = level.load_level_data(constants.STARTING_MAP)
+        self.level = level.obj_Level(data[0], self.init_seed, False)
+
+        self.new_level_set()
 
 
 class obj_Camera(object):
