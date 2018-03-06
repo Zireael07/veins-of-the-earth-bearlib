@@ -121,11 +121,13 @@ def shop_window(player, creature, items):
     index = renderer.multicolumn_menu("SHOP", columns, 80, 25)
     print("Ind: " + str(index))
 
-    num = index[0]-len(player_inv)
-    print(num)
+
 
     if index is None:
         return None
+    else:
+        num = index[0]-len(player_inv)
+        print(num)
 
     # return item
     return creature.shop[num]
