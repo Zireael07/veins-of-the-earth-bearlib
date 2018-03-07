@@ -119,7 +119,8 @@ class obj_Game(object):
 
         self.new_level_set()
 
-    def previous_level(self):
+    def previous_level(self, from_level):
+        print("From level: " + str(from_level))
         self.game_message("You ascend back", "violet")
 
         # re-make starting level from seed
@@ -127,6 +128,18 @@ class obj_Game(object):
         self.level = level.obj_Level(data[0], self.init_seed, False)
 
         self.new_level_set()
+
+        # move to down stairs
+        if from_level == "cavern":
+            stairs_room = self.level.rooms[len(self.level.rooms) - 1]
+            stairs_x, stairs_y = (stairs_room.x1 + stairs_room.x2 -1) // 2, (stairs_room.y1 + stairs_room.y2 -1) // 2
+            print("Move to " + str(stairs_x) + " " + str(stairs_y))
+            PLAYER.creature.move_to_target(stairs_x, stairs_y, self.level.current_map)
+
+            # force fov recompute
+            self.fov_recompute = True
+
+            CAMERA.start_update(PLAYER)
 
 
 class obj_Camera(object):

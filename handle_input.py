@@ -135,7 +135,7 @@ def game_player_turn_input(key):
 
     if key == blt.TK_COMMA and blt.check(blt.TK_SHIFT):
         if GAME.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS_UP):
-            GAME.previous_level()
+            GAME.previous_level(GAME.level.gen_type)
 
     # items
     if key == blt.TK_G:
