@@ -371,8 +371,9 @@ def multicolumn_menu(title, columns, width, col_width, wanted_keys_num=1):
             else:
                 ret = multicolumn_menu_inner(title, columns, width, col_width, 0, ret[1])
 
-        print("Returning: " + str(ret) + ": " + str(ret[1]))
-        return ret[1]
+        if ret is not None:
+            print("Returning: " + str(ret) + ": " + str(ret[1]))
+            return ret[1]
 
 def multicolumn_menu_inner(title, columns, width, col_width, current, values):
     #GAME.fov_recompute = True

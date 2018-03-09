@@ -238,32 +238,39 @@ def character_creation_menu(player):
 
     key = renderer.multicolumn_menu("CHARACTER CREATION", columns, 80, 10, 2)
 
-    if 0 in key and 2 in key:
-        select = tiles[0]
-    if 0 in key and 3 in key:
-        select = tiles[2]
-    if 1 in key and 2 in key:
-        select = tiles[1]
-    if 1 in key and 3 in key:
-        select = tiles[3]
+    if key is not None:
+        if 0 in key and 2 in key:
+            select = tiles[0]
+        if 0 in key and 3 in key:
+            select = tiles[2]
+        if 1 in key and 2 in key:
+            select = tiles[1]
+        if 1 in key and 3 in key:
+            select = tiles[3]
 
-    blt.set("0x40: " + select + ", align=center")  # "@"
+        blt.set("0x40: " + select + ", align=center")  # "@"
 
-    #print("Selected: " + str(select))
+        #print("Selected: " + str(select))
 
-    # step II - character stats
-    blt.clear()
-    opt = character_stats_menu_outer(player)
+        # step II - character stats
+        blt.clear()
+        opt = character_stats_menu_outer(player)
 
-    # welcome!
-    blt.clear()
-    # TODO: text wrap
-    renderer.text_menu("", 70, "Welcome to Veins of the Earth",
-              """Brave adventurer, you are now lost in the underground corridors 
-of the Veins of the Earth. 
-There is no way to return to your homeland.
-How long can you survive...?
-Press ESC or click to close.""")
+        # welcome!
+        blt.clear()
+        # TODO: text wrap
+        renderer.text_menu("", 70, "Welcome to Veins of the Earth",
+                  """Brave adventurer, you are now lost in the underground corridors 
+    of the Veins of the Earth. 
+    There is no way to return to your homeland.
+    How long can you survive...?
+    Press ESC or click to close.""")
+
+    # pressed ESC while in character creation I
+    else:
+        print("Pressed ESC")
+        # quit
+        blt.close()
 
 def inventory_menu(header, player):
     index = renderer.inventory_menu_test(header, 50, 'INVENTORY', player.container.equipped_items, player.container.inventory)
