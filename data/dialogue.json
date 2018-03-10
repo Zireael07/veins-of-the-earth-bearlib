@@ -4,7 +4,8 @@
            "answer": [
                      {
                       "chat": "Yes, please",
-                      "reply": "great"
+                      "reply": "great",
+                      "action": "shop"
                       },
                       {
                       "chat": "No thanks, just passing by",

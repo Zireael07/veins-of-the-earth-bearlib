@@ -99,13 +99,19 @@ def dialogue_window(creature, player, items):
     if index is not None and creature.chat['answer'][index]:
         #print("Index " + str(index) + " " + str(creature.chat['answer'][index]['reply']))
         reply = creature.chat['answer'][index]['reply']
-        index = renderer.dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat[reply], [])
-        # test shop
-        item = shop_window(player, creature, items)
+        action = creature.chat['answer'][index]['action'] if 'action' in creature.chat['answer'][index] else None
+        print("Action is: " + str(action))
 
-        # transfer item to player
-        if item is not None:
-            item.item.pick_up(player.owner)
+        # this resets the index!
+        index = renderer.dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat[reply], [])
+
+        if action == "shop":
+            # test shop
+            item = shop_window(player, creature, items)
+
+            # transfer item to player
+            if item is not None:
+                item.item.pick_up(player.owner)
 
 
 def shop_window(player, creature, items):
