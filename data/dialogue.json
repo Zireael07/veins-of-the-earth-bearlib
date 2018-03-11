@@ -14,5 +14,20 @@
                       ],
             "great": "That's brilliant!",
             "no": "Your choice."
+           },
+ "hooker": {
+           "chat": "Hello handsome! Do you want to spend a night?",
+           "answer": [
+                     {
+                      "chat": "Oh yeah.",
+                      "reply": "great"
+                      },
+                      {
+                      "chat": "No thanks, just passing by",
+                      "reply": "no"
+                      }
+                      ],
+            "great": "Come, let us have a nice time!",
+            "no": "Your choice."
            }
 }

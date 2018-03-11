@@ -48,6 +48,17 @@
            "text": "Hello traveler",
            "chat": "test"
  },
+ "hooker": {
+           "char": "0xE003",
+           "rarity": 8,
+           "name": "hooker",
+           "faction": "neutral",
+           "hit_points": 8,
+           "damage_dice": 4,
+           "damage_number": 1,
+           "text": "Hello sweetie",
+           "chat": "hooker"
+ },
  "orc": {
            "char": "0xE001",
            "rarity": 5,
