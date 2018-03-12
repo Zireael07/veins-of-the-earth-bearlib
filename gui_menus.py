@@ -115,16 +115,16 @@ def dialogue_window(creature, player, items):
 
 
 def shop_window(player, creature, items):
-    player_inv = [item.display_name() for item in player.owner.container.inventory]
+    player_inv = [item.display_name() + " (" + str(item.item.price) + ")" for item in player.owner.container.inventory]
 
     creature.shop = []
     for item in items:
         creature.shop.append(item)
-    shop_inv = [item.display_name() for item in creature.shop]
+    shop_inv = [item.display_name() + " (" + str(item.item.price) + ")" for item in creature.shop]
     columns = [player_inv, shop_inv]
 
     # we want one item selected (for now)
-    index = renderer.multicolumn_menu("SHOP", columns, 80, 25)
+    index = renderer.multicolumn_menu("SHOP", columns, 80, 50)
     print("Ind: " + str(index))
 
 
