@@ -19,6 +19,9 @@
  "chainmail": {
            "char": "0xFF3B",
            "name": "chainmail",
+           "cost": {
+           "platinum": 2
+           },
            "slot": "body",
            "type": "armor",
            "combat_armor": 5
@@ -26,6 +29,10 @@
  "leather armor": {
            "char": "0xFF09",
            "name": "leather armor",
+           "cost": {
+           "gold": 7,
+           "silver": 10
+           },
            "slot": "body",
            "type": "armor",
            "combat_armor": 3
@@ -33,6 +40,10 @@
  "studded armor": {
            "char": "0xFF08",
            "name": "studded armor",
+           "cost": {
+           "gold": 26,
+           "silver": 5
+           },
            "slot": "body",
            "type": "armor",
            "combat_armor": 4

@@ -490,7 +490,8 @@ class com_Container(object):
         return list_equipped
 
 class com_Item(object):
-    def __init__(self, weight=0.0, use_function=None):
+    def __init__(self, price=0, weight=0.0, use_function=None):
+        self.price = price
         self.weight = weight
         self.use_function = use_function
 

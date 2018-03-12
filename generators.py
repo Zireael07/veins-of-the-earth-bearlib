@@ -202,6 +202,26 @@ def get_random_item():
 
     # return res
 
+
+# calculates in cp (because there are some items worth less than 1 sp)
+# 1 sp = 10 cp
+# 1 gp = 20 sp = 200 cp
+# 1 pp = 10 gp = 200 sp = 2000 cp
+def calculate_price(cost):
+    price = 0
+    print(str(cost))
+    if 'silver' in cost:
+        price += cost['silver']*10
+    if 'gold' in cost:
+        price += cost['gold']*200
+    if 'platinum' in cost:
+        price += cost['platinum']*200
+
+    print("Calculated price is: " + str(price) + " cp")
+
+    return price
+
+
 # X,Y need to come after id so that we can use tuple unpacking here (Python 2.7.x)
 def generate_item(i_id, x,y):
     logger.info("Generating item with id " + i_id + " at " + str(x) + " " + str(y))
@@ -218,6 +238,11 @@ def generate_item(i_id, x,y):
     # make it a hex value
     item_char = int(items_data[i_id]['char'], 16)
     item_type = items_data[i_id]['type']
+    if 'cost' in items_data[i_id]:
+        item_cost = items_data[i_id]['cost']
+        item_price = calculate_price(item_cost)
+    else:
+        item_price = 0
 
     # create the most basic item
     eq_com = components.com_Equipment(item_slot)
@@ -238,7 +263,7 @@ def generate_item(i_id, x,y):
         eq_com = components.com_Equipment(item_slot, defense_bonus=item_armor)
 
 
-    item_com = components.com_Item()
+    item_com = components.com_Item(item_price)
     item = components.obj_Actor(x,y, item_char, item_name, item=item_com, equipment=eq_com)
 
     return item
