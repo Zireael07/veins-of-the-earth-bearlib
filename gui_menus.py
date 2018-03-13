@@ -111,6 +111,8 @@ def dialogue_window(creature, player, items):
 
             # transfer item to player
             if item is not None:
+                # test
+                player.player.remove_money([("silver", item.item.price/10)])
                 item.item.pick_up(player.owner)
 
 

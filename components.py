@@ -667,3 +667,34 @@ class com_Player(object):
         GAME.calendar.turn += calendar.HOUR*8
         GAME.game_message("Rested for " + str(self.rest_cnt) + " turns", "blue")
         GAME.game_message(GAME.calendar.get_time_date(GAME.calendar.turn), "blue")
+
+    # money
+    def add_money(self, values):
+        print(str(values))
+        for v in values:
+            for m in self.money:
+                if v[0] == m[0]:
+                    # because tuples are immutable
+                    i = self.money.index(m)
+                    self.money.remove(m)
+                    m = list(m)
+                    m[1] += v[1]
+                    m = tuple(m)
+                    print("Incrementing " + str(m[0]) + " by " + str(v[1]))
+                    self.money.insert(i, m)
+                    break
+
+    def remove_money(self, values):
+        print(str(values))
+        for v in values:
+            for m in self.money:
+                if v[0] == m[0]:
+                    # because tuples are immutable
+                    i = self.money.index(m)
+                    self.money.remove(m)
+                    m = list(m)
+                    m[1] -= v[1]
+                    m = tuple(m)
+                    print("Decrementing " + str(m[0]) + " by " + str(v[1]))
+                    self.money.insert(i, m)
+                    break
