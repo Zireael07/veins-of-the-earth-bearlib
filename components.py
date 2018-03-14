@@ -583,10 +583,11 @@ class com_Player(object):
         self.nutrition = 500
         self.thirst = 300
         self.autoexplore = False
-        self.money = [ ("bronze", 0),
-                       ("silver", 100),
-                       ("gold", 0),
-                       ("platinum", 0)]
+        # not tuples because we modify the amounts during the game
+        self.money = [ ["bronze", 0],
+                       ["silver", 100],
+                       ["gold", 0],
+                       ["platinum", 0]]
 
     def act(self):
         if self.resting:
@@ -674,14 +675,8 @@ class com_Player(object):
         for v in values:
             for m in self.money:
                 if v[0] == m[0]:
-                    # because tuples are immutable
-                    i = self.money.index(m)
-                    self.money.remove(m)
-                    m = list(m)
                     m[1] += v[1]
-                    m = tuple(m)
                     print("Incrementing " + str(m[0]) + " by " + str(v[1]))
-                    self.money.insert(i, m)
                     break
 
     def remove_money(self, values):
@@ -689,12 +684,6 @@ class com_Player(object):
         for v in values:
             for m in self.money:
                 if v[0] == m[0]:
-                    # because tuples are immutable
-                    i = self.money.index(m)
-                    self.money.remove(m)
-                    m = list(m)
                     m[1] -= v[1]
-                    m = tuple(m)
                     print("Decrementing " + str(m[0]) + " by " + str(v[1]))
-                    self.money.insert(i, m)
                     break
