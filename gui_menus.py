@@ -107,19 +107,27 @@ def dialogue_window(creature, player, items):
 
         if action == "shop":
             # test shop
-            item = shop_window(player, creature, items)
+            item, buy = shop_window(player, creature, items)
 
             # transfer item to player
             if item is not None:
-                # test
-                player.player.remove_money([("silver", item.item.price/10)])
-                item.item.pick_up(player.owner)
+                if buy:
+                    # test
+                    player.player.remove_money([("silver", item.item.price/10)])
+                    item.item.pick_up(player.owner)
+                else:
+                    player.player.add_money([("silver", item.item.price/10)])
+                    item.item.current_container.inventory.remove(item)
+                    creature.shop = []
+                    creature.shop.append(item)
 
 
 def shop_window(player, creature, items):
     player_inv = [item.display_name() + " (" + str(item.item.price) + ")" for item in player.owner.container.inventory]
 
-    creature.shop = []
+    if not hasattr(creature, 'shop'):
+        creature.shop = []
+
     for item in items:
         creature.shop.append(item)
     shop_inv = [item.display_name() + " (" + str(item.item.price) + ")" for item in creature.shop]
@@ -132,13 +140,19 @@ def shop_window(player, creature, items):
 
 
     if index is None:
-        return None
+        return None, False
     else:
-        num = index[0]-len(player_inv)
-        print(num)
+        if index[0] > len(player_inv)-1:
+            num = index[0]-len(player_inv)
+            print("NPC item" + str(num))
 
-    # return item
-    return creature.shop[num]
+            # return item
+            return creature.shop[num], True
+        else:
+            num = index[0]
+            print("Own item num " + str(num))
+            # return item
+            return player.owner.container.inventory[num], False
 
 
 def help_menu():
