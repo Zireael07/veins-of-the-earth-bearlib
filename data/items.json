@@ -3,6 +3,7 @@
  "longsword": {
            "char": "0x2215",
            "name": "longsword",
+           "paperdoll": "0xE202",
            "slot": "main_hand",
            "type": "weapon",
            "damage_dice": 8,
@@ -19,6 +20,7 @@
  "chainmail": {
            "char": "0xFF3B",
            "name": "chainmail",
+           "paperdoll": "0xE200",
            "cost": {
            "platinum": 2
            },
@@ -29,6 +31,7 @@
  "leather armor": {
            "char": "0xFF09",
            "name": "leather armor",
+           "paperdoll": "0xE201",
            "cost": {
            "gold": 7,
            "silver": 10
@@ -40,6 +43,7 @@
  "studded armor": {
            "char": "0xFF08",
            "name": "studded armor",
+           "paperdoll": "0xE201",
            "cost": {
            "gold": 26,
            "silver": 5

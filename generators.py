@@ -244,6 +244,11 @@ def generate_item(i_id, x,y):
     else:
         item_price = 0
 
+
+    if 'paperdoll' in items_data[i_id]:
+        # make it a hex value
+        item_doll = int(items_data[i_id]['paperdoll'], 16)
+
     # create the most basic item
     eq_com = components.com_Equipment(item_slot)
 
@@ -264,6 +269,10 @@ def generate_item(i_id, x,y):
 
 
     item_com = components.com_Item(item_price)
+
+    if 'paperdoll' in items_data[i_id]:
+        item_com.paperdoll = item_doll
+
     item = components.obj_Actor(x,y, item_char, item_name, item=item_com, equipment=eq_com)
 
     return item

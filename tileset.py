@@ -34,3 +34,8 @@ def set_tiles():
     blt.set("0x2017: gfx/unit_marker.png, align=center")  # "̳"
     blt.set("0x2BC1: gfx/splash_gray.png, align=center")  # "⯁"
     blt.set("0x2BC2: gfx/splash_shield.png, align=center")  # "⯂"
+
+    # paperdoll
+    blt.set("0xE200: gfx/paperdoll/chainmail.png, align=center")
+    blt.set("0xE201: gfx/paperdoll/leather_armour.png, align=center")
+    blt.set("0xE202: gfx/paperdoll/long_sword_right.png, align=center")
