@@ -76,8 +76,15 @@ def log_menu(header, begin, end):
             ret, begin, end = log_menu_inner("Log history", begin, end)
 
 
-def dmg_menu(header):
-    options = ["Damage display"]
+def dmg_menu(header, opt):
+    #options = ["Damage display"]
+
+    options = []
+
+    for o in opt:
+        options.append(str(o))
+
+
     index = renderer.options_menu(header, options, 30)
 
     if index is None:
@@ -85,12 +92,16 @@ def dmg_menu(header):
 
 
 def display_dmg_window(index):
-    if "damage" in GAME.message_history[index][0]:
+    #if "damage" in GAME.message_history[index][0]:
         #print("The line says damage!")
 
         # extract the dmg number
-        dmg = filter(str.isdigit, str(GAME.message_history[index][0]))
-        dmg_menu(dmg)
+        #dmg = filter(str.isdigit, str(GAME.message_history[index][0]))
+        #dmg_menu(dmg)
+
+    if GAME.message_history[index][2] is not None:
+        if "damage" in GAME.message_history[index][0]:
+            dmg_menu("damage", GAME.message_history[index][2])
 
 def dialogue_window(creature, player, items):
     blt.layer(1)

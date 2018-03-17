@@ -258,15 +258,15 @@ class com_Creature(object):
 
             # get weapon dice
             if weapon is not None:
-                damage_str = "Weapon " + str(weapon.equipment.num_dice)+"d"+str(weapon.equipment.damage_dice)
+                damage_str = ["Weapon " + str(weapon.equipment.num_dice)+"d"+str(weapon.equipment.damage_dice)]
             else:
-                damage_str = str(self.num_dice)+"d"+str(self.damage_dice)
+                damage_str = [str(self.num_dice)+"d"+str(self.damage_dice)]
 
-            object_bonuses = ["Bonus " + str(obj.equipment.attack_bonus)
-                              for obj in self.owner.container.equipped_items]
+            object_bonuses = [["Bonus " + str(obj.equipment.attack_bonus)]
+                              for obj in self.owner.container.equipped_items if obj.equipment.attack_bonus > 0]
 
             for bonus in object_bonuses:
-                damage_str.join(bonus)
+                damage_str.append(bonus)
 
         return damage_str
 
@@ -355,7 +355,7 @@ class com_Creature(object):
 
             return False
 
-    def attack(self, target, damage):
+    def attack(self, target, damage, damage_details):
         if self.skill_test("melee"):
             if self.owner.visible:
                 GAME.game_message(self.name_instance + " hits " + target.creature.name_instance +"!", "white")
@@ -365,7 +365,7 @@ class com_Creature(object):
                     GAME.game_message(target.creature.name_instance + " dodges!", "green")
             else:
                 if self.owner.visible:
-                    GAME.game_message(self.name_instance + " deals " + str(damage) + " damage to " + target.creature.name_instance, "red")
+                    GAME.game_message(self.name_instance + " deals " + str(damage) + " damage to " + target.creature.name_instance, "red", damage_details)
                 target.creature.take_damage(damage)
         else:
             if self.owner.visible:
@@ -415,7 +415,8 @@ class com_Creature(object):
             if is_enemy_faction:
                 #print "Target faction " + target.creature.faction + " is enemy!"
                 damage_dealt = self.damage
-                self.attack(target, damage_dealt)
+                damage_details = self.damage_str
+                self.attack(target, damage_dealt, damage_details)
             else:
                 if self.text is not None and self.owner.visible:
                     tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, GAME.level.render_positions)
