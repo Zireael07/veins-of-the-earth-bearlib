@@ -54,8 +54,8 @@ class obj_Game(object):
 
         self.fov_recompute = False
 
-    def game_message(self, msg, msg_color):
-        self.message_history.append((msg, msg_color))
+    def game_message(self, msg, msg_color, details=None):
+        self.message_history.append((msg, msg_color, details))
 
 
     def add_faction(self, faction_data):

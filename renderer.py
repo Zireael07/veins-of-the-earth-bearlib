@@ -129,7 +129,7 @@ def draw_messages(msg_history):
     start_y = blt.state(blt.TK_HEIGHT) - (constants.NUM_MESSAGES)
 
     i = 0
-    for message, color in to_draw:
+    for message, color, details in to_draw:
         string = "[color=" + str(color) + "] " + message
         blt.puts(2, start_y+i, string)
 
