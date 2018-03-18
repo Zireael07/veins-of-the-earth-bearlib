@@ -77,13 +77,14 @@ def log_menu(header, begin, end):
 
 
 def dmg_menu(header, opt):
-    #options = ["Damage display"]
+    # flatten
+    flat_list = [item for sublist in opt for item in sublist]
 
     options = []
 
-    for o in opt:
+    #for o in opt:
+    for o in flat_list:
         options.append(str(o))
-
 
     index = renderer.options_menu(header, options, 30)
 
