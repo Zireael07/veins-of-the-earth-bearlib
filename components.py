@@ -234,6 +234,13 @@ class com_Creature(object):
                 total_damage = roll(self.num_dice, self.damage_dice)
 
             #print self.name_instance + ": Total damage after rolling is " + str(total_damage)
+
+            # strength bonus
+            str_bonus = int(math.floor(((self.strength - 10) / 2)))
+            print("STR bonus: " + str(str_bonus))
+            total_damage += str_bonus
+
+
             # get bonuses
             object_bonuses = [ obj.equipment.attack_bonus
                                for obj in self.owner.container.equipped_items]
@@ -251,6 +258,7 @@ class com_Creature(object):
 
     @property
     def damage_str(self):
+        damage_str = []
 
         if self.owner.container:
             # get weapon
@@ -258,9 +266,14 @@ class com_Creature(object):
 
             # get weapon dice
             if weapon is not None:
-                damage_str = ["Weapon " + str(weapon.equipment.num_dice)+"d"+str(weapon.equipment.damage_dice)]
+                damage_str.append(["Weapon " + str(weapon.equipment.num_dice)+"d"+str(weapon.equipment.damage_dice)])
             else:
-                damage_str = [str(self.num_dice)+"d"+str(self.damage_dice)]
+                damage_str.append([str(self.num_dice)+"d"+str(self.damage_dice)])
+
+            # Strength bonus
+            str_bonus = int(math.floor(((self.strength - 10) / 2)))
+            damage_str.append(["Strength " + str(str_bonus)])
+
 
             object_bonuses = [["Bonus " + str(obj.equipment.attack_bonus)]
                               for obj in self.owner.container.equipped_items if obj.equipment.attack_bonus > 0]
