@@ -8,16 +8,11 @@ import generators
 from map_common import get_free_tiles, random_free_tile, random_free_tile_away, random_tile_with_desc, \
     print_map_string
 from tile_lookups import TileTypes, get_index
+import item_uses
 
 from bspmap import BspMapGenerator
 from bspcity import BspCityGenerator
 from cavemap import CaveGenerator
-
-# need a reference to global GAME %^$@
-def initialize_game(game):
-    print("[Level] initialized game")
-    global GAME
-    GAME = game
 
 
 class obj_Level(object):
@@ -114,14 +109,14 @@ class obj_Level(object):
             dists = []
 
         # test potion
-        self.spawn_usable_item(0x2762, "potion", cast_heal)
+        self.spawn_usable_item(0x2762, "potion", item_uses.cast_heal)
 
         # test potion 2
-        self.spawn_usable_item(0x2762, "potion 2", cast_strength)
+        self.spawn_usable_item(0x2762, "potion 2", item_uses.cast_strength)
 
         # food/drink
-        self.spawn_usable_item(0x1F35E, "rations", eat_food)
-        self.spawn_usable_item(0x2615, "water flask", drink)
+        self.spawn_usable_item(0x1F35E, "rations", item_uses.eat_food)
+        self.spawn_usable_item(0x2615, "water flask", item_uses.drink)
 
 
         # test generating items
@@ -147,38 +142,6 @@ class obj_Level(object):
         else:
              # test: force spawn a monster on top of the player
              self.add_entity(generators.generate_monster("goblin", self.player_start_x, self.player_start_y))
-
-
-# item use effects
-def cast_heal(actor):
-    if actor.creature.hp == actor.creature.max_hp:
-        GAME.game_message("You are already fully healed!", "red")
-        return 'cancelled'
-
-    heal = generators.roll(1,8)
-    GAME.game_message("You healed " + str(heal) + " damage", "violet")
-    actor.creature.heal(heal)
-
-def cast_strength(actor):
-    str_buff = components.Effect("Strength", "green", 4, 2)
-    str_buff.apply_effect(actor.creature)
-    GAME.game_message("You cast strength!", "pink")
-
-def eat_food(actor):
-    if actor.creature.player and actor.creature.player.nutrition < 500:
-        GAME.game_message("You ate your food", "light green")
-        actor.creature.player.nutrition += 150
-
-    else:
-        GAME.game_message("You are full, you cannot eat any more", "light yellow")
-
-def drink(actor):
-    if actor.creature.player and actor.creature.player.thirst < 300:
-        GAME.game_message("You drank from the flask", "light blue")
-        actor.creature.player.thirst += 150
-
-    else:
-        GAME.game_message("You are full, you cannot drink any more", "light yellow")
 
 
 def iso_pos(x,y):
