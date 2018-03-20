@@ -6,6 +6,7 @@ from renderer import draw_iso, draw_blood_splatter, draw_shield, draw_floating_t
 from gui_menus import dialogue_window
 from tile_lookups import get_block_path
 import calendar
+import events
 
 from generators import roll
 
@@ -336,7 +337,7 @@ class com_Creature(object):
 
     def skill_test(self, skill):
         if self.owner.visible:
-            GAME.game_message("Making a test for " + skill + " target: " + str(getattr(self, skill)), "green")
+            events.notify(("Making a test for " + skill + " target: " + str(getattr(self, skill)), "green"))
         result = roll(1,100)
 
         if result < getattr(self, skill):
@@ -349,11 +350,11 @@ class com_Creature(object):
                     # +1d4 if we succeeded
                     gain =  roll(1, 4)
                     setattr(self, skill, getattr(self, skill) + gain)
-                    GAME.game_message("You gain " + str(gain) + " skill points!", "light green")
+                    events.notify(("You gain " + str(gain) + " skill points!", "light green"))
                 else:
                     # +1 if we didn't
                     setattr(self, skill, getattr(self, skill) + 1)
-                    GAME.game_message("You gain 1 skill point", "light green")
+                    events.notify((("You gain 1 skill point", "light green")))
             return True
         else:
             # player only
@@ -364,27 +365,28 @@ class com_Creature(object):
                 if tick > getattr(self, skill):
                     # +1 if we succeeded, else nothing
                     setattr(self, skill, getattr(self, skill) + 1)
-                    GAME.game_message("You learn from your failure and gain 1 skill point", "light green")
+                    events.notify(("You learn from your failure and gain 1 skill point", "light green"))
 
             return False
 
     def attack(self, target, damage, damage_details):
         if self.skill_test("melee"):
             if self.owner.visible:
-                GAME.game_message(self.name_instance + " hits " + target.creature.name_instance +"!", "white")
+                events.notify((self.name_instance + " hits " + target.creature.name_instance +"!", "white"))
             # assume target can try to dodge (i.e. not sleeping)
             if (target.creature.player is not None and not target.creature.player.resting) and target.creature.skill_test("dodge"):
                 if self.owner.visible:
-                    GAME.game_message(target.creature.name_instance + " dodges!", "green")
+                    events.notify((target.creature.name_instance + " dodges!", "green"))
             else:
                 if self.owner.visible:
-                    GAME.game_message(self.name_instance + " deals " + str(damage) + " damage to " + target.creature.name_instance, "red", damage_details)
+                    events.notify((self.name_instance + " deals " + str(damage) + " damage to " + target.creature.name_instance, "red", damage_details))
                 target.creature.take_damage(damage)
         else:
             if self.owner.visible:
                 tile_x, tile_y = draw_iso(target.x, target.y, GAME.level.render_positions)
                 draw_shield(tile_x, tile_y)
-                GAME.game_message(self.name_instance + " misses " + target.creature.name_instance + "!", "lighter blue")
+                events.notify((self.name_instance + " misses " + target.creature.name_instance + "!", "lighter blue"))
+
 
     def take_damage(self, damage):
         change = damage - self.defense
@@ -393,10 +395,10 @@ class com_Creature(object):
         self.hp -= change
         if self.owner.visible:
             if self.defense > 0:
-                GAME.game_message(self.name_instance + " blocks " + str(self.defense) + " damage", "gray")
+                events.notify((self.name_instance + " blocks " + str(self.defense) + " damage", "gray"))
             tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, GAME.level.render_positions)
             draw_blood_splatter(tile_x, tile_y, change)
-            GAME.game_message(self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp), "white")
+            events.notify((self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp), "white"))
 
         if self.hp <= 0:
             if self.death_function is not None:
@@ -405,7 +407,7 @@ class com_Creature(object):
     def heal(self, amount):
         self.hp += amount
         if self.owner.visible:
-            GAME.game_message(self.name_instance + " heals!", "lighter red")
+            events.notify((self.name_instance + " heals!", "lighter red"))
 
     def move(self, dx, dy, game_map):
         if self.owner.y + dy >= len(game_map) or self.owner.y + dy < 0:
@@ -435,7 +437,7 @@ class com_Creature(object):
                     tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, GAME.level.render_positions)
                     draw_floating_text(tile_x, tile_y-1, self.text)
                     #draw_floating_text_step(tile_x, tile_y-1, self.text)
-                    GAME.game_message(self.name_instance + " says: " + self.text, "yellow")
+                    events.notify((self.name_instance + " says: " + self.text, "yellow"))
 
                     # wake player if he's sleeping
                     if target.creature.player.resting:
@@ -445,7 +447,7 @@ class com_Creature(object):
                     tile_x, tile_y = draw_iso(target.x, target.y, GAME.level.render_positions)
                     draw_floating_text(tile_x, tile_y - 1, target.creature.text)
                     # draw_floating_text_step(tile_x, tile_y-1, target.creature.text)
-                    GAME.game_message(target.creature.name_instance + " says: " + target.creature.text, "yellow")
+                    events.notify((target.creature.name_instance + " says: " + target.creature.text, "yellow"))
 
                 # test
                 # if self.chat is not None:
@@ -522,10 +524,10 @@ class com_Item(object):
             if self.owner in GAME.level.current_entities:
                 GAME.level.current_entities.remove(self.owner)
                 # if we're creating NPC inventory, don't make a log message
-                GAME.game_message(actor.creature.name_instance + " picked up " + self.owner.name, "white")
+                events.notify((actor.creature.name_instance + " picked up " + self.owner.name, "white"))
 
     def drop(self, actor):
-        GAME.game_message(actor.creature.name_instance + " dropped " + self.owner.name, "white")
+        events.notify((actor.creature.name_instance + " dropped " + self.owner.name, "white"))
         self.current_container.inventory.remove(self.owner)
 
         GAME.level.current_entities.append(self.owner)
@@ -565,11 +567,11 @@ class com_Equipment(object):
             old_equipment.unequip(actor)
 
         self.equipped = True
-        GAME.game_message(actor.creature.name_instance + " equipped " + self.owner.name, "white")
+        events.notify((actor.creature.name_instance + " equipped " + self.owner.name, "white"))
 
     def unequip(self, actor):
         self.equipped = False
-        GAME.game_message(actor.creature.name_instance + " took off " + self.owner.name, "white")
+        events.notify((actor.creature.name_instance + " took off " + self.owner.name, "white"))
 
 
 class Effect(object):
@@ -580,14 +582,14 @@ class Effect(object):
         self.strength_bonus = strength
 
     def apply_effect(self, target):
-        GAME.game_message(target.name_instance + " is now affected by " + str(self.name), self.color)
+        events.notify((target.name_instance + " is now affected by " + str(self.name), self.color))
 
         target.effects.append(self)
         self.owner = target
 
     def remove_effect(self):
         self.owner.effects.remove(self)
-        GAME.game_message(self.owner.name_instance + " is no longer affected by " + str(self.name), self.color)
+        events.notify((self.owner.name_instance + " is no longer affected by " + str(self.name), self.color))
 
     def countdown(self):
         self.duration -= 1
@@ -653,7 +655,7 @@ class com_Player(object):
         self.rest_cnt = 0
         self.resting = True
         self.rest_turns = turns
-        GAME.game_message("Resting starts...", "blue")
+        events.notify(("Resting starts...", "blue"))
 
         if self.resting and self.rest_cnt >= turns:
             self.rest_stop()
@@ -685,8 +687,8 @@ class com_Player(object):
         self.resting = False
         # passage of time
         GAME.calendar.turn += calendar.HOUR*8
-        GAME.game_message("Rested for " + str(self.rest_cnt) + " turns", "blue")
-        GAME.game_message(GAME.calendar.get_time_date(GAME.calendar.turn), "blue")
+        events.notify(("Rested for " + str(self.rest_cnt) + " turns", "blue"))
+        events.notify((GAME.calendar.get_time_date(GAME.calendar.turn), "blue"))
 
     # money
     def add_money(self, values):

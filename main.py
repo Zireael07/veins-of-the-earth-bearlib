@@ -119,7 +119,7 @@ class obj_Game(object):
         CAMERA.start_update(PLAYER)
 
     def next_level(self):
-        self.game_message("You descend deeper in the dungeon", "violet")
+        self.game_message(("You descend deeper in the dungeon", "violet"))
 
         # make next level
         self.level = level.obj_Level("cavern")
@@ -128,7 +128,7 @@ class obj_Game(object):
 
     def previous_level(self, from_level):
         print("From level: " + str(from_level))
-        self.game_message("You ascend back", "violet")
+        self.game_message(("You ascend back", "violet"))
 
         # re-make starting level from seed
         data = level.load_level_data(constants.STARTING_MAP)
@@ -214,7 +214,7 @@ class obj_Camera(object):
             return constants.MAP_HEIGHT
 
 def death_player(player):
-    GAME.game_message(player.creature.name_instance + " is dead!", "dark red")
+    events.notify((player.creature.name_instance + " is dead!", "dark red"))
     # remove from map
     GAME.level.current_entities.remove(player)
     # set game state to player dead

@@ -4,6 +4,7 @@ import math
 import constants
 from tile_lookups import get_block_path
 from map_common import random_free_tile_away
+import events
 
 
 # need a reference to global GAME %^$@
@@ -69,7 +70,7 @@ class NeutralAI(AI):
 
 def death_monster(monster):
     if monster.visible:
-        GAME.game_message(monster.creature.name_instance + " is dead!", "gray")
+        events.notify((monster.creature.name_instance + " is dead!", "gray"))
 
     # spawn loot
     #GAME.level.current_entities.append(generate_item("dagger", monster.x, monster.y))
