@@ -35,7 +35,7 @@ class obj_Game(object):
             data = level.load_level_data(constants.STARTING_MAP)
             self.level = level.obj_Level(data[0], init_seed, False) #level.obj_Level("city")
             # use events for messages
-            events.subscribers.append(self.game_message)
+            events.subscribers.append(self.events_handler)
 
             # init game for submodules
             components.initialize_game(self)
@@ -56,11 +56,17 @@ class obj_Game(object):
 
         self.fov_recompute = False
 
-    def game_message(self, event): #msg, msg_color, details=None):
-        if len(event) > 2:
-            self.message_history.append((event[0], event[1], event[2]))
+    def events_handler(self, event):
+        if event.type == "MESSAGE":
+            self.game_message(event.data)
+        elif event.type == "END_TURN":
+            self.end_player_turn()
+
+    def game_message(self, event_data): #msg, msg_color, details=None):
+        if len(event_data) > 2:
+            self.message_history.append((event_data[0], event_data[1], event_data[2]))
         else:
-            self.message_history.append((event[0], event[1], None))
+            self.message_history.append((event_data[0], event_data[1], None))
 
 
     def add_faction(self, faction_data):
@@ -212,7 +218,7 @@ class obj_Camera(object):
             return constants.MAP_HEIGHT
 
 def death_player(player):
-    events.notify((player.creature.name_instance + " is dead!", "dark red"))
+    events.notify(events.GameEvent("MESSAGE", (player.creature.name_instance + " is dead!", "dark red")))
     # remove from map
     GAME.level.current_entities.remove(player)
     # set game state to player dead
@@ -560,7 +566,7 @@ def game_initialize():
     # main menu
     GAME = obj_Game(True)
     GAME.game_state = GameStates.MAIN_MENU
-    renderer.initialize_game(GAME)
+    #renderer.initialize_game(GAME)
 
     ret = main_menu.main_menu(start_new_game)
     if ret is not None:

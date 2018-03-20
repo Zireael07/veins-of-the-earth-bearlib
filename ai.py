@@ -70,11 +70,9 @@ class NeutralAI(AI):
 
 def death_monster(monster):
     if monster.visible:
-        events.notify((monster.creature.name_instance + " is dead!", "gray"))
+        events.notify(events.GameEvent("MESSAGE", (monster.creature.name_instance + " is dead!", "gray")))
 
     # spawn loot
-    #GAME.level.current_entities.append(generate_item("dagger", monster.x, monster.y))
-
     if monster.container is not None:
         print("Monster had inventory")
         for item in monster.container.inventory:
