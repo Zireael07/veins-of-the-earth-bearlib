@@ -19,6 +19,7 @@ import gui_menus
 import hud
 import main_menu
 import calendar
+import events
 
 from map_common import map_make_fov, map_check_for_creature, find_free_grid_in_range
 
@@ -33,13 +34,15 @@ class obj_Game(object):
             print("Init seed: " + str(init_seed))
             data = level.load_level_data(constants.STARTING_MAP)
             self.level = level.obj_Level(data[0], init_seed, False) #level.obj_Level("city")
+            # use events for messages
+            events.subscribers.append(self.game_message)
 
             # init game for submodules
             components.initialize_game(self)
             generators.initialize_game(self)
             renderer.initialize_game(self)
             gui_menus.initialize_game(self)
-            item_uses.initialize_game(self)
+            #item_uses.initialize_game(self)
 
             self.message_history = []
 
@@ -55,8 +58,11 @@ class obj_Game(object):
 
         self.fov_recompute = False
 
-    def game_message(self, msg, msg_color, details=None):
-        self.message_history.append((msg, msg_color, details))
+    def game_message(self, event): #msg, msg_color, details=None):
+        if len(event) > 2:
+            self.message_history.append((event[0], event[1], event[2]))
+        else:
+            self.message_history.append((event[0], event[1], None))
 
 
     def add_faction(self, faction_data):
