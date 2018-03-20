@@ -15,9 +15,9 @@ def initialize_camera(camera):
     global CAMERA
     CAMERA = camera
 
-def initialize_game(game):
-    global GAME
-    GAME = game
+# def initialize_game(game):
+#     global GAME
+#     GAME = game
 
 def roll(dice, sides):
     result = 0

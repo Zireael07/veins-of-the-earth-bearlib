@@ -13,7 +13,7 @@ import tileset
 import renderer
 import components
 import generators
-import item_uses
+
 import level
 import gui_menus
 import hud
@@ -40,9 +40,7 @@ class obj_Game(object):
             # init game for submodules
             components.initialize_game(self)
             generators.initialize_game(self)
-            renderer.initialize_game(self)
             gui_menus.initialize_game(self)
-            #item_uses.initialize_game(self)
 
             self.message_history = []
 
