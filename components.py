@@ -11,9 +11,11 @@ import events
 from generators import roll
 
 import constants
+import game_vars
 
 # need a reference to global GAME %^$@
 def initialize_game(game):
+    print("[Components] Initializing GAME")
     global GAME
     GAME = game
 
@@ -23,7 +25,7 @@ def map_check_for_creature(x, y, exclude_entity = None):
 
     # find entity that isn't excluded
     if exclude_entity:
-        for ent in GAME.level.current_entities:
+        for ent in game_vars.level.current_entities:
             if (ent is not exclude_entity
                 and ent.x == x
                 and ent.y == y
@@ -35,7 +37,7 @@ def map_check_for_creature(x, y, exclude_entity = None):
 
     # find any entity if no exclusions
     else:
-        for ent in GAME.level.current_entities:
+        for ent in game_vars.level.current_entities:
             if (ent.x == x
                 and ent.y == y
                 and ent.creature):
@@ -96,7 +98,7 @@ class obj_Actor(object):
 
         self.visible = is_visible
 
-        draw_item = self.item and GAME.level.current_explored[self.x][self.y]
+        draw_item = self.item and game_vars.level.current_explored[self.x][self.y]
 
 
         if self.visible or draw_item:
@@ -124,8 +126,8 @@ class obj_Actor(object):
             #blt.put_ext(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, 10, 10, self.char)
 
     def send_to_back(self):
-        GAME.level.current_entities.remove(self)
-        GAME.level.current_entities.insert(0, self)
+        game_vars.level.current_entities.remove(self)
+        game_vars.level.current_entities.insert(0, self)
 
 
 class com_Creature(object):
@@ -387,7 +389,7 @@ class com_Creature(object):
                 target.creature.take_damage(damage)
         else:
             if self.owner.visible:
-                tile_x, tile_y = draw_iso(target.x, target.y, GAME.level.render_positions)
+                tile_x, tile_y = draw_iso(target.x, target.y, game_vars.level.render_positions)
                 draw_shield(tile_x, tile_y)
                 events.notify(events.GameEvent("MESSAGE",
                                         (self.name_instance + " misses " + target.creature.name_instance + "!", "lighter blue")))
@@ -402,7 +404,7 @@ class com_Creature(object):
             if self.defense > 0:
                 events.notify(events.GameEvent("MESSAGE",
                                             (self.name_instance + " blocks " + str(self.defense) + " damage", "gray")))
-            tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, GAME.level.render_positions)
+            tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, game_vars.level.render_positions)
             draw_blood_splatter(tile_x, tile_y, change)
             events.notify(events.GameEvent("MESSAGE",
                                 (self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp), "white")))
@@ -441,7 +443,7 @@ class com_Creature(object):
                 self.attack(target, damage_dealt, damage_details)
             else:
                 if self.text is not None and self.owner.visible:
-                    tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, GAME.level.render_positions)
+                    tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, game_vars.level.render_positions)
                     draw_floating_text(tile_x, tile_y-1, self.text)
                     #draw_floating_text_step(tile_x, tile_y-1, self.text)
                     events.notify(events.GameEvent("MESSAGE", (self.name_instance + " says: " + self.text, "yellow")))
@@ -451,7 +453,7 @@ class com_Creature(object):
                         target.creature.player.resting = False
 
                 if target.creature.text is not None and target.visible:
-                    tile_x, tile_y = draw_iso(target.x, target.y, GAME.level.render_positions)
+                    tile_x, tile_y = draw_iso(target.x, target.y, game_vars.level.render_positions)
                     draw_floating_text(tile_x, tile_y - 1, target.creature.text)
                     # draw_floating_text_step(tile_x, tile_y-1, target.creature.text)
                     events.notify(events.GameEvent("MESSAGE",
@@ -472,7 +474,7 @@ class com_Creature(object):
                 # player initiated conversations
                 if target.creature.chat is not None:
                     items = []
-                    item = GAME.level.spawn_item_by_id("chainmail")
+                    item = game_vars.level.spawn_item_by_id("chainmail")
                     items.append(item)
 
                     dialogue_window(target.creature, self, items)
@@ -529,8 +531,8 @@ class com_Item(object):
             actor.container.inventory.append(self.owner)
             self.current_container = actor.container
             # special case: we might not be in the entities list at all if creating NPC inventory
-            if self.owner in GAME.level.current_entities:
-                GAME.level.current_entities.remove(self.owner)
+            if self.owner in game_vars.level.current_entities:
+                game_vars.level.current_entities.remove(self.owner)
                 # if we're creating NPC inventory, don't make a log message
                 events.notify(events.GameEvent("MESSAGE",
                                                (actor.creature.name_instance + " picked up " + self.owner.name, "white")))
@@ -539,7 +541,7 @@ class com_Item(object):
         events.notify(events.GameEvent("MESSAGE", (actor.creature.name_instance + " dropped " + self.owner.name, "white")))
         self.current_container.inventory.remove(self.owner)
 
-        GAME.level.current_entities.append(self.owner)
+        game_vars.level.current_entities.append(self.owner)
         self.owner.send_to_back()
 
         self.owner.x = actor.x

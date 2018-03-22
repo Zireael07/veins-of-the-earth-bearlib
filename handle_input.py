@@ -7,6 +7,8 @@ from renderer import pix_to_iso
 from map_common import map_check_for_items, find_unexplored_closest
 from tile_lookups import TileTypes, get_index
 
+import game_vars
+
 def initialize_camera(camera):
     global CAMERA
     CAMERA = camera
@@ -25,14 +27,14 @@ def get_top_log_string_index():
     check = -4
     #print("Checking " + str(check))
 
-    if not GAME.message_history:
+    if not game_vars.message_history:
         return None
 
-    if len(GAME.message_history) < 4:
-        check = -len(GAME.message_history)
+    if len(game_vars.message_history) < 4:
+        check = -len(game_vars.message_history)
 
 
-    if GAME.message_history[check]:
+    if game_vars.message_history[check]:
         return check
 
 
@@ -43,24 +45,24 @@ def click_on_msg_log(m_y):
         # print("Clicked over line #1")
         check = get_top_log_string_index()
         if check is not None:
-            print(GAME.message_history[check])
+            print(game_vars.message_history[check])
             gui_menus.display_dmg_window(check)
 
     elif m_y == log_h + 1:
         check = get_top_log_string_index()
         if check is not None:
-            print(GAME.message_history[check + 1])
+            print(game_vars.message_history[check + 1])
             gui_menus.display_dmg_window(check + 1)
 
     elif m_y == log_h + 2:
         check = get_top_log_string_index()
         if check is not None:
-            print(GAME.message_history[check + 2])
+            print(game_vars.message_history[check + 2])
             gui_menus.display_dmg_window(check + 2)
     elif m_y == log_h + 3:
         check = get_top_log_string_index()
         if check is not None:
-            print(GAME.message_history[check + 3])
+            print(game_vars.message_history[check + 3])
             gui_menus.display_dmg_window(check + 3)
 
 
@@ -93,10 +95,10 @@ def game_handle_mouse_input(key):
                     print "Clicked on tile " + str(click_x) + " " + str(click_y)
 
                     if click_x != PLAYER.x or click_y != PLAYER.y:
-                        moved = PLAYER.creature.move_towards(click_x, click_y, GAME.level.current_map)
+                        moved = PLAYER.creature.move_towards(click_x, click_y, game_vars.level.current_map)
                         if (moved[0]):
                             CAMERA.move(moved[1], moved[2])
-                            GAME.fov_recompute = True
+                            game_vars.fov_recompute = True
 
                     return "player-moved"
 
@@ -113,9 +115,9 @@ def game_key_move(key):
         'UP': (0, -1), 'DOWN': (0, 1), 'LEFT': (-1, 0), 'RIGHT': (1, 0)
     }
 
-    if PLAYER.creature.move(KEY_TO_DIR[key][0], KEY_TO_DIR[key][1], GAME.level.current_map):
+    if PLAYER.creature.move(KEY_TO_DIR[key][0], KEY_TO_DIR[key][1], game_vars.level.current_map):
         CAMERA.move(KEY_TO_DIR[key][0], KEY_TO_DIR[key][1])
-        GAME.fov_recompute = True
+        game_vars.fov_recompute = True
 
     return "player-moved"
 
@@ -130,17 +132,16 @@ def game_player_turn_input(key):
         return game_key_move('RIGHT')
 
     if key == blt.TK_PERIOD and blt.check(blt.TK_SHIFT):
-        if GAME.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS):  # .stairs:
+        if game_vars.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS):  # .stairs:
             GAME.next_level()
 
     if key == blt.TK_COMMA and blt.check(blt.TK_SHIFT):
-        if GAME.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS_UP):
-            GAME.previous_level(GAME.level.gen_type)
+        if game_vars.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS_UP):
+            GAME.previous_level(game_vars.level.gen_type)
 
     # items
     if key == blt.TK_G:
-        ents = map_check_for_items(PLAYER.x, PLAYER.y, GAME.level.current_entities)
-        #ent = map_check_for_item(PLAYER.x, PLAYER.y, GAME)
+        ents = map_check_for_items(PLAYER.x, PLAYER.y, game_vars.level.current_entities)
         if ents is not None:
             if len(ents) > 1:
                 chosen_item = gui_menus.pickup_menu(ents)
@@ -186,12 +187,12 @@ def game_player_turn_input(key):
             PLAYER.creature.player.autoexplore = False
 
         if PLAYER.creature.player.autoexplore:
-            x,y = find_unexplored_closest(PLAYER.x, PLAYER.y, GAME.level.current_map, GAME.level.current_explored)
+            x,y = find_unexplored_closest(PLAYER.x, PLAYER.y, game_vars.level.current_map, game_vars.level.current_explored)
             print("Closest unexplored is " + str(x) + " " + str(y))
-            moved = PLAYER.creature.player.move_towards_autoexplore(x,y, GAME.level.current_map)
+            moved = PLAYER.creature.player.move_towards_autoexplore(x, y, game_vars.level.current_map)
             if (moved[0]):
                 CAMERA.move(moved[1], moved[2])
-                GAME.fov_recompute = True
+                game_vars.fov_recompute = True
 
             return "player-moved"
 
@@ -201,7 +202,7 @@ def game_handle_keys():
     if key in (blt.TK_ESCAPE, blt.TK_CLOSE):
         return "QUIT"
 
-    if GAME.game_state == GameStates.MAIN_MENU:
+    if game_vars.game_state == GameStates.MAIN_MENU:
         if key not in (blt.TK_S, blt.TK_L):
             return "QUIT"
 
@@ -221,7 +222,7 @@ def game_handle_keys():
     #print("Mouse: " + str(game_handle_mouse_input(key)))
     game_handle_mouse_input(key)
 
-    if GAME.game_state == GameStates.PLAYER_TURN:
+    if game_vars.game_state == GameStates.PLAYER_TURN:
         #print (game_player_turn_input(key))
         return game_player_turn_input(key)
 
