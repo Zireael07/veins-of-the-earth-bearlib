@@ -53,8 +53,8 @@ class obj_Game(object):
         game_vars.fov_recompute = False
 
 
-
-    def initialize_seed(self, seed=10):
+    @staticmethod
+    def initialize_seed(seed=10):
         init_seed = seed
         print("Init seed: " + str(init_seed))
         return init_seed
@@ -65,20 +65,23 @@ class obj_Game(object):
         elif event.type == "END_TURN":
             self.end_player_turn()
 
-    def game_message(self, event_data):  # msg, msg_color, details=None):
+    @staticmethod
+    def game_message(event_data):  # msg, msg_color, details=None):
         if len(event_data) > 2:
             game_vars.message_history.append((event_data[0], event_data[1], event_data[2]))
         else:
             game_vars.message_history.append((event_data[0], event_data[1], None))
 
-    def add_faction(self, faction_data):
+    @staticmethod
+    def add_faction(faction_data):
         game_vars.factions.append(faction_data)
         print "Added faction " + str(faction_data)
         # add the reverse mapping, too
         game_vars.factions.append((faction_data[1], faction_data[0], faction_data[2]))
         print "Added reverse faction " + str((faction_data[1], faction_data[0], faction_data[2]))
 
-    def get_faction_reaction(self, faction, target_faction, log):
+    @staticmethod
+    def get_faction_reaction(faction, target_faction, log):
         if faction == target_faction:
             return 100
 
@@ -88,22 +91,25 @@ class obj_Game(object):
                     print("Faction reaction of " + fact[0] + " to " + fact[1] + " is " + str(fact[2]))
                 return fact[2]
 
-    def end_player_turn(self):
+    @staticmethod
+    def end_player_turn():
         # toggle game state to enemy turn
         game_vars.game_state = GameStates.ENEMY_TURN
 
-    def set_player_turn(self):
+    @staticmethod
+    def set_player_turn():
         # set state to player turn
         game_vars.game_state = GameStates.PLAYER_TURN
         print("Set player turn")
 
-    def map_calculate_fov(self):
+    @staticmethod
+    def map_calculate_fov():
         if game_vars.fov_recompute:
             game_vars.fov_recompute = False
             libtcod.map_compute_fov(game_vars.fov_map, PLAYER.x, PLAYER.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
                                     constants.FOV_ALGO)
-
-    def new_level_set(self):
+    @staticmethod
+    def new_level_set():
         # add player
         game_vars.level.current_entities.append(PLAYER)
 
