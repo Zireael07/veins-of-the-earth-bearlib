@@ -1,4 +1,3 @@
-from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 
 MAP_HEIGHT = 20

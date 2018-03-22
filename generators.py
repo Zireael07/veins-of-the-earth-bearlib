@@ -2,26 +2,14 @@
 import libtcodpy as libtcod
 import bisect
 import json
-import math
 
 import ai
 import components
 import constants
 from map_common import map_check_for_creature, find_free_grid_in_range
-import game_vars
 
 import logging
 from logging.config import dictConfig
-
-# need a reference to global GAME %^$@
-def initialize_game(game):
-    print("Initialized game")
-    global GAME
-
-    GAME = game
-
-    #ai.initialize_game(game)
-
 
 def roll(dice, sides):
     result = 0

@@ -44,7 +44,6 @@ class obj_Game(object):
 
             # init game object for submodules
             components.initialize_game(self)
-            generators.initialize_game(self)
 
 
             # use events for messages
@@ -519,14 +518,11 @@ def start_new_game(seed):
     # spawn player
     player = generate_player()
 
-
-
     # handle input needs all three
     handle_input.initialize_game(game_obj)
     handle_input.initialize_player(player)
     handle_input.initialize_camera(camera)
 
-    #hud.initialize_game(game_obj)
     hud.initialize_player(player)
 
     # adjust camera position so that player is centered
@@ -569,7 +565,6 @@ def game_initialize():
     # main menu
     GAME = obj_Game(True)
     game_vars.game_state = GameStates.MAIN_MENU
-    #renderer.initialize_game(GAME)
 
     ret = main_menu.main_menu(start_new_game)
     if ret is not None:

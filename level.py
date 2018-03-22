@@ -127,7 +127,7 @@ class obj_Level(object):
 
         self.add_entity(generators.generate_monster("human", *random_free_tile(self.current_map)))
 
-        for i in range(num):
+        for _ in range(num):
             self.spawn_random_monster()
 
         for d in dists:
