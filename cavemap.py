@@ -68,7 +68,7 @@ class CaveGenerator(object):
 
     def create_caves(self):
         # ==== Create distinct caves ====
-        for i in xrange(0, self.iterations):
+        for _ in xrange(0, self.iterations):
             # Pick a random point with a buffer around the edges of the map
             tile_x = libtcod.random_get_int(self.rnd, 1, self.map_width - 2)  # (2,mapWidth-3)
             tile_y = libtcod.random_get_int(self.rnd, 1, self.map_height - 2)  # (2,mapHeight-3)
@@ -84,7 +84,7 @@ class CaveGenerator(object):
 
     def smooth(self):
         if self.smooth_edges:
-            for i in xrange(0, 5):
+            for _ in xrange(0, 5):
                 # Look at each cell individually and check for smoothness
                 for x in range(1, self.map_width - 1):
                     for y in range(1, self.map_height - 1):
@@ -234,7 +234,8 @@ class CaveGenerator(object):
             if point2:  # if all tunnels are connected, point2 == None
                 self.create_tunnel(point1, point2, current_cave)
 
-    def distance_formula(self, point1, point2):
+    @staticmethod
+    def distance_formula(point1, point2):
         d = sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
         return d
 
