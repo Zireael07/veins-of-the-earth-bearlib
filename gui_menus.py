@@ -7,9 +7,11 @@ from map_common import get_map_string
 from generators import roll
 import renderer
 
-def initialize_game(game):
-    global GAME
-    GAME = game
+import game_vars
+
+#def initialize_game(game):
+#    global GAME
+#    GAME = game
 
 
 def main_menu():
@@ -30,7 +32,7 @@ def character_sheet_menu(header, player):
                ("Attack: " + str(player.creature.melee), "white"), ("Dodge: " + str(player.creature.dodge), "white"),
                ("Armor defense: " + str(player.creature.defense) + str(player.creature.defense_str), "white"),
                ("", "white"),
-               (str(GAME.calendar.get_time_date(GAME.calendar.turn)), "yellow")
+               (str(game_vars.calendar.get_time_date(game_vars.calendar.turn)), "yellow")
                ]
 
     for m in player.creature.player.money:
@@ -48,7 +50,7 @@ def character_sheet_menu(header, player):
 
 
 def log_menu_inner(header, begin, end):
-    options = GAME.message_history
+    options = game_vars.message_history
 
     scroll = renderer.menu_colored_scrolled(header, options, 50, begin, end, 'LOG HISTORY')
 
@@ -59,7 +61,7 @@ def log_menu(header, begin, end):
     if ret is not None:
         # if we are getting input, keep showing the log
         while ret is not None:
-            if end + ret > len(GAME.message_history) - 1:
+            if end + ret > len(game_vars.message_history) - 1:
                 # do nothing if we'd scroll past the end
                 end = end
                 begin = begin
@@ -67,7 +69,7 @@ def log_menu(header, begin, end):
                 # if we would scroll past 0, do nothing
                 begin = 0
                 end = end
-            if begin + ret > 0 and end + ret <= len(GAME.message_history) - 1:
+            if begin + ret > 0 and end + ret <= len(game_vars.message_history) - 1:
                 # print("Proceed normally")
                 begin = begin + ret
                 end = end + ret
@@ -93,16 +95,16 @@ def dmg_menu(header, opt):
 
 
 def display_dmg_window(index):
-    #if "damage" in GAME.message_history[index][0]:
+    #if "damage" in game.message_history[index][0]:
         #print("The line says damage!")
 
         # extract the dmg number
-        #dmg = filter(str.isdigit, str(GAME.message_history[index][0]))
+        #dmg = filter(str.isdigit, str(game.message_history[index][0]))
         #dmg_menu(dmg)
 
-    if GAME.message_history[index][2] is not None:
-        if "damage" in GAME.message_history[index][0]:
-            dmg_menu("damage", GAME.message_history[index][2])
+    if game_vars.message_history[index][2] is not None:
+        if "damage" in game_vars.message_history[index][0]:
+            dmg_menu("damage", game_vars.message_history[index][2])
 
 def dialogue_window(creature, player, items):
     blt.layer(1)
@@ -196,7 +198,7 @@ def debug_menu(player):
         blt.set("0x3002: none")
         blt.set("0x23: none")
 
-        renderer.text_menu("Map", 50, "MAP OVERVIEW", get_map_string(GAME.level.current_map))
+        renderer.text_menu("Map", 50, "MAP OVERVIEW", get_map_string(game_vars.level.current_map))
 
         # restore drawing
         blt.set("0x003E: gfx/stairs_down.png, align=center")
@@ -206,7 +208,7 @@ def debug_menu(player):
     if key == 2:
 
         opt = []
-        for ent in GAME.level.current_entities:
+        for ent in game_vars.level.current_entities:
             if ent.creature:
                 opt.append(ent.creature.name_instance + " X: " + str(ent.x) + " Y: " + str(ent.y))
 
@@ -226,7 +228,7 @@ def debug_menu(player):
         sel = renderer.options_menu("Spawn creature:", opt, 50, "List")
 
         if sel is not None:
-            GAME.level.add_entity(generators.generate_monster(opt[sel], player.x, player.y))
+            game_vars.level.add_entity(generators.generate_monster(opt[sel], player.x, player.y))
 
 def character_stats_menu_outer(player):
     ret = character_stats_menu(player)

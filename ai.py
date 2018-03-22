@@ -5,13 +5,13 @@ import constants
 from tile_lookups import get_block_path
 from map_common import random_free_tile_away
 import events
-
+import game_vars
 
 # need a reference to global GAME %^$@
-def initialize_game(game):
+#def initialize_game(game):
     #print("[AI] initialized game")
-    global GAME
-    GAME = game
+#    global GAME
+#    GAME = game
 
 # AI
 class AI(object):
@@ -41,11 +41,11 @@ class EnemyAI(AI):
 
         # if not in fov
         if not libtcod.map_is_in_fov(fov_map, player.x, player.y):
-            self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), GAME.level.current_map)
+            self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), game_vars.level.current_map)
         else:
             print("Player in fov")
-            move_astar(self.owner, player, GAME.level.current_map)
-            #self.owner.creature.move_towards(player.x, player.y, GAME.level.current_map)
+            move_astar(self.owner, player, game_vars.level.current_map)
+            #self.owner.creature.move_towards(player.x, player.y, game.level.current_map)
 
 class NeutralAI(AI):
     def take_turn(self, player, fov_map):
@@ -58,12 +58,12 @@ class NeutralAI(AI):
         # if not in fov
         if not libtcod.map_is_in_fov(fov_map, player.x, player.y):
             self.owner.creature.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1),
-                                     GAME.level.current_map)
+                                     game_vars.level.current_map)
         else:
             if not self.target:
-                self.target = random_free_tile_away(GAME.level.current_map, 6, (self.owner.x, self.owner.y))
+                self.target = random_free_tile_away(game_vars.level.current_map, 6, (self.owner.x, self.owner.y))
 
-            move_astar(self.owner, self.target, GAME.level.current_map)
+            move_astar(self.owner, self.target, game_vars.level.current_map)
 
 
 
@@ -79,14 +79,14 @@ def death_monster(monster):
             print("Spawning an item from inventory")
             item.x = monster.x
             item.y = monster.y
-            GAME.level.current_entities.append(item)
+            game_vars.level.current_entities.append(item)
             item.send_to_back()
 
     # clean up components
     monster.creature = None
     monster.ai = None
     # remove from map
-    GAME.level.current_entities.remove(monster)
+    game_vars.level.current_entities.remove(monster)
 
 def move_astar(actor, target, inc_map):
     #print("Astar target: " + str(target))
@@ -106,7 +106,7 @@ def move_astar(actor, target, inc_map):
     #Scan all the entities to see if there are objects that must be navigated around
     #Check also that the entity isn't self or the target (so that the start and the end points are free)
     #The AI class handles the situation if self is next to the target so it will not use this A* function anyway
-    for ent in GAME.level.current_entities:
+    for ent in game_vars.level.current_entities:
         if ent.creature and ent != actor and ent != target:
             #Set the tile as a wall so it must be navigated around
             libtcod.map_set_properties(fov, ent.x, ent.y, True, False)

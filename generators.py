@@ -8,6 +8,7 @@ import ai
 import components
 import constants
 from map_common import map_check_for_creature, find_free_grid_in_range
+import game_vars
 
 import logging
 from logging.config import dictConfig
@@ -19,7 +20,7 @@ def initialize_game(game):
 
     GAME = game
 
-    ai.initialize_game(game)
+    #ai.initialize_game(game)
 
 
 def roll(dice, sides):
@@ -420,9 +421,9 @@ def generate_monster(m_id, x,y):
         ai_comp = ai.EnemyAI()
 
     # check that x,y isn't taken
-    taken = map_check_for_creature(x,y,GAME)
+    taken = map_check_for_creature(x,y)
     if taken is not None:
-        grids = find_free_grid_in_range(3,x,y,GAME)
+        grids = find_free_grid_in_range(3,x,y)
         if grids is not None:
             x,y, = grids[0]
 

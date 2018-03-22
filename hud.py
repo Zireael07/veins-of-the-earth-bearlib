@@ -2,11 +2,12 @@ from bearlibterminal import terminal as blt
 
 import renderer
 from map_common import distance_to, tiles_distance_to, get_map_desc, map_check_for_creature
+import game_vars
 
 # need the refs
-def initialize_game(game):
-    global GAME
-    GAME = game
+#def initialize_game(game):
+#    global GAME
+#    GAME = game
 
 def initialize_player(player):
     global PLAYER
@@ -16,10 +17,10 @@ def initialize_player(player):
 # debugging rooms
 def get_room_index():
     room_index = -1
-    for r in GAME.level.rooms:
+    for r in game_vars.level.rooms:
 
         if r.contains((PLAYER.x, PLAYER.y)):
-            room_index = GAME.level.rooms.index(r)
+            room_index = game_vars.level.rooms.index(r)
             break
 
     return room_index
@@ -34,7 +35,7 @@ def room_index_str():
 
 def get_room_from_index(index):
     if index != -1:
-        return GAME.level.rooms[index]
+        return game_vars.level.rooms[index]
 
 def get_room_data():
     index = get_room_index()
@@ -51,7 +52,7 @@ def show_npc_desc(pix_x, pix_y):
     w = 4
     h = 10
     iso_x, iso_y = renderer.pix_to_iso(pix_x, pix_y)
-    taken = map_check_for_creature(iso_x, iso_y, GAME)
+    taken = map_check_for_creature(iso_x, iso_y)
     if taken is not None and taken.creature.player is None:
         hp_perc = (taken.creature.hp*100.0/taken.creature.max_hp) # *100.0
         blt.layer(1)
@@ -65,7 +66,7 @@ def show_npc_desc(pix_x, pix_y):
         blt.layer(0)
 
 def show_tile_desc(pix_x, pix_y, fov_map):
-    if not hasattr(GAME.level, 'map_desc'):
+    if not hasattr(game_vars.level, 'map_desc'):
         return
     w = 4
     h = 8
@@ -76,5 +77,5 @@ def show_tile_desc(pix_x, pix_y, fov_map):
 
     blt.layer(1)
     blt.puts(w,h+1, "Dist: real:" + str(dist) + " tiles: " + str(tiles_dist) + " ft: " + str(tiles_dist*5) + " ft.")
-    blt.puts(w, h, get_map_desc(iso_x, iso_y, fov_map, GAME.level.current_explored, GAME.level.map_desc))
+    blt.puts(w, h, get_map_desc(iso_x, iso_y, fov_map, game_vars.level.current_explored, game_vars.level.map_desc))
     blt.layer(0)

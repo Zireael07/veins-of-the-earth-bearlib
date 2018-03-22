@@ -13,7 +13,7 @@ import renderer
 import hud
 import handle_input
 
-
+import game_vars
 
 
 
@@ -27,23 +27,23 @@ def main_menu(start_new_game):
         GAME, PLAYER, CAMERA = game_loaders.load_game()
 
         # handle FOV
-        GAME.fov_recompute = True
+        game_vars.fov_recompute = True
         # recreate the fov
-        GAME.fov_map = map_make_fov(GAME.level.current_map)
-        GAME.ai_fov_map = map_make_fov(GAME.level.current_map)
+        game_vars.fov_map = map_make_fov(game_vars.level.current_map)
+        game_vars.ai_fov_map = map_make_fov(game_vars.level.current_map)
 
         # patch in required stuff
         # init game for submodules
         components.initialize_game(GAME)
         generators.initialize_game(GAME)
-        level.initialize_game(GAME)
-        renderer.initialize_game(GAME)
-        gui_menus.initialize_game(GAME)
+        #level.initialize_game(GAME)
+        #renderer.initialize_game(GAME)
+        #gui_menus.initialize_game(GAME)
 
         # init camera for renderer
         renderer.initialize_camera(CAMERA)
 
-        hud.initialize_game(GAME)
+        #hud.initialize_game(GAME)
         hud.initialize_player(PLAYER)
 
         # handle input needs all three
@@ -67,7 +67,7 @@ def main_menu(start_new_game):
         # print("Seed: "+ str(seed))
 
         GAME, PLAYER, CAMERA = start_new_game(seed)
-        GAME.fov_recompute = True
+        game_vars.fov_recompute = True
 
         GAME.set_player_turn()
 

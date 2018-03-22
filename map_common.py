@@ -7,6 +7,7 @@ from operator import itemgetter
 
 import constants
 from tile_lookups import TileTypes, get_map_str, get_index, get_block_path
+import game_vars
 
 # used by the debugging
 from bearlibterminal import terminal as blt
@@ -163,14 +164,14 @@ def find_grid_in_range(dist, x, y):
 
     return coord_in_range
 
-def find_free_grid_in_range(dist, x, y, game):
+def find_free_grid_in_range(dist, x, y):
     coords = find_grid_in_range(dist, x,y)
-    free = get_free_tiles(game.level.current_map)
+    free = get_free_tiles(game_vars.level.current_map)
     out = []
 
     for c in coords:
         if (c[0], c[1]) in free:
-            if map_check_for_creature(c[0],c[1],game) is None:
+            if map_check_for_creature(c[0], c[1], game_vars) is None:
                 out.append((c[0], c[1]))
 
     return out
@@ -191,11 +192,10 @@ def find_unexplored_closest(x, y, inc_map, explored):
     # return first item's coords
     return out[0][0], out[0][1]
 
-# admittedly not ideal here due to the reliance on game... but /shrug
-def map_check_for_item(x,y, game):
+def map_check_for_item(x,y):
     target = None
 
-    for ent in game.level.current_entities:
+    for ent in game_vars.level.current_entities:
         if (ent.x == x
             and ent.y == y
             and ent.item):
@@ -217,13 +217,13 @@ def map_check_for_items(x,y,entities):
     else:
         return None
 
-def map_check_for_creature(x, y, game, exclude_entity = None):
+def map_check_for_creature(x, y, exclude_entity = None):
     #print("Checking for creatures at " + str(x) + " " + str(y))
     target = None
 
     # find entity that isn't excluded
     if exclude_entity:
-        for ent in game.level.current_entities:
+        for ent in game_vars.level.current_entities:
             if (ent is not exclude_entity
                 and ent.x == x
                 and ent.y == y
@@ -235,7 +235,7 @@ def map_check_for_creature(x, y, game, exclude_entity = None):
 
     # find any entity if no exclusions
     else:
-        for ent in game.level.current_entities:
+        for ent in game_vars.level.current_entities:
             if (ent.x == x
                 and ent.y == y
                 and ent.creature):
