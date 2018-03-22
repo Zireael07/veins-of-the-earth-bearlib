@@ -15,11 +15,12 @@ import components
 import generators
 
 import level
-import gui_menus
 import hud
 import main_menu
 import calendar
 import events
+import game_vars
+
 
 from map_common import map_make_fov, map_check_for_creature, find_free_grid_in_range
 
@@ -28,33 +29,35 @@ from game_states import GameStates
 
 
 class obj_Game(object):
+    """Object that is basically here to communicate with the game variables"""
     def __init__(self, basic, init_seed=10):
         if not basic:
-            self.init_seed = init_seed
-            print("Init seed: " + str(init_seed))
+            game_vars.init_seed = self.initialize_seed(init_seed)
             data = level.load_level_data(constants.STARTING_MAP)
-            self.level = level.obj_Level(data[0], init_seed, False) #level.obj_Level("city")
+            game_vars.level = level.obj_Level(data[0], init_seed, False)  # level.obj_Level("city")
+            game_vars.level.generate_items_monsters(data[1], data[2])
+
+            game_vars.fov_map = map_make_fov(game_vars.level.current_map)
+            game_vars.ai_fov_map = map_make_fov(game_vars.level.current_map)
+
+            game_vars.calendar_game = calendar.obj_Calendar(1371)
+
+            # init game object for submodules
+            components.initialize_game(self)
+            generators.initialize_game(self)
+
+
             # use events for messages
             events.subscribers.append(self.events_handler)
 
-            # init game for submodules
-            components.initialize_game(self)
-            generators.initialize_game(self)
-            gui_menus.initialize_game(self)
-
-            self.message_history = []
-
-            self.level.generate_items_monsters(data[1], data[2])
-            #global FOV_MAP
-            self.fov_map = map_make_fov(self.level.current_map)
-            #global AI_FOV_MAP
-            self.ai_fov_map = map_make_fov(self.level.current_map)
-
-            self.factions = []
-            self.calendar = calendar.obj_Calendar(1371)
+        game_vars.fov_recompute = False
 
 
-        self.fov_recompute = False
+
+    def initialize_seed(self, seed=10):
+        init_seed = seed
+        print("Init seed: " + str(init_seed))
+        return init_seed
 
     def events_handler(self, event):
         if event.type == "MESSAGE":
@@ -62,26 +65,24 @@ class obj_Game(object):
         elif event.type == "END_TURN":
             self.end_player_turn()
 
-    def game_message(self, event_data): #msg, msg_color, details=None):
+    def game_message(self, event_data):  # msg, msg_color, details=None):
         if len(event_data) > 2:
-            self.message_history.append((event_data[0], event_data[1], event_data[2]))
+            game_vars.message_history.append((event_data[0], event_data[1], event_data[2]))
         else:
-            self.message_history.append((event_data[0], event_data[1], None))
-
+            game_vars.message_history.append((event_data[0], event_data[1], None))
 
     def add_faction(self, faction_data):
-        self.factions.append(faction_data)
+        game_vars.factions.append(faction_data)
         print "Added faction " + str(faction_data)
         # add the reverse mapping, too
-        self.factions.append((faction_data[1], faction_data[0], faction_data[2]))
+        game_vars.factions.append((faction_data[1], faction_data[0], faction_data[2]))
         print "Added reverse faction " + str((faction_data[1], faction_data[0], faction_data[2]))
 
     def get_faction_reaction(self, faction, target_faction, log):
         if faction == target_faction:
             return 100
 
-
-        for fact in self.factions:
+        for fact in game_vars.factions:
             if fact[0] == faction and fact[1] == target_faction:
                 if log:
                     print("Faction reaction of " + fact[0] + " to " + fact[1] + " is " + str(fact[2]))
@@ -89,66 +90,66 @@ class obj_Game(object):
 
     def end_player_turn(self):
         # toggle game state to enemy turn
-        self.game_state = GameStates.ENEMY_TURN
+        game_vars.game_state = GameStates.ENEMY_TURN
 
     def set_player_turn(self):
         # set state to player turn
-        self.game_state = GameStates.PLAYER_TURN
+        game_vars.game_state = GameStates.PLAYER_TURN
         print("Set player turn")
 
     def map_calculate_fov(self):
-        if self.fov_recompute:
-            self.fov_recompute = False
-            libtcod.map_compute_fov(self.fov_map, PLAYER.x, PLAYER.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
+        if game_vars.fov_recompute:
+            game_vars.fov_recompute = False
+            libtcod.map_compute_fov(game_vars.fov_map, PLAYER.x, PLAYER.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
                                     constants.FOV_ALGO)
 
     def new_level_set(self):
         # add player
-        self.level.current_entities.append(PLAYER)
+        game_vars.level.current_entities.append(PLAYER)
 
         # place player in sensible place
-        PLAYER.creature.move_to_target(self.level.player_start_x, self.level.player_start_y, self.level.current_map)
+        PLAYER.creature.move_to_target(game_vars.level.player_start_x, game_vars.level.player_start_y, game_vars.level.current_map)
 
         # add stuff
-        self.level.generate_items_monsters()
+        game_vars.level.generate_items_monsters()
 
         # global FOV_MAP
-        GAME.fov_map = map_make_fov(self.level.current_map)
+        game_vars.fov_map = map_make_fov(game_vars.level.current_map)
         # global AI_FOV_MAP
-        GAME.ai_fov_map = map_make_fov(self.level.current_map)
+        game_vars.ai_fov_map = map_make_fov(game_vars.level.current_map)
 
         # force fov recompute
-        self.fov_recompute = True
+        game_vars.fov_recompute = True
 
         CAMERA.start_update(PLAYER)
 
     def next_level(self):
-        self.game_message(("You descend deeper in the dungeon", "violet"))
+        events.notify(events.GameEvent("MESSAGE", ("You descend deeper in the dungeon", "violet")))
 
         # make next level
-        self.level = level.obj_Level("cavern")
+        game_vars.level = level.obj_Level("cavern")
 
         self.new_level_set()
 
     def previous_level(self, from_level):
         print("From level: " + str(from_level))
-        self.game_message(("You ascend back", "violet"))
+        events.notify(events.GameEvent("MESSAGE", ("You ascend back", "violet")))
 
         # re-make starting level from seed
         data = level.load_level_data(constants.STARTING_MAP)
-        self.level = level.obj_Level(data[0], self.init_seed, False)
+        game_vars.level = level.obj_Level(data[0], game_vars.init_seed, False)
 
         self.new_level_set()
 
         # move to down stairs
         if from_level == "cavern":
-            stairs_room = self.level.rooms[len(self.level.rooms) - 1]
-            stairs_x, stairs_y = (stairs_room.x1 + stairs_room.x2 -1) // 2, (stairs_room.y1 + stairs_room.y2 -1) // 2
+            stairs_room = game_vars.level.rooms[len(game_vars.level.rooms) - 1]
+            stairs_x, stairs_y = (stairs_room.x1 + stairs_room.x2 - 1) // 2, (stairs_room.y1 + stairs_room.y2 - 1) // 2
             print("Move to " + str(stairs_x) + " " + str(stairs_y))
-            PLAYER.creature.move_to_target(stairs_x, stairs_y, self.level.current_map)
+            PLAYER.creature.move_to_target(stairs_x, stairs_y, game_vars.level.current_map)
 
             # force fov recompute
-            self.fov_recompute = True
+            game_vars.fov_recompute = True
 
             CAMERA.start_update(PLAYER)
 
@@ -220,9 +221,9 @@ class obj_Camera(object):
 def death_player(player):
     events.notify(events.GameEvent("MESSAGE", (player.creature.name_instance + " is dead!", "dark red")))
     # remove from map
-    GAME.level.current_entities.remove(player)
+    game_vars.level.current_entities.remove(player)
     # set game state to player dead
-    GAME.game_state = GameStates.PLAYER_DEAD
+    game_vars.game_state = GameStates.PLAYER_DEAD
     #delete savegame (this assumes we can only have one)
     if os.path.isfile('savegame.json'):
         os.remove('savegame.json')
@@ -232,9 +233,9 @@ def death_player(player):
 def draw_game(x,y):
     # don't draw map and NPCs if sleeping
     if not PLAYER.creature.player.resting:
-        renderer.draw_map(GAME.level.current_map, GAME.level.current_explored, GAME.fov_map, GAME.level.render_positions, constants.DEBUG)
+        renderer.draw_map(game_vars.level.current_map, game_vars.level.current_explored, game_vars.fov_map, game_vars.level.render_positions, constants.DEBUG)
 
-        renderer.draw_mouseover(x,y, GAME.level.render_positions)
+        renderer.draw_mouseover(x, y, game_vars.level.render_positions)
 
         #blt.color("white")
         blt.color(4294967295)
@@ -243,14 +244,14 @@ def draw_game(x,y):
         height_start = CAMERA.get_height_start()
         height_end = CAMERA.get_height_end()
 
-        for ent in GAME.level.current_entities:
+        for ent in game_vars.level.current_entities:
             if ent.x >= width_start and ent.x < width_end:
                 if ent.y >= height_start and ent.y < height_end:
-                    ent.draw(fov_map=GAME.fov_map, render_pos=GAME.level.render_positions)
+                    ent.draw(fov_map=game_vars.fov_map, render_pos=game_vars.level.render_positions)
 
         # on top of map
         blt.layer(1)
-        renderer.draw_messages(GAME.message_history)
+        renderer.draw_messages(game_vars.message_history)
 
     else:
         blt.puts(80,20, "SLEEPING...")
@@ -263,7 +264,7 @@ def draw_game(x,y):
 
     blt.color(4294967295)
 
-    if GAME.game_state == GameStates.PLAYER_DEAD:
+    if game_vars.game_state == GameStates.PLAYER_DEAD:
         blt.puts(80, 20, "You are dead!")
 
 
@@ -303,7 +304,7 @@ def game_main_loop():
         #clear
         blt.clear()
 
-        if not GAME.game_state == GameStates.MAIN_MENU:
+        if not game_vars.game_state == GameStates.MAIN_MENU:
             blt.layer(1)
             blt.puts(2,1, "[color=white]FPS: %d ms %.3f" % (fps_value, 1000/(fps_value * 1.0) if fps_value else 0) )
 
@@ -329,13 +330,13 @@ def game_main_loop():
             blt.layer(0)
             #mouse_picking(m_x, m_y)
             # this works on map tiles
-            hud.show_tile_desc(pix_x, pix_y, GAME.fov_map)
+            hud.show_tile_desc(pix_x, pix_y, game_vars.fov_map)
             hud.show_npc_desc(pix_x, pix_y)
 
         # refresh term
         blt.refresh()
 
-        if not GAME.game_state == GameStates.MAIN_MENU:
+        if not game_vars.game_state == GameStates.MAIN_MENU:
             # fps
             fps_counter += 1
             tm = time()
@@ -364,35 +365,35 @@ def game_main_loop():
             if player_action is not None and player_action != "no-action" and player_action != "mouse_click":
                # print("Advancing time")
                 # advance time
-                GAME.calendar.turn += 1
+                game_vars.calendar_game.turn += 1
 
                 #toggle game state to enemy turn
-                GAME.game_state = GameStates.ENEMY_TURN
+                game_vars.game_state = GameStates.ENEMY_TURN
 
             # enemy turn
-            if GAME.game_state == GameStates.ENEMY_TURN:
-                for ent in GAME.level.current_entities:
+            if game_vars.game_state == GameStates.ENEMY_TURN:
+                for ent in game_vars.level.current_entities:
                     if ent.ai:
-                        ent.ai.take_turn(PLAYER, GAME.ai_fov_map)
+                        ent.ai.take_turn(PLAYER, game_vars.ai_fov_map)
 
-                        if GAME.game_state == GameStates.PLAYER_DEAD:
+                        if game_vars.game_state == GameStates.PLAYER_DEAD:
                             print("Player's dead, breaking the loop")
                             break
 
-                if not GAME.game_state == GameStates.PLAYER_DEAD:
-                    GAME.game_state = GameStates.PLAYER_TURN
+                if not game_vars.game_state == GameStates.PLAYER_DEAD:
+                    game_vars.game_state = GameStates.PLAYER_TURN
                     # resting (potentially other stuff)
                     PLAYER.creature.player.act()
                     # test passage of time
                     #print(GAME.calendar.get_time_date(GAME.calendar.turn))
 
-            if GAME.game_state == GameStates.PLAYER_DEAD:
+            if game_vars.game_state == GameStates.PLAYER_DEAD:
                 print("PLAYER DEAD")
             #if GAME.game_state == GameStates.PLAYER_TURN:
             #    print("PLAYER TURN")
 
     #save if not dead
-    if not GAME.game_state == GameStates.PLAYER_DEAD and not GAME.game_state == GameStates.MAIN_MENU:
+    if not game_vars.game_state == GameStates.PLAYER_DEAD and not game_vars.game_state == GameStates.MAIN_MENU:
         #print(str(GAME.game_state) + " we should save game")
         game_loaders.save_game(GAME, CAMERA, PLAYER)
 
@@ -455,7 +456,7 @@ def mouse_picking(m_x, m_y):
         if n == 0:
             blt.puts(w, h, "Empty cell")
 
-def generate_player(game):
+def generate_player():
     container_com1 = components.com_Container()
     player_array = generators.generate_stats("heroic")
 
@@ -468,11 +469,11 @@ def generate_player(game):
                                             player=player_com1, faction="player", death_function=death_player)
 
     # check that x,y isn't taken
-    x,y = game.level.player_start_x, game.level.player_start_y
-    taken = map_check_for_creature(x,y, game)
+    x,y = game_vars.level.player_start_x, game_vars.level.player_start_y
+    taken = map_check_for_creature(x,y)
     if taken is not None:
         print("Looking for grid in range")
-        grids = find_free_grid_in_range(3, x, y, game)
+        grids = find_free_grid_in_range(3, x, y)
         #grids = find_grid_in_range(3, x,y)
         if grids is not None:
             x,y = grids[0]
@@ -501,42 +502,38 @@ def start_new_game(seed):
     camera = obj_Camera()
     # init camera for renderer
     renderer.initialize_camera(camera)
+    game_vars.camera = camera
 
-
-    game = obj_Game(False, seed)
-
-    # init game for submodules (moved to the game init itself)
-    #components.initialize_game(game)
-    #generators.initialize_game(game)
-    #renderer.initialize_game(game)
+    game_obj = obj_Game(False, seed)
 
     # init factions
-    game.add_faction(("player", "enemy", -100))
-    game.add_faction(("player", "neutral", 0))
+    game_obj.add_faction(("player", "enemy", -100))
+    game_obj.add_faction(("player", "neutral", 0))
 
     # spawn player
-    player = generate_player(game)
+    player = generate_player()
 
 
 
     # handle input needs all three
-    handle_input.initialize_game(game)
+    handle_input.initialize_game(game_obj)
     handle_input.initialize_player(player)
     handle_input.initialize_camera(camera)
 
-    hud.initialize_game(game)
+    #hud.initialize_game(game_obj)
     hud.initialize_player(player)
 
     # adjust camera position so that player is centered
     camera.start_update(player)
 
     # put player last
-    game.level.current_entities.append(player)
+    game_vars.player = player
+    game_vars.level.current_entities.append(player)
 
     # test
     generators.get_random_item()
 
-    return game, player, camera
+    return game_obj, player, camera
 
 def game_initialize():
     global GAME, PLAYER, CAMERA
@@ -565,7 +562,7 @@ def game_initialize():
 
     # main menu
     GAME = obj_Game(True)
-    GAME.game_state = GameStates.MAIN_MENU
+    game_vars.game_state = GameStates.MAIN_MENU
     #renderer.initialize_game(GAME)
 
     ret = main_menu.main_menu(start_new_game)
