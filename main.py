@@ -238,9 +238,9 @@ def death_player(player):
 def draw_game(x,y):
     # don't draw map and NPCs if sleeping
     if not PLAYER.creature.player.resting:
-        renderer.draw_map(game_vars.level.current_map, game_vars.level.current_explored, game_vars.fov_map, game_vars.level.render_positions, constants.DEBUG)
+        renderer.draw_map(game_vars.level.current_map, game_vars.level.current_explored, game_vars.fov_map, constants.RENDER_POSITIONS, constants.DEBUG)
 
-        renderer.draw_mouseover(x, y, game_vars.level.render_positions)
+        renderer.draw_mouseover(x, y, constants.RENDER_POSITIONS)
 
         #blt.color("white")
         blt.color(4294967295)
@@ -252,7 +252,7 @@ def draw_game(x,y):
         for ent in game_vars.level.current_entities:
             if ent.x >= width_start and ent.x < width_end:
                 if ent.y >= height_start and ent.y < height_end:
-                    ent.draw(fov_map=game_vars.fov_map, render_pos=game_vars.level.render_positions)
+                    ent.draw(fov_map=game_vars.fov_map, render_pos=constants.RENDER_POSITIONS)
 
         # on top of map
         blt.layer(1)

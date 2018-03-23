@@ -389,7 +389,7 @@ class com_Creature(object):
                 target.creature.take_damage(damage)
         else:
             if self.owner.visible:
-                tile_x, tile_y = draw_iso(target.x, target.y, game_vars.level.render_positions)
+                tile_x, tile_y = draw_iso(target.x, target.y, constants.RENDER_POSITIONS)
                 draw_shield(tile_x, tile_y)
                 events.notify(events.GameEvent("MESSAGE",
                                         (self.name_instance + " misses " + target.creature.name_instance + "!", "lighter blue")))
@@ -404,7 +404,7 @@ class com_Creature(object):
             if self.defense > 0:
                 events.notify(events.GameEvent("MESSAGE",
                                             (self.name_instance + " blocks " + str(self.defense) + " damage", "gray")))
-            tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, game_vars.level.render_positions)
+            tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, constants.RENDER_POSITIONS)
             draw_blood_splatter(tile_x, tile_y, change)
             events.notify(events.GameEvent("MESSAGE",
                                 (self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp), "white")))
@@ -443,7 +443,7 @@ class com_Creature(object):
                 self.attack(target, damage_dealt, damage_details)
             else:
                 if self.text is not None and self.owner.visible:
-                    tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, game_vars.level.render_positions)
+                    tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, constants.RENDER_POSITIONS)
                     draw_floating_text(tile_x, tile_y-1, self.text)
                     #draw_floating_text_step(tile_x, tile_y-1, self.text)
                     events.notify(events.GameEvent("MESSAGE", (self.name_instance + " says: " + self.text, "yellow")))
@@ -453,7 +453,7 @@ class com_Creature(object):
                         target.creature.player.resting = False
 
                 if target.creature.text is not None and target.visible:
-                    tile_x, tile_y = draw_iso(target.x, target.y, game_vars.level.render_positions)
+                    tile_x, tile_y = draw_iso(target.x, target.y, constants.RENDER_POSITIONS)
                     draw_floating_text(tile_x, tile_y - 1, target.creature.text)
                     # draw_floating_text_step(tile_x, tile_y-1, target.creature.text)
                     events.notify(events.GameEvent("MESSAGE",

@@ -34,7 +34,7 @@ def main_menu(start_new_game):
         # patch in required stuff
         # init game for submodules
         components.initialize_game(GAME)
-        generators.initialize_game(GAME)
+        #generators.initialize_game(GAME)
 
         # init camera for renderer
         renderer.initialize_camera(CAMERA)
