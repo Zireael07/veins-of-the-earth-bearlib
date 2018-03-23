@@ -21,10 +21,6 @@ class obj_Level(object):
         # new way of storing explored info
         self.current_explored = [[False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
 
-        # cache the isometric calculations instead of doing them every frame
-        # this wouldn't be necessary for a non-iso game since the calculations would be almost nonexistent
-        self.render_positions = [[iso_pos(x, y) for y in range(0, constants.MAP_HEIGHT)] for x in range(0, constants.MAP_WIDTH)]
-
         self.current_entities = []
 
         # level gen
@@ -32,19 +28,19 @@ class obj_Level(object):
         # map gen
         if gen_type == "dungeon":
             map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-                                  False, self.render_positions, seed, constants.DEBUG_MAP)
+                                  False, constants.RENDER_POSITIONS, seed, constants.DEBUG_MAP)
         elif gen_type == "encampment":
             map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
-                                False, self.render_positions, seed, False, constants.DEBUG_MAP)
+                                False, constants.RENDER_POSITIONS, seed, False, constants.DEBUG_MAP)
         elif gen_type == "city":
             map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
-                                False, self.render_positions, seed, True, constants.DEBUG_MAP)
+                                False, constants.RENDER_POSITIONS, seed, True, constants.DEBUG_MAP)
         elif gen_type == "cavern":
-            map_gen = CaveGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, self.render_positions, seed, constants.DEBUG_MAP)
+            map_gen = CaveGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.RENDER_POSITIONS, seed, constants.DEBUG_MAP)
         # fallback
         else:
             map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-                                      constants.FULL_ROOMS, self.render_positions, seed, constants.DEBUG_MAP)
+                                      constants.FULL_ROOMS, constants.RENDER_POSITIONS, seed, constants.DEBUG_MAP)
 
         gen_map = map_gen.generate_map()
         # catch degenerate instances
@@ -143,15 +139,6 @@ class obj_Level(object):
              # test: force spawn a monster on top of the player
              self.add_entity(generators.generate_monster("goblin", self.player_start_x, self.player_start_y))
 
-
-def iso_pos(x,y):
-    # isometric
-    offset_x = constants.CAMERA_OFFSET
-    #hw = constants.HALF_TILE_WIDTH
-    #hh = constants.HALF_TILE_HEIGHT
-    tile_x = (x - y) * constants.HALF_TILE_WIDTH + offset_x
-    tile_y = (x + y) * constants.HALF_TILE_HEIGHT
-    return tile_x, tile_y
 
 def load_level_data(l_id):
     if not l_id in levels_data:

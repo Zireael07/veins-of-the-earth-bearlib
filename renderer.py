@@ -27,7 +27,7 @@ def roll(dice, sides):
 
 # based on STI library for LOVE2D
 def draw_iso(x,y, pos):
-    # moved to main.py for precalculating
+    # moved to constants for precalculating
     # isometric
     # offset_x = constants.CAMERA_OFFSET
     # hw = constants.HALF_TILE_WIDTH
