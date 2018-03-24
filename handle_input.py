@@ -110,9 +110,11 @@ def game_handle_mouse_input(key):
 
         return "mouse_click"
 
+# TODO: implement vi-keys as an option (note: it requires moving 'log' to some other key)
 def game_key_move(key):
     KEY_TO_DIR = {
-        'UP': (0, -1), 'DOWN': (0, 1), 'LEFT': (-1, 0), 'RIGHT': (1, 0)
+        'UP': (0, -1), 'DOWN': (0, 1), 'LEFT': (-1, 0), 'RIGHT': (1, 0),
+        'HOME': (-1,-1), 'PAGEUP': (1,-1), 'PAGEDOWN': (-1,1), 'END': (1,1)
     }
 
     if PLAYER.creature.move(KEY_TO_DIR[key][0], KEY_TO_DIR[key][1], game_vars.level.current_map):
@@ -130,6 +132,14 @@ def game_player_turn_input(key):
         return game_key_move('LEFT')
     if key == blt.TK_RIGHT:
         return game_key_move('RIGHT')
+    if key == blt.TK_HOME:
+        return game_key_move('HOME')
+    if key == blt.TK_PAGEUP:
+        return game_key_move('PAGEUP')
+    if key == blt.TK_PAGEDOWN:
+        return game_key_move('PAGEDOWN')
+    if key == blt.TK_END:
+        return game_key_move('END')
 
     if key == blt.TK_PERIOD and blt.check(blt.TK_SHIFT):
         if game_vars.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS):  # .stairs:
