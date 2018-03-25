@@ -93,7 +93,7 @@ class obj_Actor(object):
             else:
                 return self.name
 
-    def draw(self, fov_map, render_pos):
+    def draw(self, fov_map):
         is_visible = libtcod.map_is_in_fov(fov_map, self.x, self.y)
 
         self.visible = is_visible
@@ -102,7 +102,7 @@ class obj_Actor(object):
 
 
         if self.visible or draw_item:
-            tile_x, tile_y = draw_iso(self.x,self.y, render_pos) #this is the top(?) corner of our tile
+            tile_x, tile_y = draw_iso(self.x,self.y, constants.RENDER_POSITIONS) #this is the top(?) corner of our tile
             # this works for ASCII mode
             #blt.put_ext(tile_x, tile_y, 0, blt.state(blt.TK_CELL_HEIGHT), self.char)
 
