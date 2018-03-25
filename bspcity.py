@@ -6,7 +6,7 @@ from map_common import Rect, print_map_string, room_desc, convert_walls, debug_p
 from tile_lookups import TileTypes, get_index
 
 class BspCityGenerator(object):
-    def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms, render_positions, seed,
+    def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms, seed,
                  wall=False, debug=False):
         self.map_width = map_width
         self.map_height = map_height
@@ -16,7 +16,6 @@ class BspCityGenerator(object):
         self.wall = wall
         self._map = []
         self.debug = debug
-        self.render_positions = render_positions
         self.seed = seed
 
         # seed
@@ -207,9 +206,7 @@ if __name__ == '__main__':
     test_attempts = 3
     for i in range(test_attempts):
         map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
-                                  False,
-                                   #render_pos,
-                                  2, True)
+                                  False, 2, True)
         gen_map = map_gen.generate_map()
         current_map, map_desc = gen_map[0], gen_map[1]
         print_map_string(current_map)

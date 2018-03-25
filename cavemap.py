@@ -10,7 +10,7 @@ from tile_lookups import TileTypes, get_index
 # implementation from https://github.com/AtTheMatinee/dungeon-generation
 class CaveGenerator(object):
 
-    def __init__(self, map_width, map_height, render_positions, seed, debug):
+    def __init__(self, map_width, map_height, seed, debug):
         self._map = []
         self.caves = []
 
@@ -29,7 +29,6 @@ class CaveGenerator(object):
 
         # debugging
         self.debug = debug
-        self.render_positions = render_positions
         self.seed = seed
 
         # seed

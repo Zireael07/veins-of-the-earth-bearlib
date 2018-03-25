@@ -5,7 +5,7 @@ from map_common import Rect, print_map_string, convert_to_box_drawing, convert_w
 from tile_lookups import TileTypes, get_index
 
 class BspMapGenerator(object):
-    def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms, render_positions, seed, debug):
+    def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms, seed, debug=False):
         self.map_width = map_width
         self.map_height = map_height
         self.min_room_size = min_room_size
@@ -13,7 +13,6 @@ class BspMapGenerator(object):
         self.full_rooms = full_rooms
         self._map = []
         self.debug = debug
-        self.render_positions = render_positions
         self.seed = seed
 
         # seed
@@ -211,7 +210,7 @@ if __name__ == '__main__':
     test_attempts = 3
     for i in range(test_attempts):
         map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-                                  constants.FULL_ROOMS)
+                                  constants.FULL_ROOMS, 2)
         gen_map = map_gen.generate_map()
         current_map, map_desc = gen_map[0], gen_map[1]
         print_map_string(current_map)

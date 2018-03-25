@@ -410,7 +410,7 @@ def debug_pause(mapgen):
         unpaused = True
 
         # stub out the renderer
-        renderer.draw_map(mapgen._map, [[False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)], [], mapgen.render_positions, True)
+        renderer.draw_map(mapgen._map, [[False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)], [], constants.RENDER_POSITIONS, True)
 
         # redraw and wait for input
         blt.refresh()
