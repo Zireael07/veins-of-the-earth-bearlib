@@ -711,7 +711,7 @@ def input_menu(header, width):
 
     blt.refresh()
     # present the root console to the player and wait for a key-press
-    blt.set('input: filter = [keyboard]')
+    blt.set('input: filter = [0123456789, enter, backspace]')
     while True:
         # take input
         string = blt.read_str(menu_x, y, input_str, 10)
