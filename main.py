@@ -238,9 +238,9 @@ def death_player(player):
 def draw_game(x,y):
     # don't draw map and NPCs if sleeping
     if not PLAYER.creature.player.resting:
-        renderer.draw_map(game_vars.level.current_map, game_vars.level.current_explored, game_vars.fov_map, constants.RENDER_POSITIONS, constants.DEBUG)
+        renderer.draw_map(game_vars.level.current_map, game_vars.level.current_explored, game_vars.fov_map, constants.DEBUG)
 
-        renderer.draw_mouseover(x, y, constants.RENDER_POSITIONS)
+        renderer.draw_mouseover(x, y)
 
         #blt.color("white")
         blt.color(4294967295)

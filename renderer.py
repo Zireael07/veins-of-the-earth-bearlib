@@ -60,7 +60,7 @@ def pix_to_iso(x,y):
     return int(iso_x), int(iso_y)
 
 
-def draw_map(map_draw, map_explored, fov_map, render_positions, debug=False):
+def draw_map(map_draw, map_explored, fov_map, debug=False):
     #width = constants.MAP_WIDTH
     #height = constants.MAP_HEIGHT
     #debug = constants.DEBUG
@@ -69,6 +69,7 @@ def draw_map(map_draw, map_explored, fov_map, render_positions, debug=False):
     width_end = CAMERA.get_width_end()
     height_start = CAMERA.get_height_start()
     height_end = CAMERA.get_height_end()
+    render_pos = constants.RENDER_POSITIONS
 
     #for x in range(width_start, width_end):
     #    for y in range(height_start, height_end):
@@ -87,7 +88,7 @@ def draw_map(map_draw, map_explored, fov_map, render_positions, debug=False):
                 # tile_x = x * constants.TILE_WIDTH
                 # tile_y = y * constants.TILE_HEIGHT
 
-                tile_x, tile_y = draw_iso(x, y, render_positions)
+                tile_x, tile_y = draw_iso(x, y,render_pos)
 
                 blt.put(tile_x, tile_y, get_char(map_draw[x][y]))
 
@@ -102,16 +103,16 @@ def draw_map(map_draw, map_explored, fov_map, render_positions, debug=False):
             # tile_x = x*constants.TILE_WIDTH
             # tile_y = y*constants.TILE_HEIGHT
 
-            tile_x, tile_y = draw_iso(x, y, render_positions)
+            tile_x, tile_y = draw_iso(x, y, render_pos)
 
             blt.put(tile_x, tile_y, get_char(map_draw[x][y]))
         #elif map_explored[x][y]:  # map_draw[x][y].explored:
 
 
-def draw_mouseover(x,y, render_pos):
+def draw_mouseover(x,y):
     tile_x, tile_y = pix_to_iso(x, y)
     if 0 < tile_x < constants.MAP_WIDTH and 0 < tile_y < constants.MAP_HEIGHT:
-        draw_x, draw_y = draw_iso(tile_x, tile_y, render_pos)
+        draw_x, draw_y = draw_iso(tile_x, tile_y, constants.RENDER_POSITIONS)
         blt.color("light yellow")
         blt.put(draw_x, draw_y, 0x2317)
 
