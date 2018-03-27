@@ -151,11 +151,12 @@ def draw_bar(x, y, total_width, name, value, maximum, bar_color, bg_color, label
 
 # GUI
 # based on https://github.com/FirstAidKitten/Roguelike-Sandbox
-def create_window(x, y, w, h, title=None, border=True):
+def create_window(x, y, w, h, title=None, border=True, layer=1):
     # test
     blt.composition(True)
 
-    blt.layer(1)
+    blt.layer(layer)
+    #blt.layer(1)
 
     # fill the background
     blt.color("black")
@@ -192,7 +193,7 @@ def create_window(x, y, w, h, title=None, border=True):
 
     blt.composition(True)
 
-def options_menu(header, options, width, title=None):
+def options_menu(header, options, width, title=None, layer=1):
     #GAME.fov_recompute = True
 
     menu_x = int((120 - width) / 2)
@@ -204,10 +205,12 @@ def options_menu(header, options, width, title=None):
 
     menu_h = int(header_height + 1 + 26)
     menu_y = int((50 - menu_h) / 2)
+    # offset for menus on further layers
+    if layer > 1:
+        menu_y = menu_y + layer
 
     # create a window
-
-    create_window(menu_x, menu_y, width, menu_h, title)
+    create_window(menu_x, menu_y, width, menu_h, title, True, layer)
 
 
     blt.puts(menu_x, menu_y, header)

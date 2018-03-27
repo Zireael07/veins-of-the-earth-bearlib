@@ -320,10 +320,9 @@ def inventory_menu(header, player):
 
 
 def item_actions_menu(item):
-    blt.clear()
     options = ["Use/wear", "Drop"]
 
-    index = renderer.options_menu(item.display_name(), options, 20, "Item actions")
+    index = renderer.options_menu(item.display_name(), options, 20, "Item actions", 2)
 
     if index is None:
         return None
