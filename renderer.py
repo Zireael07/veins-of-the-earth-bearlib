@@ -10,6 +10,7 @@ from tile_lookups import get_char
 
 import constants
 from equipment_slots import EquipmentSlots
+import game_vars
 
 def initialize_camera(camera):
     global CAMERA
@@ -522,7 +523,18 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
 
     letter_index = ord('a')
 
+    # draw paperdoll
+    blt.layer(2)
+    blt.put(x, y, game_vars.player.char)
+
+    for obj in game_vars.player.container.equipped_items:
+        blt.put(x, y, obj.item.paperdoll)
+
+    x = menu_x + 10
+    #y = menu_y + 6
+
     # draw equipped items
+    blt.layer(1)
     # reverse mapping of a custom enum is a dict that we can iterate on
     for slot in EquipmentSlots.reverse_mapping:
         name = str(EquipmentSlots.reverse_mapping[slot]).lower()
