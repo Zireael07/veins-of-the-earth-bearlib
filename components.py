@@ -120,7 +120,8 @@ class obj_Actor(object):
             if self.creature and self.creature.player:
                 # paperdoll
                 for obj in self.container.equipped_items:
-                    blt.put_ext(tile_x, tile_y, 0, 2, obj.item.paperdoll)
+                    if hasattr(obj.item, 'paperdoll'):
+                        blt.put_ext(tile_x, tile_y, 0, 2, obj.item.paperdoll)
 
             #cartesian
             #blt.put_ext(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, 10, 10, self.char)

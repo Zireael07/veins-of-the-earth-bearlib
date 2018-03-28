@@ -94,8 +94,12 @@ def draw_map(map_draw, map_explored, fov_map, debug=False):
                 blt.put(tile_x, tile_y, get_char(map_draw[x][y]))
 
         else:
-            # blt.color("white")
-            blt.color(4294967295)
+            # tint light for the player
+            if game_vars.player is not None:
+                blt.color("lighter yellow")
+            #blt.color(4294967295)
+            else:
+                blt.color("white")
 
             map_explored[x][y] = True
             # map_draw[x][y].explored = True
@@ -531,7 +535,8 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
     blt.put(x, y, game_vars.player.char)
 
     for obj in game_vars.player.container.equipped_items:
-        blt.put(x, y, obj.item.paperdoll)
+        if hasattr(obj.item, 'paperdoll'):
+            blt.put(x, y, obj.item.paperdoll)
 
     x = menu_x + 10
     #y = menu_y + 6
