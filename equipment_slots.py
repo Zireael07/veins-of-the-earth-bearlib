@@ -8,4 +8,5 @@ def enum(*sequential, **named):
 
 
 EquipmentSlots = enum(MAIN_HAND=1,
-                  BODY=2)
+                  BODY=2,
+                  LITE=3    )

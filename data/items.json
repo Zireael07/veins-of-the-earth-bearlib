@@ -51,5 +51,11 @@
            "slot": "body",
            "type": "armor",
            "combat_armor": 4
+ },
+ "torch": {
+          "char": "0x2053",
+          "name": "torch",
+          "slot": "lite",
+          "type": "lite"
  }
 }
