@@ -497,7 +497,8 @@ def generate_player():
     start_equip = generators.generate_item("leather armor", x, y)
     start_equip.item.pick_up(player)
     start_equip.equipment.equip(player)
-
+    start_equip = generators.generate_item("torch", x, y)
+    start_equip.item.pick_up(player)
 
     return player
 
