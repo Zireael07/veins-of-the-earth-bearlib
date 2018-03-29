@@ -702,9 +702,9 @@ class com_Player(object):
     def rest_stop(self):
         self.resting = False
         # passage of time
-        GAME.calendar.turn += calendar.HOUR*8
+        game_vars.calendar_game.turn += calendar.HOUR*8
         events.notify(events.GameEvent("MESSAGE", ("Rested for " + str(self.rest_cnt) + " turns", "blue")))
-        events.notify(events.GameEvent("MESSAGE", (GAME.calendar.get_time_date(GAME.calendar.turn), "blue")))
+        events.notify(events.GameEvent("MESSAGE", (game_vars.calendar_game.get_time_date(game_vars.calendar_game.turn), "blue")))
 
     # money
     def add_money(self, values):
