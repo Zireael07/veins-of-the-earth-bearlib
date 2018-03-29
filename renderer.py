@@ -7,6 +7,7 @@ import time
 import itertools
 
 from tile_lookups import get_char
+from map_common import tiles_distance_to
 
 import constants
 from equipment_slots import EquipmentSlots
@@ -96,7 +97,8 @@ def draw_map(map_draw, map_explored, fov_map, debug=False):
         else:
             # tint light for the player
             if game_vars.player is not None:
-                blt.color("lighter yellow")
+                #blt.color("white")
+                blt.color(dimmer(x,y, (255, 255, 127)))
             #blt.color(4294967295)
             else:
                 blt.color("white")
@@ -112,6 +114,19 @@ def draw_map(map_draw, map_explored, fov_map, debug=False):
 
             blt.put(tile_x, tile_y, get_char(map_draw[x][y]))
         #elif map_explored[x][y]:  # map_draw[x][y].explored:
+
+dist_to_alpha = { 0: 0, 1:0, 2: 25, 3: 50, 4: 75, 5:90}
+def dimmer(x,y, color):
+    # paranoia
+    if not isinstance(color, tuple):
+        color = (255, 255, 255)
+
+
+    dist = tiles_distance_to((x, y), (game_vars.player.x, game_vars.player.y))
+    if dist in dist_to_alpha:
+        return blt.color_from_argb(a=255-dist_to_alpha[dist], r=color[0], g=color[1], b=color[2])
+    else:
+        return blt.color_from_argb(a=255, r=color[0], g=color[1], b=color[2])
 
 
 def draw_mouseover(x,y):
