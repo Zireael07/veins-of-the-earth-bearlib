@@ -125,6 +125,7 @@ class obj_Game(object):
 
         # force fov recompute
         game_vars.fov_recompute = True
+        game_vars.redraw = True
 
         CAMERA.start_update(PLAYER)
 
@@ -155,6 +156,7 @@ class obj_Game(object):
 
             # force fov recompute
             game_vars.fov_recompute = True
+            game_vars.redraw = True
 
             CAMERA.start_update(PLAYER)
 
@@ -235,15 +237,18 @@ def death_player(player):
 
 
 # the core drawing function
-def draw_game(x,y):
+def draw_game():
     # don't draw map and NPCs if sleeping
     if not PLAYER.creature.player.resting:
+        blt.layer(0)
         renderer.draw_map(game_vars.level.current_map, game_vars.level.current_explored, game_vars.fov_map, constants.DEBUG)
 
-        renderer.draw_mouseover(x, y)
+        # moved outside since it has to be redrawn always
+        #renderer.draw_mouseover(x, y)
 
         #blt.color("white")
         blt.color(4294967295)
+        blt.layer(2)
         width_start = CAMERA.get_width_start()
         width_end = CAMERA.get_width_end()
         height_start = CAMERA.get_height_start()
@@ -254,17 +259,9 @@ def draw_game(x,y):
                 if ent.y >= height_start and ent.y < height_end:
                     ent.draw(fov_map=game_vars.fov_map)
 
-        # on top of map
-        blt.layer(1)
-        renderer.draw_messages(game_vars.message_history)
-
     else:
         blt.puts(80,20, "SLEEPING...")
 
-    renderer.draw_bar(2, 15, 20, "HP", PLAYER.creature.hp, PLAYER.creature.max_hp, "red", "darker red", str(PLAYER.creature.hp))
-
-    renderer.draw_bar(2, 17, 20, "Nutrition", PLAYER.creature.player.nutrition, 500, "green", "darker green")
-    renderer.draw_bar(2, 19, 20, "Thirst", PLAYER.creature.player.thirst, 300, "blue", "darker blue")
 
 
     blt.color(4294967295)
@@ -296,9 +293,13 @@ def game_main_loop():
     1. fps
     2. mouse
     3. draw (including things dependent on mouse position)
+        * redraw hud always
+        * redraw map only if told to (basically only if moved)
     4. handle input
     5. process turns
     """
+
+    redraw = game_vars.redraw
     game_quit = False
 
     fps_update_time = time()
@@ -307,7 +308,19 @@ def game_main_loop():
     while not game_quit:
 
         #clear
-        blt.clear()
+        #blt.clear()
+        # hud layer
+        blt.layer(1)
+        blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+        # used by some menus
+        blt.layer(3)
+        blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+        blt.layer(4)
+        blt.clear_area(0,0, blt.state(blt.TK_WIDTH, blt.state(blt.TK_HEIGHT)))
+        blt.layer(5)
+        blt.clear_area(0,0,blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+
+        blt.layer(0)
 
         if not game_vars.game_state == GameStates.MAIN_MENU:
             blt.layer(1)
@@ -320,7 +333,29 @@ def game_main_loop():
             CAMERA.update()
 
             # draw
-            draw_game(pix_x, pix_y)
+            if game_vars.redraw:
+                blt.layer(0)
+                blt.clear_area(0,0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+                blt.layer(2)
+                blt.clear_area(0,0,blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+                draw_game()
+
+            # on top of map
+            blt.layer(1)
+            renderer.draw_messages(game_vars.message_history)
+
+            blt.layer(1)
+            renderer.draw_mouseover(pix_x, pix_y)
+            blt.color(4294967295)
+
+            # hud bars
+            blt.layer(1)
+            renderer.draw_bar(2, 15, 20, "HP", PLAYER.creature.hp, PLAYER.creature.max_hp, "red", "darker red",
+                              str(PLAYER.creature.hp))
+            renderer.draw_bar(2, 17, 20, "Nutrition", PLAYER.creature.player.nutrition, 500, "green", "darker green")
+            renderer.draw_bar(2, 19, 20, "Thirst", PLAYER.creature.player.thirst, 300, "blue", "darker blue")
+
+            blt.color(4294967295)
 
             # debug
             #on top of map
@@ -334,6 +369,7 @@ def game_main_loop():
             # this works on cells
             blt.layer(0)
             #mouse_picking(m_x, m_y)
+            blt.layer(1)
             # this works on map tiles
             hud.show_tile_desc(pix_x, pix_y, game_vars.fov_map)
             hud.show_npc_desc(pix_x, pix_y)
@@ -366,14 +402,18 @@ def game_main_loop():
             if player_action == "mouse_click":
                 print "Click"
 
-
-            if player_action is not None and player_action != "no-action" and player_action != "mouse_click":
+            if player_action is not None and player_action not in ["no-action", "mouse_click", "redraw"]:
+                game_vars.redraw = True
                # print("Advancing time")
                 # advance time
                 game_vars.calendar_game.turn += 1
 
                 #toggle game state to enemy turn
                 game_vars.game_state = GameStates.ENEMY_TURN
+            elif player_action == "redraw":
+                game_vars.redraw = True
+            else:
+                game_vars.redraw = False
 
             # enemy turn
             if game_vars.game_state == GameStates.ENEMY_TURN:

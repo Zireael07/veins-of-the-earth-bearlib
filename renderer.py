@@ -170,7 +170,7 @@ def draw_bar(x, y, total_width, name, value, maximum, bar_color, bg_color, label
 
 # GUI
 # based on https://github.com/FirstAidKitten/Roguelike-Sandbox
-def create_window(x, y, w, h, title=None, border=True, layer=1):
+def create_window(x, y, w, h, title=None, border=True, layer=3):
     # test
     blt.composition(True)
 
@@ -212,7 +212,7 @@ def create_window(x, y, w, h, title=None, border=True, layer=1):
 
     blt.composition(True)
 
-def options_menu(header, options, width, title=None, layer=1):
+def options_menu(header, options, width, title=None, layer=3):
     #GAME.fov_recompute = True
 
     menu_x = int((120 - width) / 2)
@@ -225,7 +225,7 @@ def options_menu(header, options, width, title=None, layer=1):
     menu_h = int(header_height + 1 + 26)
     menu_y = int((50 - menu_h) / 2)
     # offset for menus on further layers
-    if layer > 1:
+    if layer > 3:
         menu_y = menu_y + layer
 
     # create a window
@@ -517,7 +517,7 @@ def draw_box(x,y,w,h):
 
 
 def draw_slot(x,y,char=None):
-    blt.layer(2)
+    blt.layer(4)
     draw_box(x, y, 2, 1)
     if char is not None:
         blt.put_ext(x, y, 2, -1, char)
@@ -546,7 +546,7 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
     letter_index = ord('a')
 
     # draw paperdoll
-    blt.layer(2)
+    blt.layer(4)
     blt.put(x, y, game_vars.player.char)
 
     for obj in game_vars.player.container.equipped_items:
@@ -768,7 +768,7 @@ def wait(wait_time):
         blt.refresh()
 
 def draw_effect(x,y, tile, speed, clear, color="white"):
-    blt.layer(1)
+    blt.layer(3)
     blt.color(color)
     blt.put_ext(x, y, 0, 0, tile)
     wait(8*speed)
@@ -776,7 +776,7 @@ def draw_effect(x,y, tile, speed, clear, color="white"):
         blt.clear_area(x,y)
 
 def draw_effect_mult(x,y,tile, speed, color="white"):
-    blt.layer(1)
+    blt.layer(3)
     blt.color(color)
     blt.put_ext(x, y, 0, 0, tile)
 

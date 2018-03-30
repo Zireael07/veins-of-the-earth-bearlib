@@ -16,6 +16,7 @@ factions = []
 calendar_game = None
 
 fov_recompute = True
+redraw = True
 
 camera = None
 player = None

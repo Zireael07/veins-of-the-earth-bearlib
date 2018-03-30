@@ -705,6 +705,8 @@ class com_Player(object):
         game_vars.calendar_game.turn += calendar.HOUR*8
         events.notify(events.GameEvent("MESSAGE", ("Rested for " + str(self.rest_cnt) + " turns", "blue")))
         events.notify(events.GameEvent("MESSAGE", (game_vars.calendar_game.get_time_date(game_vars.calendar_game.turn), "blue")))
+        # force redraw
+        game_vars.redraw = True
 
     # money
     def add_money(self, values):

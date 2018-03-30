@@ -322,7 +322,7 @@ def inventory_menu(header, player):
 def item_actions_menu(item):
     options = ["Use/wear", "Drop"]
 
-    index = renderer.options_menu(item.display_name(), options, 20, "Item actions", 2)
+    index = renderer.options_menu(item.display_name(), options, 20, "Item actions", 5)
 
     if index is None:
         return None

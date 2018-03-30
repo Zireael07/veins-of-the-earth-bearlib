@@ -144,10 +144,14 @@ def game_player_turn_input(key):
     if key == blt.TK_PERIOD and blt.check(blt.TK_SHIFT):
         if game_vars.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS):  # .stairs:
             GAME.next_level()
+            return "redraw"
+            #return "player-moved"
 
     if key == blt.TK_COMMA and blt.check(blt.TK_SHIFT):
         if game_vars.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS_UP):
             GAME.previous_level(game_vars.level.gen_type)
+            return "redraw"
+            #return "player-moved"
 
     # items
     if key == blt.TK_G:
