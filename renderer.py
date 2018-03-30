@@ -258,6 +258,7 @@ def options_menu(header, options, width, title=None, layer=3):
             # did we click in the menu
             if click_x >= 0 and click_x <= width and click_y >= 0 and click_y < menu_h - header_height - 1:
                 print("Clicked, returning " + str(click_y))
+                blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
                 return click_y
 
         if blt.check(blt.TK_CHAR):
@@ -267,10 +268,12 @@ def options_menu(header, options, width, title=None, layer=3):
             if 0 <= index < len(options):
                 blt.set('input: filter = [keyboard, mouse+]')
                 blt.composition(True)
+                blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
                 return index
         else:
             blt.set('input: filter = [keyboard, mouse+]')
             blt.composition(True)
+            blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
             return None
 
 # this one doesn't show keys and conversely doesn't have the 26 entries limit
@@ -315,10 +318,12 @@ def menu_colored(header, options_tuples, width, title=None, menu_x=None, border=
             # did we click in the menu
             if click_x >= 0 and click_x <= width and click_y >= 0 and click_y < menu_h - header_height - 1:
                 print("Clicked, returning " + str(click_y))
+                blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
                 return click_y
         else:
             blt.set('input: filter = [keyboard, mouse+]')
             blt.composition(True)
+            blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
             return key
 
 # scrolling version of the above
@@ -488,6 +493,7 @@ def multicolumn_menu_inner(title, columns, width, col_width, current, values):
             if start <= index < start + len(columns[cur_column]):
                 blt.set('input: filter = [keyboard, mouse+]')
                 blt.composition(True)
+                blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
                 print("Pressed key " + str(index))
 
                 if index not in values:
@@ -498,6 +504,7 @@ def multicolumn_menu_inner(title, columns, width, col_width, current, values):
         else:
             blt.set('input: filter = [keyboard, mouse+]')
             blt.composition(True)
+            blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
             print("Pressed any key")
             return None
 
@@ -628,10 +635,22 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
             if 0 <= index < len(inventory):
                 blt.set('input: filter = [keyboard, mouse+]')
                 blt.composition(True)
+                blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+                blt.layer(4)
+                blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+                blt.layer(5)
+                blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+                #blt.layer(3)
                 return index
         else:
             blt.set('input: filter = [keyboard, mouse+]')
             blt.composition(True)
+            blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+            blt.layer(4)
+            blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+            blt.layer(5)
+            blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+            # blt.layer(3)
             return None
 
 def dialogue_menu(header, width, title, text, answers):
@@ -680,6 +699,7 @@ def dialogue_menu(header, width, title, text, answers):
             # did we click in the menu
             if click_x >= 0 and click_x <= width and click_y >= 0 and click_y < menu_h - header_height - 3:
                 print("Clicked, returning " + str(click_y))
+                blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
                 return click_y
 
         if blt.check(blt.TK_CHAR):
@@ -689,10 +709,12 @@ def dialogue_menu(header, width, title, text, answers):
             if 0 <= index < len(answers):
                 blt.set('input: filter = [keyboard, mouse+]')
                 blt.composition(True)
+                blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
                 return index
         else:
             blt.set('input: filter = [keyboard, mouse+]')
             blt.composition(True)
+            blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
             return None
 
 def text_menu(header, width, title, text):
@@ -724,6 +746,7 @@ def text_menu(header, width, title, text):
         key = blt.read()
         blt.set('input: filter = [keyboard, mouse+]')
         blt.composition(True)
+        blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
         return key
 
 def input_menu(header, width):
@@ -755,6 +778,7 @@ def input_menu(header, width):
         # after confirming with enter, the function returns the string
         if string > 0:
             blt.set('input: filter = [keyboard, mouse+]')
+            blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
             #print("Str" + str(string))
             return string
 

@@ -312,13 +312,13 @@ def game_main_loop():
         # hud layer
         blt.layer(1)
         blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
-        # used by some menus
+        # used by some menus and by effects
         blt.layer(3)
         blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
-        blt.layer(4)
-        blt.clear_area(0,0, blt.state(blt.TK_WIDTH, blt.state(blt.TK_HEIGHT)))
-        blt.layer(5)
-        blt.clear_area(0,0,blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+        #blt.layer(4)
+        #blt.clear_area(0,0, blt.state(blt.TK_WIDTH, blt.state(blt.TK_HEIGHT)))
+        #blt.layer(5)
+        #blt.clear_area(0,0,blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
 
         blt.layer(0)
 
