@@ -1,6 +1,7 @@
 from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 import math
+from timeit import default_timer
 
 from renderer import draw_iso, draw_blood_splatter, draw_shield, draw_floating_text
 from gui_menus import dialogue_window
@@ -391,7 +392,12 @@ class com_Creature(object):
         else:
             if self.owner.visible:
                 tile_x, tile_y = draw_iso(target.x, target.y, constants.RENDER_POSITIONS)
-                draw_shield(tile_x, tile_y)
+                #draw_shield(tile_x, tile_y)
+
+                shield = com_VisualEffect(self.owner.x, self.owner.y)
+                shield.tiles.append((0x2BC2, "white"))
+                game_vars.level.current_effects.append(shield)
+
                 events.notify(events.GameEvent("MESSAGE",
                                         (self.name_instance + " misses " + target.creature.name_instance + "!", "lighter blue")))
 
@@ -406,7 +412,15 @@ class com_Creature(object):
                 events.notify(events.GameEvent("MESSAGE",
                                             (self.name_instance + " blocks " + str(self.defense) + " damage", "gray")))
             tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, constants.RENDER_POSITIONS)
-            draw_blood_splatter(tile_x, tile_y, change)
+            #draw_blood_splatter(tile_x, tile_y, change)
+
+            splatter = com_VisualEffect(self.owner.x, self.owner.y)
+            splatter.tiles.append((0x2BC1, "red"))
+            for l in str(damage):
+                splatter.tiles.append((l, "white"))
+
+            game_vars.level.current_effects.append(splatter)
+
             events.notify(events.GameEvent("MESSAGE",
                                 (self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp), "white")))
 
@@ -609,6 +623,38 @@ class Effect(object):
         self.duration -= 1
         if self.duration <= 0:
             self.remove_effect()
+
+
+class com_VisualEffect(object):
+    def __init__(self, x, y, duration=3, tiles=None):
+        self.x = x
+        self.y = y
+        if tiles is None:
+            tiles = []
+        self.start_time = None
+        self.tiles = tiles
+        self.duration = duration
+        self.start_time = default_timer()
+
+
+    def set_tiles(self, tiles):
+        self.tiles = tiles
+
+    def draw(self):
+        tile_x, tile_y = draw_iso(self.x, self.y, constants.RENDER_POSITIONS)
+        blt.layer(3)
+        for tile, color in self.tiles:
+            blt.color(color)
+
+            blt.put_ext(tile_x, tile_y, 0, 0, tile)
+
+    def update(self):
+        # check duration
+        if default_timer() - self.start_time > self.duration:
+            self.render = False
+        else:
+            self.render = True
+
 
 class com_Player(object):
     def __init__(self):

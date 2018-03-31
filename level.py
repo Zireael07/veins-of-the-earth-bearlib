@@ -22,6 +22,7 @@ class obj_Level(object):
         self.current_explored = [[False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
 
         self.current_entities = []
+        self.current_effects = []
 
         # level gen
         self.gen_type = gen_type

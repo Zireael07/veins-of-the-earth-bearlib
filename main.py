@@ -340,6 +340,22 @@ def game_main_loop():
                 blt.clear_area(0,0,blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
                 draw_game()
 
+            # effects
+            width_start = CAMERA.get_width_start()
+            width_end = CAMERA.get_width_end()
+            height_start = CAMERA.get_height_start()
+            height_end = CAMERA.get_height_end()
+
+            for ef in game_vars.level.current_effects:
+
+                ef.update()
+                if not ef.render:
+                    game_vars.level.current_effects.remove(ef)
+
+                if ef.x >= width_start and ef.x < width_end:
+                    if ef.y >= height_start and ef.y < height_end:
+                        ef.draw()
+
             # on top of map
             blt.layer(1)
             renderer.draw_messages(game_vars.message_history)
