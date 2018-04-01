@@ -12,6 +12,7 @@ from map_common import tiles_distance_to
 import constants
 from equipment_slots import EquipmentSlots
 import game_vars
+import colors
 
 def initialize_camera(camera):
     global CAMERA
@@ -98,6 +99,7 @@ def draw_map(map_draw, map_explored, fov_map, debug=False):
             # tint light for the player
             if game_vars.player is not None:
                 #blt.color("white")
+                #print(str(blt.color_from_argb(165, 255, 255, 127)))
                 blt.color(dimmer(x,y, (255, 255, 127)))
             #blt.color(4294967295)
             else:
@@ -116,17 +118,25 @@ def draw_map(map_draw, map_explored, fov_map, debug=False):
         #elif map_explored[x][y]:  # map_draw[x][y].explored:
 
 dist_to_alpha = { 0: 0, 1:0, 2: 25, 3: 50, 4: 75, 5:90}
+
+dist_to_color = { 0: colors.light_yellow, 1: colors.light_yellow, 2: colors.light_yellow_dim1, 3: colors.light_yellow_dim2,
+                  4: colors.light_yellow_dim3, 5: colors.light_yellow_dim4
+                  }
+
 def dimmer(x,y, color):
     # paranoia
-    if not isinstance(color, tuple):
-        color = (255, 255, 255)
+    #if not isinstance(color, tuple):
+    #    color = (255, 255, 255)
 
 
     dist = tiles_distance_to((x, y), (game_vars.player.x, game_vars.player.y))
-    if dist in dist_to_alpha:
-        return blt.color_from_argb(a=255-dist_to_alpha[dist], r=color[0], g=color[1], b=color[2])
+    #if dist in dist_to_alpha:
+    if dist in dist_to_color:
+        return dist_to_color[dist]
+        #return blt.color_from_argb(a=255-dist_to_alpha[dist], r=color[0], g=color[1], b=color[2])
     else:
-        return blt.color_from_argb(a=255, r=color[0], g=color[1], b=color[2])
+        return dist_to_color[1]
+        #return blt.color_from_argb(a=255, r=color[0], g=color[1], b=color[2])
 
 
 def draw_mouseover(x,y):
