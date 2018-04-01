@@ -1,3 +1,5 @@
+# coding: utf8
+
 from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 import math
@@ -322,6 +324,20 @@ class com_Creature(object):
             else:
                 return None
 
+    def get_light_radius(self):
+        radius = 4
+        if self.player:
+            for obj in self.owner.container.equipped_items:
+                if obj.name == u"torch":
+                    radius = 4 #20 ft.
+                    break
+                else:
+                    radius = 1 # getting by with touch
+        else:
+            radius = 4
+
+        return radius
+
     @property
     def faction_color(self):
         return self.get_marker_color()
@@ -562,6 +578,9 @@ class com_Item(object):
     def use(self, actor):
         if self.owner.equipment:
             self.owner.equipment.toggle_equip(actor)
+            # force recompute FOV if torch
+            if self.owner.name == u"torch":
+                game_vars.fov_recompute = True
             return
         elif self.use_function is not None:
             # destroy after use, unless it was cancelled for some reason

@@ -36,7 +36,7 @@ class EnemyAI(AI):
         #if libtcod.map_is_in_fov(fov_map, self.owner.x, self.owner.y):
 
         #ai fov
-        libtcod.map_compute_fov(fov_map, self.owner.x, self.owner.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
+        libtcod.map_compute_fov(fov_map, self.owner.x, self.owner.y, self.owner.creature.get_light_radius(), constants.FOV_LIGHT_WALLS,
                                 constants.FOV_ALGO)
 
         # if not in fov
@@ -52,7 +52,7 @@ class NeutralAI(AI):
         # print("AI taking turn")
 
         # ai fov
-        libtcod.map_compute_fov(fov_map, self.owner.x, self.owner.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
+        libtcod.map_compute_fov(fov_map, self.owner.x, self.owner.y, self.owner.creature.get_light_radius(), constants.FOV_LIGHT_WALLS,
                                 constants.FOV_ALGO)
 
         # if not in fov

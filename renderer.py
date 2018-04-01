@@ -97,7 +97,7 @@ def draw_map(map_draw, map_explored, fov_map, debug=False):
 
         else:
             # tint light for the player
-            if game_vars.player is not None:
+            if game_vars.player is not None and game_vars.player.creature.get_light_radius() > 1:
                 #blt.color("white")
                 #print(str(blt.color_from_argb(165, 255, 255, 127)))
                 blt.color(dimmer(x,y, (255, 255, 127)))

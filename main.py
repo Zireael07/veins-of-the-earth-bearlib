@@ -105,8 +105,14 @@ class obj_Game(object):
     def map_calculate_fov():
         if game_vars.fov_recompute:
             game_vars.fov_recompute = False
-            libtcod.map_compute_fov(game_vars.fov_map, PLAYER.x, PLAYER.y, constants.LIGHT_RADIUS, constants.FOV_LIGHT_WALLS,
-                                    constants.FOV_ALGO)
+            radius = PLAYER.creature.get_light_radius()
+            if radius > 1:
+                libtcod.map_compute_fov(game_vars.fov_map, PLAYER.x, PLAYER.y, radius, constants.FOV_LIGHT_WALLS,
+                                        constants.FOV_ALGO)
+            # radius 1, we want to see in all directions, use a square fov instead of whatever is defined in constants
+            else:
+                libtcod.map_compute_fov(game_vars.fov_map, PLAYER.x, PLAYER.y, 1,
+                                        constants.FOV_LIGHT_WALLS, libtcod.FOV_PERMISSIVE_6)
     @staticmethod
     def new_level_set():
         # add player
