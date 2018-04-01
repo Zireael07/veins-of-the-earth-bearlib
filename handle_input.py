@@ -182,6 +182,7 @@ def game_player_turn_input(key):
                 # actions
                 if action == 0:
                     chosen_item.item.use(PLAYER)
+                    return "player-moved"
                 elif action == 1:
                     chosen_item.item.drop(PLAYER)
                     return "player-moved"

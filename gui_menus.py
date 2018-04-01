@@ -31,8 +31,9 @@ def character_sheet_menu(header, player):
                 ("WIS: " + str(player.creature.wisdom), "white"), ("CHA: " + str(player.creature.charisma), "white"),
                ("Attack: " + str(player.creature.melee), "white"), ("Dodge: " + str(player.creature.dodge), "white"),
                ("Armor defense: " + str(player.creature.defense) + str(player.creature.defense_str), "white"),
+               ("Light: " + str(player.creature.get_light_radius()), "yellow"),
                ("", "white"),
-               (str(game_vars.calendar.get_time_date(game_vars.calendar.turn)), "yellow")
+               (str(game_vars.calendar_game.get_time_date(game_vars.calendar_game.turn)), "yellow")
                ]
 
     for m in player.creature.player.money:
