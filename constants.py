@@ -32,10 +32,14 @@ RENDER_POSITIONS = [[iso_pos(x, y) for y in range(0, MAP_HEIGHT)] for x in range
 
 
 
-#FOV
+#FOV (used by both player and AI)
 FOV_ALGO = libtcod.FOV_BASIC
+#FOV_ALGO = libtcod.FOV_DIAMOND
+#FOV_ALGO = libtcod.FOV_SHADOW
+# this is the only one that gives equal radius in all directions (square and not circular)
+#FOV_ALGO = libtcod.FOV_PERMISSIVE_6
 FOV_LIGHT_WALLS = True
-LIGHT_RADIUS = 4
+#LIGHT_RADIUS = 4
 
 NUM_MESSAGES = 4
 
