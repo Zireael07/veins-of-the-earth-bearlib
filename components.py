@@ -3,7 +3,7 @@ import libtcodpy as libtcod
 import math
 from timeit import default_timer
 
-from renderer import draw_iso, draw_blood_splatter, draw_shield, draw_floating_text
+from renderer import draw_iso, draw_floating_text
 from gui_menus import dialogue_window
 from tile_lookups import get_block_path
 import calendar
@@ -391,10 +391,7 @@ class com_Creature(object):
                 target.creature.take_damage(damage)
         else:
             if self.owner.visible:
-                tile_x, tile_y = draw_iso(target.x, target.y, constants.RENDER_POSITIONS)
-                #draw_shield(tile_x, tile_y)
-
-                shield = com_VisualEffect(self.owner.x, self.owner.y)
+                shield = com_VisualEffect(target.x, target.y)
                 shield.tiles.append((0x2BC2, "white"))
                 game_vars.level.current_effects.append(shield)
 
