@@ -20,7 +20,7 @@ import main_menu
 import calendar
 import events
 import game_vars
-
+import square_fov
 
 from map_common import map_make_fov, map_check_for_creature, find_free_grid_in_range
 
@@ -37,8 +37,9 @@ class obj_Game(object):
             game_vars.level = level.obj_Level(data[0], init_seed, False)  # level.obj_Level("city")
             game_vars.level.generate_items_monsters(data[1], data[2])
 
-            game_vars.fov_map = map_make_fov(game_vars.level.current_map)
-            game_vars.ai_fov_map = map_make_fov(game_vars.level.current_map)
+            game_vars.fov_map = map_make_fov(game_vars.level.current_map, False)
+
+            game_vars.ai_fov_map = map_make_fov(game_vars.level.current_map, True)
 
             game_vars.calendar_game = calendar.obj_Calendar(1371)
 
@@ -106,13 +107,17 @@ class obj_Game(object):
         if game_vars.fov_recompute:
             game_vars.fov_recompute = False
             radius = PLAYER.creature.get_light_radius()
-            if radius > 1:
-                libtcod.map_compute_fov(game_vars.fov_map, PLAYER.x, PLAYER.y, radius, constants.FOV_LIGHT_WALLS,
-                                        constants.FOV_ALGO)
-            # radius 1, we want to see in all directions, use a square fov instead of whatever is defined in constants
-            else:
-                libtcod.map_compute_fov(game_vars.fov_map, PLAYER.x, PLAYER.y, 1,
-                                        constants.FOV_LIGHT_WALLS, libtcod.FOV_PERMISSIVE_6)
+
+            square_fov.recompute_fov(game_vars.fov_map, PLAYER.x, PLAYER.y, radius)
+
+
+            # if radius > 1:
+            #     libtcod.map_compute_fov(game_vars.fov_map, PLAYER.x, PLAYER.y, radius, constants.FOV_LIGHT_WALLS,
+            #                             constants.FOV_ALGO)
+            # # radius 1, we want to see in all directions, use a square fov instead of whatever is defined in constants
+            # else:
+            #     libtcod.map_compute_fov(game_vars.fov_map, PLAYER.x, PLAYER.y, 1,
+            #                             constants.FOV_LIGHT_WALLS, libtcod.FOV_PERMISSIVE_6)
     @staticmethod
     def new_level_set():
         # add player
@@ -125,9 +130,9 @@ class obj_Game(object):
         game_vars.level.generate_items_monsters()
 
         # global FOV_MAP
-        game_vars.fov_map = map_make_fov(game_vars.level.current_map)
+        game_vars.fov_map = map_make_fov(game_vars.level.current_map, False)
         # global AI_FOV_MAP
-        game_vars.ai_fov_map = map_make_fov(game_vars.level.current_map)
+        game_vars.ai_fov_map = map_make_fov(game_vars.level.current_map, True)
 
         # force fov recompute
         game_vars.fov_recompute = True
