@@ -33,8 +33,10 @@ RENDER_POSITIONS = [[iso_pos(x, y) for y in range(0, MAP_HEIGHT)] for x in range
 
 
 #FOV (used by both player and AI)
+# 'basic' is called circular raycasting in source
 FOV_ALGO = libtcod.FOV_BASIC
 #FOV_ALGO = libtcod.FOV_DIAMOND
+# libtcod's shadowcasting gives circular fov, not square
 #FOV_ALGO = libtcod.FOV_SHADOW
 # this is the only one that gives equal radius in all directions (square and not circular)
 #FOV_ALGO = libtcod.FOV_PERMISSIVE_6
