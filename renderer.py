@@ -80,7 +80,8 @@ def draw_map(map_draw, map_explored, fov_map, debug=False):
         if debug:
             is_visible = True
         else:
-            is_visible = libtcod.map_is_in_fov(fov_map, x, y)
+            #is_visible = libtcod.map_is_in_fov(fov_map, x, y)
+            is_visible = fov_map.lit(x,y)
 
         if not is_visible:
 

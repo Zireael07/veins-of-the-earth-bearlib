@@ -8,6 +8,7 @@ from operator import itemgetter
 import constants
 from tile_lookups import TileTypes, get_map_str, get_index, get_block_path
 import game_vars
+import square_fov
 
 # used by the debugging
 from bearlibterminal import terminal as blt
@@ -89,17 +90,18 @@ class Rect(object):
         self.x2 = x + max(0,w)
         self.y2 = y + max(0,h)
 
-def map_make_fov(incoming_map):
-    #global FOV_MAP
-    #FOV_MAP = libtcod.map_new(constants.MAP_WIDTH, constants.MAP_HEIGHT)
-    fov_map = libtcod.map_new(constants.MAP_WIDTH, constants.MAP_HEIGHT)
+def map_make_fov(incoming_map, doryen):
+    if doryen:
+        fov_map = libtcod.map_new(constants.MAP_WIDTH, constants.MAP_HEIGHT)
 
-    for y in range(constants.MAP_HEIGHT):
-        for x in range(constants.MAP_WIDTH):
-            #libtcod.map_set_properties(FOV_MAP, x,y,
-            libtcod.map_set_properties(fov_map, x,y,
-                                        not get_block_path(incoming_map[x][y]),
-                                       not get_block_path(incoming_map[x][y]))
+        for y in range(constants.MAP_HEIGHT):
+            for x in range(constants.MAP_WIDTH):
+                libtcod.map_set_properties(fov_map, x,y,
+                                            not get_block_path(incoming_map[x][y]),
+                                           not get_block_path(incoming_map[x][y]))
+
+    else:
+        fov_map = square_fov.init_fov_map(incoming_map)
 
     return fov_map
 
@@ -362,7 +364,8 @@ def get_map_desc(x,y, fov_map, explored_map, desc_map=None):
         print("No descriptions")
         return
 
-    is_visible = libtcod.map_is_in_fov(fov_map, x, y)
+    #is_visible = libtcod.map_is_in_fov(fov_map, x, y)
+    is_visible = fov_map.lit(x,y)
 
     #print("Getting map desc for " + str(x) + " " + str(y))
     #print("Desc map is " + str(desc_map[x][y]))

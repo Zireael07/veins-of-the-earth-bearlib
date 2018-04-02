@@ -97,7 +97,8 @@ class obj_Actor(object):
                 return self.name
 
     def draw(self, fov_map):
-        is_visible = libtcod.map_is_in_fov(fov_map, self.x, self.y)
+        #is_visible = libtcod.map_is_in_fov(fov_map, self.x, self.y)
+        is_visible = fov_map.lit(self.x,self.y)
 
         self.visible = is_visible
 
