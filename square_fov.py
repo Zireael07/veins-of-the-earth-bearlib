@@ -29,9 +29,8 @@ class FOVMap(object):
 
     def lit(self, x, y):
         # prevent crash
-        if x > self.width or y > self.height:
+        if x >= self.width or y >= self.height:
             return False
-
 
         return self.light[x][y] == self.flag
 
