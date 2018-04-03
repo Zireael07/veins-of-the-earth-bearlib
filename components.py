@@ -130,6 +130,16 @@ class obj_Actor(object):
             #cartesian
             #blt.put_ext(self.x*constants.TILE_WIDTH, self.y*constants.TILE_HEIGHT, 10, 10, self.char)
 
+    def draw_label(self):
+        draw_item = self.item and game_vars.level.current_explored[self.x][self.y]
+
+        if self.visible or draw_item:
+            tile_x, tile_y = draw_iso(self.x, self.y, constants.RENDER_POSITIONS)
+            blt.color(4294967295)
+            blt.layer(4)
+            blt.puts(tile_x-int(len(self.name)/2), tile_y-2, self.name)
+            blt.layer(0)
+
     def send_to_back(self):
         game_vars.level.current_entities.remove(self)
         game_vars.level.current_entities.insert(0, self)

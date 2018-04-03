@@ -233,6 +233,16 @@ def game_handle_keys():
         # constants.DEBUG = True
         gui_menus.debug_menu(PLAYER)
 
+    # Toggle labels
+    if key == blt.TK_TAB:
+        #print("Toggle labels")
+        game_vars.labels = not game_vars.labels
+        print("Labels: " + " " + str(game_vars.labels))
+        blt.layer(4)
+        blt.clear_area(0, 0, blt.state(blt.TK_WIDTH, blt.state(blt.TK_HEIGHT)))
+        if game_vars.labels:
+            return "redraw"
+
 
     #print("Mouse: " + str(game_handle_mouse_input(key)))
     game_handle_mouse_input(key)

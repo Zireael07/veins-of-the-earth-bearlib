@@ -17,6 +17,7 @@ calendar_game = None
 
 fov_recompute = True
 redraw = True
+labels = False
 
 camera = None
 player = None

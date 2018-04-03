@@ -265,10 +265,15 @@ def draw_game():
         height_start = CAMERA.get_height_start()
         height_end = CAMERA.get_height_end()
 
+        labels = game_vars.labels
+
         for ent in game_vars.level.current_entities:
             if ent.x >= width_start and ent.x < width_end:
                 if ent.y >= height_start and ent.y < height_end:
                     ent.draw(fov_map=game_vars.fov_map)
+
+                    if labels:
+                        ent.draw_label()
 
     else:
         blt.puts(80,20, "SLEEPING...")
@@ -326,6 +331,7 @@ def game_main_loop():
         # used by some menus and by effects
         blt.layer(3)
         blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+
         #blt.layer(4)
         #blt.clear_area(0,0, blt.state(blt.TK_WIDTH, blt.state(blt.TK_HEIGHT)))
         #blt.layer(5)
@@ -349,6 +355,9 @@ def game_main_loop():
                 blt.clear_area(0,0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
                 blt.layer(2)
                 blt.clear_area(0,0,blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+                if game_vars.labels:
+                    blt.layer(4)
+                    blt.clear_area(0, 0, blt.state(blt.TK_WIDTH, blt.state(blt.TK_HEIGHT)))
                 draw_game()
 
             # effects
