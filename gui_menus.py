@@ -62,7 +62,7 @@ def log_menu(header, begin, end):
     if ret is not None:
         # if we are getting input, keep showing the log
         while ret is not None:
-            if end + ret > len(game_vars.message_history) - 1:
+            if end + ret > len(game_vars.message_history)-1:
                 # do nothing if we'd scroll past the end
                 end = end
                 begin = begin
@@ -70,7 +70,7 @@ def log_menu(header, begin, end):
                 # if we would scroll past 0, do nothing
                 begin = 0
                 end = end
-            if begin + ret > 0 and end + ret <= len(game_vars.message_history) - 1:
+            if begin + ret >= 0 and end + ret <= len(game_vars.message_history)-1:
                 # print("Proceed normally")
                 begin = begin + ret
                 end = end + ret

@@ -345,7 +345,7 @@ def menu_colored_scrolled(header, options_tuples, width, begin, end, title=None)
 
     header_height = 2
 
-    menu_h = int(header_height + 1 + 26)
+    menu_h = int(header_height + 1 + 27) #26 options plus one for the border
     menu_y = int((50 - menu_h) / 2)
 
     # calculate
@@ -360,7 +360,7 @@ def menu_colored_scrolled(header, options_tuples, width, begin, end, title=None)
     # print all the options
     y = menu_y + header_height + 1
     # for option in options_tuples:
-    for i in range(begin, end):
+    for i in range(begin, end+1):
         option = options_tuples[i]
         string = "[color=" + str(option[1]) + "] " + option[0]
 
