@@ -12,7 +12,6 @@ import square_fov
 
 # used by the debugging
 from bearlibterminal import terminal as blt
-import renderer
 
 room_desc = [
     "",
@@ -413,6 +412,8 @@ def debug_pause(mapgen):
         unpaused = True
 
         # stub out the renderer
+        # to prevent import loop
+        import renderer
         renderer.draw_map(mapgen._map, [[False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)], [], True)
 
         # redraw and wait for input
