@@ -10,7 +10,7 @@ from tile_lookups import TileTypes, get_index
 # implementation from https://github.com/AtTheMatinee/dungeon-generation
 class CaveGenerator(object):
 
-    def __init__(self, map_width, map_height, seed, debug):
+    def __init__(self, map_width, map_height, seed, debug=False):
         self._map = []
         self.caves = []
 
@@ -281,9 +281,9 @@ if __name__ == '__main__':
     max_tiles = constants.MAP_WIDTH*constants.MAP_WIDTH
 
     for i in range(test_attempts):
-        map_gen = CaveGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT)
+        map_gen = CaveGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, 2)
 
-        current_map = map_gen.generate_map()
+        current_map = map_gen.generate_map()[0]
         # catch degenerate instances
         while len(get_free_tiles(current_map)) < max_tiles/8: #50:
             print("Free tiles check failed, regenerating...")
