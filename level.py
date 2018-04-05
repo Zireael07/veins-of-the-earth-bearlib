@@ -10,9 +10,9 @@ from map_common import get_free_tiles, random_free_tile, random_free_tile_away, 
 from tile_lookups import TileTypes, get_index
 import item_uses
 
-from bspmap import BspMapGenerator
-from bspcity import BspCityGenerator
-from cavemap import CaveGenerator
+from map.bspmap import BspMapGenerator
+from map.bspcity import BspCityGenerator
+from map.cavemap import CaveGenerator
 
 
 class obj_Level(object):
