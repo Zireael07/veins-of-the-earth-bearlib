@@ -245,16 +245,17 @@ def map_check_for_creature(x, y, exclude_entity = None):
             if target:
                 return target
 
-
+# this is for debugging
 def print_map_string(inc_map):
     for y in range(len(inc_map)):
         for x in range(len(inc_map[0])):
             #sys.stdout.write(tile_types[inc_map[x][y]].map_str)
             sys.stdout.write(get_map_str(inc_map[x][y]))
         
-        #our row ended, add a line break
-        sys.stdout.write("\n")
+        #our row ended, print line number and add a line break
+        sys.stdout.write(str(y) + "\n")
 
+# this is for map overview
 def get_map_string(inc_map):
     list_str = []
     for y in range(len(inc_map)):
