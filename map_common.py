@@ -247,6 +247,12 @@ def map_check_for_creature(x, y, exclude_entity = None):
 
 # this is for debugging
 def print_map_string(inc_map):
+    # write columns
+    for x in range(len(inc_map[0])):
+        sys.stdout.write(str(x%10)) #just the units digit to save space
+    # line break
+    sys.stdout.write("\n")
+
     for y in range(len(inc_map)):
         for x in range(len(inc_map[0])):
             #sys.stdout.write(tile_types[inc_map[x][y]].map_str)
