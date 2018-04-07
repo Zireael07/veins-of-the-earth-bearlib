@@ -42,7 +42,23 @@ class NoiseMapGenerator(object):
                 else:
                     self._map[x][y] = get_index(TileTypes.FLOOR)
 
-    def generate_heightmap(self):
+    def print_heightmap_values(self, hmap):
+        hvs = [[0 for _ in range(self.map_height)] for _ in range(self.map_width)]
+        for x in range(self.map_width):
+            for y in range(self.map_height):
+                hm_v = libtcod.heightmap_get_value(hmap, x, y)
+                hvs[x][y] = hm_v
+
+        print(str(hvs))
+
+
+    def generate_heightmap(self, bounded=True):
+        """
+        Generate a map from two layers of noise
+        :param bounded: If true, changing map size keeps the same pattern, just scaled;
+         otherwise the pattern is continued
+        :return:
+        """
         print("Hurst: " + str(self.hurst) + " lacuna: " + str(self.lacunarity))
 
         hm = libtcod.heightmap_new(self.map_width, self.map_height)
@@ -52,10 +68,38 @@ class NoiseMapGenerator(object):
         noise = libtcod.noise_new(2, self.hurst, self.lacunarity, self.rnd)
         #print(str(noise))
 
-        libtcod.heightmap_add_fbm(hm1, noise, self.noise_zoom, self.noise_zoom, 0.0, 0.0, self.noise_octaves, 0.0, 1.0)
-        #libtcod.heightmap_add_fbm(hm, noise, 1.5, 1.5, 1.2, 1.2, self.noise_octaves, 0.5, 0.5)
+        if bounded:
+            # The noise coordinate for map cell (x,y) are (x + addx)*mulx / width , (y + addy)*muly / height.
+            libtcod.heightmap_add_fbm(hm1, noise, self.noise_zoom, self.noise_zoom, 0.0, 0.0, self.noise_octaves, 0.0, 1.0)
 
-        libtcod.heightmap_add_fbm(hm2, noise, self.noise_zoom * 2, self.noise_zoom * 2, 0.0, 0.0, self.noise_octaves / 2, 0.0, 1.0)
+            # debugging
+            self.print_heightmap_values(hm1)
+
+            #libtcod.heightmap_add_fbm(hm, noise, 1.5, 1.5, 1.2, 1.2, self.noise_octaves, 0.5, 0.5)
+
+            libtcod.heightmap_add_fbm(hm2, noise, self.noise_zoom * 2, self.noise_zoom * 2, 0.0, 0.0, self.noise_octaves / 2, 0.0, 1.0)
+
+            # debugging
+            self.print_heightmap_values(hm2)
+
+        else:
+            zoom = self.noise_zoom * 2
+            noise_div = (30 * 1.0)
+            for x in range(self.map_width):
+                for y in range(self.map_height):
+                    noise_val = libtcod.noise_get_fbm(noise, [x/noise_div,y/noise_div], self.noise_octaves)
+                    # test (replicates the bounded logic above)
+                    #noise_val = libtcod.noise_get_fbm(noise, [(x/(self.map_width *1.0)), (y/(self.map_height *1.0))], self.noise_octaves)
+                    libtcod.heightmap_set_value(hm1, x,y, noise_val)
+
+                    noise_val = libtcod.noise_get_fbm(noise, [(zoom * x)/noise_div, (zoom * y)/noise_div], self.noise_octaves/2)
+                    # test (replicates the bounded logic above)
+                    #noise_val = libtcod.noise_get_fbm(noise, [float((zoom * x)/(self.map_width *1.0)), float((zoom*y)/(self.map_height * 1.0))], self.noise_octaves/2)
+                    libtcod.heightmap_set_value(hm2, x,y, noise_val)
+
+            # debugging
+            self.print_heightmap_values(hm1)
+            self.print_heightmap_values(hm2)
 
         #libtcod.heightmap_add_hm(hm1, hm2, hm)
 
@@ -74,13 +118,14 @@ class NoiseMapGenerator(object):
 
         return heightmap
 
-    def generate_map(self):
+
+    def generate_map(self, bounded=True):
         print("Mapgen seed: " + str(self.seed))
 
         self._map = self._generate_empty_map()
         #print(str(self._map))
 
-        self.heightmap = self.generate_heightmap()
+        self.heightmap = self.generate_heightmap(bounded)
 
         self.generate_map_from_heightmap()
 

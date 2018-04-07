@@ -151,32 +151,36 @@ if __name__ == '__main__':
 
     # default
     map_gen = MainMapGenerator(40, 40, 2)
-    current_map = map_gen.generate_map()
+    current_map = map_gen.generate_map(False)
 
     print_map_string(current_map)
+
+
+    map_gen = MainMapGenerator(60,60,2)
+    current_map = map_gen.generate_map(False)
+
+    print_map_string(current_map)
+
+
 
     # test special stuff
-    floors = map_gen.num_unbroken_floors_columns()
-    # pretty
-    #print(map_gen.unbroken_floors_columns_print(floors))
-
-    # get tidy rows from the floors 2d array
-    row_floors = map_gen.unbroken_floors_columns_get(floors)
-    #print(row_floors)
-
-    largest = map_gen.largest_area_rects(row_floors)
-
-
-    # big_rect = largest[1]
-    # index = largest[2]
-
-    big_rect = largest[1][0]
-    index = largest[1][1]
-
-
-    print("Largest: " + "index: " + str(index) + " x " + str(big_rect.x1) + ",y " + str(big_rect.y1) + " to x: " +
-           str(big_rect.x2) + ",y: " + str(big_rect.y2))
-
-    map_gen.fill_big_rect(big_rect)
-
-    print_map_string(current_map)
+    # floors = map_gen.num_unbroken_floors_columns()
+    # # pretty
+    # #print(map_gen.unbroken_floors_columns_print(floors))
+    #
+    # # get tidy rows from the floors 2d array
+    # row_floors = map_gen.unbroken_floors_columns_get(floors)
+    # #print(row_floors)
+    #
+    # largest = map_gen.largest_area_rects(row_floors)
+    #
+    # big_rect = largest[1][0]
+    # index = largest[1][1]
+    #
+    #
+    # print("Largest: " + "index: " + str(index) + " x " + str(big_rect.x1) + ",y " + str(big_rect.y1) + " to x: " +
+    #        str(big_rect.x2) + ",y: " + str(big_rect.y2))
+    #
+    # map_gen.fill_big_rect(big_rect)
+    #
+    # print_map_string(current_map)
