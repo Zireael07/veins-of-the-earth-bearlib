@@ -59,7 +59,7 @@ class MainMapGenerator(NoiseMapGenerator):
         Return: rect (x,y,w,h), area
         """
 
-        print("Histogram: " + str(histogram) + " " + str(len(histogram)))
+        #print("Histogram: " + str(histogram) + " " + str(len(histogram)))
 
         stack = []
         top = lambda: stack[-1]
@@ -93,7 +93,7 @@ class MainMapGenerator(NoiseMapGenerator):
 
             rects.append((start, height, width, area))
 
-        print("Max area: " + str(max_area))
+        print("Max area in line: " + str(max_area))
 
         # added by yours truly, TODO: can we do this somewhere earlier?
         for r in rects:
@@ -121,14 +121,14 @@ class MainMapGenerator(NoiseMapGenerator):
         rects = []
         # reverse order
         for y in range(len(floors) - 1, -1, -1):
-            print("Index: " + str(y))
+            #print("Index: " + str(y))
             #print(str(floors[y]))
 
             rect = self.max_rectangle_area(floors[y], y)
 
             # discard all rects whose area is 0 or 1 (TODO: why do they happen?)
             if rect[0] > 1:
-                 print("Appending: " + str(rect))
+                 #print("Appending: " + str(rect))
                  rects.append(rect)
 
         # this sorts in ascending order
@@ -155,7 +155,7 @@ if __name__ == '__main__':
 
     print_map_string(current_map)
 
-
+    # bigger
     map_gen = MainMapGenerator(60,60,2)
     current_map = map_gen.generate_map(False)
 
@@ -164,23 +164,24 @@ if __name__ == '__main__':
 
 
     # test special stuff
-    # floors = map_gen.num_unbroken_floors_columns()
-    # # pretty
-    # #print(map_gen.unbroken_floors_columns_print(floors))
-    #
-    # # get tidy rows from the floors 2d array
-    # row_floors = map_gen.unbroken_floors_columns_get(floors)
-    # #print(row_floors)
-    #
-    # largest = map_gen.largest_area_rects(row_floors)
-    #
-    # big_rect = largest[1][0]
-    # index = largest[1][1]
-    #
-    #
-    # print("Largest: " + "index: " + str(index) + " x " + str(big_rect.x1) + ",y " + str(big_rect.y1) + " to x: " +
-    #        str(big_rect.x2) + ",y: " + str(big_rect.y2))
-    #
-    # map_gen.fill_big_rect(big_rect)
-    #
-    # print_map_string(current_map)
+    floors = map_gen.num_unbroken_floors_columns()
+    # pretty
+    #print(map_gen.unbroken_floors_columns_print(floors))
+
+    # get tidy rows from the floors 2d array
+    row_floors = map_gen.unbroken_floors_columns_get(floors)
+    #print(row_floors)
+
+    largest = map_gen.largest_area_rects(row_floors)
+
+    big_rect = largest[1][0]
+    index = largest[1][1]
+
+
+    print("Largest: " + "index: " + str(index) + " x " + str(big_rect.x1) + ",y " + str(big_rect.y1) +
+            " w: " + str(big_rect.x2-big_rect.x1) + " h: " + str(big_rect.y2-big_rect.y1))
+          #" to x: " + str(big_rect.x2) + ",y: " + str(big_rect.y2))
+
+    map_gen.fill_big_rect(big_rect)
+
+    print_map_string(current_map)
