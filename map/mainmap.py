@@ -165,11 +165,10 @@ def test_rectangle_detection():
           " w: " + str(w) + " h: " + str(h))
     # " to x: " + str(big_rect.x2) + ",y: " + str(big_rect.y2))
 
-    map_gen.fill_big_rect(big_rect)
+    #map_gen.fill_big_rect(big_rect)
+    #print_map_string(current_map[0])
 
-    print_map_string(current_map)
-
-    return w, h
+    return w, h, big_rect.x1, big_rect.y1
 
 # testing
 def test_twenty_seeds():
@@ -182,7 +181,7 @@ def test_twenty_seeds():
         print_map_string(current_map)
 
         # test special stuff
-        w, h = test_rectangle_detection()
+        w, h, _, _ = test_rectangle_detection()
 
         test_results.append((i, (w, h)))
 
@@ -209,16 +208,30 @@ if __name__ == '__main__':
     map_gen = MainMapGenerator(40, 40, 2)
     current_map = map_gen.generate_map(False)
 
-    print_map_string(current_map)
+    print_map_string(current_map[0])
 
-    test_rectangle_detection()
+    w,h,x,y = test_rectangle_detection()
+    # print_map_string(current_map)
 
     # bigger
-    map_gen = MainMapGenerator(60, 60, 2)
-    current_map = map_gen.generate_map(False)
+    #map_gen = MainMapGenerator(60, 60, 2)
+    #current_map = map_gen.generate_map(False)
+    #print_map_string(current_map)
+    #test_rectangle_detection()
 
-    print_map_string(current_map)
+    # generate inner map
+    from bspcity import BspCityGenerator
+    import constants
+    inner_map_gen = BspCityGenerator(w,h,constants.ROOM_MIN_SIZE+2, 2, False, 2, False)
+    gen_map = inner_map_gen.generate_map()
+    inner_map, map_desc = gen_map[0], gen_map[1]
+    print_map_string(inner_map)
 
-    test_rectangle_detection()
+    # insert inner map
+    for i in range(len(inner_map)):
+        for j in range(len(inner_map[0])):
+            current_map[0][x+i][y+j] = inner_map[i][j]
+
+    print_map_string(current_map[0])
 
     #test_twenty_seeds()
