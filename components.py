@@ -717,11 +717,11 @@ class com_Player(object):
 
     def move_towards_autoexplore(self, target_x, target_y, inc_map):
         # Create a FOV map that has the dimensions of the map
-        fov = libtcod.map_new(constants.MAP_WIDTH, constants.MAP_HEIGHT)
+        fov = libtcod.map_new(len(inc_map), len(inc_map[0]))
 
         # Scan the current map each turn and set all the walls as unwalkable
-        for y1 in range(constants.MAP_HEIGHT):
-            for x1 in range(constants.MAP_WIDTH):
+        for y1 in range(len(inc_map[0])):
+            for x1 in range(len(inc_map)):
                 libtcod.map_set_properties(fov, x1, y1,
                                            not get_block_path(inc_map[x1][y1]),
                                            not get_block_path(inc_map[x1][y1]))

@@ -93,8 +93,8 @@ def map_make_fov(incoming_map, doryen):
     if doryen:
         fov_map = libtcod.map_new(constants.MAP_WIDTH, constants.MAP_HEIGHT)
 
-        for y in range(constants.MAP_HEIGHT):
-            for x in range(constants.MAP_WIDTH):
+        for y in range(len(incoming_map[0])):
+            for x in range(len(incoming_map)):
                 libtcod.map_set_properties(fov_map, x,y,
                                             not get_block_path(incoming_map[x][y]),
                                            not get_block_path(incoming_map[x][y]))
@@ -377,16 +377,16 @@ def get_map_desc(x,y, fov_map, explored_map, desc_map=None):
     #print("Desc map is " + str(desc_map[x][y]))
 
     if is_visible:
-        if x >= 0 and x < constants.MAP_WIDTH: #len(desc_map):
-            if y >= 0 and y < constants.MAP_HEIGHT: #len(desc_map[0):
+        if x >= 0 and x < len(desc_map):
+            if y >= 0 and y < len(desc_map[0]):
                 return room_desc[desc_map[x][y]]
             else:
                 return ""
         else:
             return ""
     else:
-        if x >= 0 and x < constants.MAP_WIDTH: #len(desc_map):
-            if y >= 0 and y < constants.MAP_HEIGHT: #len(desc_map[0):
+        if x >= 0 and x < len(desc_map):
+            if y >= 0 and y < len(desc_map[0]):
                 if explored_map[x][y]:
                     return room_desc[desc_map[x][y]]
                 else:
@@ -421,7 +421,7 @@ def debug_pause(mapgen):
         # stub out the renderer
         # to prevent import loop
         import renderer
-        renderer.draw_map(mapgen._map, [[False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)], [], True)
+        renderer.draw_map(mapgen._map, [[False for _ in range(0, len(mapgen._map[0]))] for _ in range(0, len(mapgen._map))], [], True)
 
         # redraw and wait for input
         blt.refresh()
