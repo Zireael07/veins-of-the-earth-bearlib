@@ -458,11 +458,11 @@ class com_Creature(object):
             events.notify(events.GameEvent("MESSAGE", (self.name_instance + " heals!", "lighter red")))
 
     def move(self, dx, dy, game_map):
-        if self.owner.y + dy >= len(game_map) or self.owner.y + dy < 0:
+        if self.owner.y + dy >= len(game_map[0]) or self.owner.y + dy < 0:
             print("Tried to move out of map")
             return
 
-        if self.owner.x + dx >= len(game_map[0]) or self.owner.x + dx < 0:
+        if self.owner.x + dx >= len(game_map) or self.owner.x + dx < 0:
             print("Tried to move out of map")
             return
 

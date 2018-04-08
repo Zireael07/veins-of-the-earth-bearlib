@@ -106,8 +106,8 @@ def map_make_fov(incoming_map, doryen):
 
 def get_free_tiles(inc_map):
     free_tiles = []
-    for y in range(len(inc_map)):
-        for x in range(len(inc_map[0])):
+    for y in range(len(inc_map[0])):
+        for x in range(len(inc_map)):
             if not get_block_path(inc_map[x][y]):
                 free_tiles.append((x,y))
     return free_tiles
@@ -248,13 +248,13 @@ def map_check_for_creature(x, y, exclude_entity = None):
 # this is for debugging
 def print_map_string(inc_map):
     # write columns
-    for x in range(len(inc_map[0])):
+    for x in range(len(inc_map)):
         sys.stdout.write(str(x%10)) #just the units digit to save space
     # line break
     sys.stdout.write("\n")
 
-    for y in range(len(inc_map)):
-        for x in range(len(inc_map[0])):
+    for y in range(len(inc_map[0])):
+        for x in range(len(inc_map)):
             #sys.stdout.write(tile_types[inc_map[x][y]].map_str)
             sys.stdout.write(get_map_str(inc_map[x][y]))
         
@@ -264,8 +264,8 @@ def print_map_string(inc_map):
 # this is for map overview
 def get_map_string(inc_map):
     list_str = []
-    for y in range(len(inc_map)):
-        for x in range(len(inc_map[0])):
+    for y in range(len(inc_map[0])):
+        for x in range(len(inc_map)):
             #list.append(tile_types[inc_map[x][y]].map_str)
             list_str.append(get_map_str(inc_map[x][y]))
 
@@ -277,20 +277,16 @@ def get_map_string(inc_map):
     return string
 
 def convert_to_box_drawing(inc_map):
-    for y in range(len(inc_map)):
-        for x in range(len(inc_map[0])):
+    for y in range(len(inc_map[0])):
+        for x in range(len(inc_map)):
             tile_str = get_map_str(inc_map[x][y])
 
             #print("Checking neighbors of " + str(x) + " " + str(y))
 
             north = y-1 > 0 and get_map_str(inc_map[x+Directions.NORTH[0]][y+Directions.NORTH[1]]) == "#"
-            #north = y-1 > 0 and get_map_str(inc_map[x][y-1]) == "#"
-            south = y+1 < len(inc_map) and get_map_str(inc_map[x+Directions.SOUTH[0]][y+Directions.SOUTH[1]]) == "#"
-            #south = y+1 < len(inc_map) and get_map_str(inc_map[x][y+1]) == "#"
+            south = y+1 < len(inc_map[0]) and get_map_str(inc_map[x+Directions.SOUTH[0]][y+Directions.SOUTH[1]]) == "#"
             west = x-1 > 0 and get_map_str(inc_map[x+Directions.WEST[0]][y+Directions.WEST[1]]) == "#"
-            #west = x-1 > 0 and get_map_str(inc_map[x-1][y]) == "#"
-            east = x+1 < len(inc_map[0]) and get_map_str(inc_map[x+Directions.EAST[0]][y+Directions.EAST[1]]) == "#"
-            #east = x+1 < len(inc_map[0]) and get_map_str(inc_map[x+1][y]) == "#"
+            east = x+1 < len(inc_map) and get_map_str(inc_map[x+Directions.EAST[0]][y+Directions.EAST[1]]) == "#"
 
             # if north:
             #     print("Wall to the north")
@@ -327,19 +323,19 @@ def convert_to_box_drawing(inc_map):
         sys.stdout.write("\n")
 
 def convert_walls(inc_map):
-    for y in range(len(inc_map)):
-        for x in range(len(inc_map[0])):
+    for y in range(len(inc_map[0])):
+        for x in range(len(inc_map)):
             tile_str = get_map_str(inc_map[x][y])
 
             #print("Checking neighbors of " + str(x) + " " + str(y))
 
             north = y-1 > 0 and get_map_str(inc_map[x+Directions.NORTH[0]][y+Directions.NORTH[1]]) == "#"
             #north = y-1 > 0 and get_map_str(inc_map[x][y-1]) == "#"
-            south = y+1 < len(inc_map) and get_map_str(inc_map[x+Directions.SOUTH[0]][y+Directions.SOUTH[1]]) == "#"
+            south = y+1 < len(inc_map[0]) and get_map_str(inc_map[x+Directions.SOUTH[0]][y+Directions.SOUTH[1]]) == "#"
             #south = y+1 < len(inc_map) and get_map_str(inc_map[x][y+1]) == "#"
             west = x-1 > 0 and get_map_str(inc_map[x+Directions.WEST[0]][y+Directions.WEST[1]]) == "#"
             #west = x-1 > 0 and get_map_str(inc_map[x-1][y]) == "#"
-            east = x+1 < len(inc_map[0]) and get_map_str(inc_map[x+Directions.EAST[0]][y+Directions.EAST[1]]) == "#"
+            east = x+1 < len(inc_map) and get_map_str(inc_map[x+Directions.EAST[0]][y+Directions.EAST[1]]) == "#"
             #east = x+1 < len(inc_map[0]) and get_map_str(inc_map[x+1][y]) == "#"
 
             if tile_str == "#":
@@ -357,8 +353,8 @@ def convert_walls(inc_map):
 
 def print_converted(inc_map):
     new_map = convert_walls(inc_map)
-    for y in range(len(new_map)):
-        for x in range (len(new_map[0])):
+    for y in range(len(new_map[0])):
+        for x in range (len(new_map)):
             sys.stdout.write(get_map_str(inc_map[x][y]))
 
         # our row ended, add a line break
@@ -397,8 +393,8 @@ def get_map_desc(x,y, fov_map, explored_map, desc_map=None):
 # desc is an int corresponding to the description
 def get_tiles_with_desc(desc_map, desc):
     filtered_tiles = []
-    for y in range(len(desc_map)):
-        for x in range(len(desc_map[0])):
+    for y in range(len(desc_map[0])):
+        for x in range(len(desc_map)):
             if desc_map[x][y] == desc:
                 filtered_tiles.append((x,y))
     return filtered_tiles
