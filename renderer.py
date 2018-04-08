@@ -69,9 +69,9 @@ def draw_map(map_draw, map_explored, fov_map, debug=False):
     #debug = constants.DEBUG
 
     width_start = CAMERA.get_width_start()
-    width_end = CAMERA.get_width_end()
+    width_end = CAMERA.get_width_end(map_draw)
     height_start = CAMERA.get_height_start()
-    height_end = CAMERA.get_height_end()
+    height_end = CAMERA.get_height_end(map_draw)
     render_pos = constants.RENDER_POSITIONS
 
     #for x in range(width_start, width_end):

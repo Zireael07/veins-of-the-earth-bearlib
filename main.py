@@ -218,11 +218,11 @@ class obj_Camera(object):
         else:
             return 0
 
-    def get_width_end(self):
-        if self.top_x + self.width <= constants.MAP_WIDTH:
+    def get_width_end(self, map_draw):
+        if self.top_x + self.width <= len(map_draw): #constants.MAP_WIDTH:
             return self.top_x + self.width
         else:
-            return constants.MAP_WIDTH
+            return len(map_draw) #constants.MAP_WIDTH
 
     def get_height_start(self):
         if self.top_y > 0:
@@ -230,11 +230,11 @@ class obj_Camera(object):
         else:
             return 0
 
-    def get_height_end(self):
-        if self.top_y + self.height <= constants.MAP_HEIGHT:
+    def get_height_end(self, map_draw):
+        if self.top_y + self.height <= len(map_draw[0]): #constants.MAP_HEIGHT:
             return self.top_y + self.height
         else:
-            return constants.MAP_HEIGHT
+            return len(map_draw[0]) #constants.MAP_HEIGHT
 
 def death_player(player):
     events.notify(events.GameEvent("MESSAGE", (player.creature.name_instance + " is dead!", "dark red")))
@@ -261,9 +261,9 @@ def draw_game():
         blt.color(4294967295)
         blt.layer(2)
         width_start = CAMERA.get_width_start()
-        width_end = CAMERA.get_width_end()
+        width_end = CAMERA.get_width_end(game_vars.level.current_map)
         height_start = CAMERA.get_height_start()
-        height_end = CAMERA.get_height_end()
+        height_end = CAMERA.get_height_end(game_vars.level.current_map)
 
         labels = game_vars.labels
 
@@ -362,9 +362,9 @@ def game_main_loop():
 
             # effects
             width_start = CAMERA.get_width_start()
-            width_end = CAMERA.get_width_end()
+            width_end = CAMERA.get_width_end(game_vars.level.current_map)
             height_start = CAMERA.get_height_start()
-            height_end = CAMERA.get_height_end()
+            height_end = CAMERA.get_height_end(game_vars.level.current_map)
 
             for ef in game_vars.level.current_effects:
 
