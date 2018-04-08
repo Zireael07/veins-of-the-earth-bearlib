@@ -43,8 +43,10 @@ class obj_Level(object):
         else:
             map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
                                       constants.FULL_ROOMS, seed, constants.DEBUG_MAP)
-
-        gen_map = map_gen.generate_map()
+        if gen_type == "main":
+            gen_map = map_gen.generate_map(False)
+        else:
+            gen_map = map_gen.generate_map()
 
         # catch degenerate instances
         if gen_type == "cavern":
@@ -52,6 +54,21 @@ class obj_Level(object):
             while len(get_free_tiles(gen_map[0])) < max_tiles / 8:  # 50:
                 print("Free tiles check failed, regenerating...")
                 gen_map = map_gen.generate_map()
+
+        # step 2 of main map
+        if gen_type == "main":
+            w, h, x, y = map_gen.test_rectangle_detection()
+
+            # generate inner map
+            inner_map_gen = BspCityGenerator(w, h, constants.ROOM_MIN_SIZE + 2, 2, False, 2, False)
+            gen_inner_map = inner_map_gen.generate_map()
+            inner_map, map_desc = gen_inner_map[0], gen_inner_map[1]
+            print_map_string(inner_map)
+
+            # insert inner map
+            for i in range(len(inner_map)):
+                for j in range(len(inner_map[0])):
+                    gen_map[0][x + i][y + j] = inner_map[i][j]
 
         if len(gen_map) > 1:
             self.current_map, self.map_desc = gen_map[0], gen_map[1]

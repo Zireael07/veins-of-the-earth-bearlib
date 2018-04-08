@@ -145,30 +145,30 @@ class MainMapGenerator(NoiseMapGenerator):
                     self._map[x][y] = get_index(TileTypes.CRATE)
 
 
-def test_rectangle_detection():
-    floors = map_gen.num_unbroken_floors_columns()
-    # pretty
-    # print(map_gen.unbroken_floors_columns_print(floors))
+    def test_rectangle_detection(self):
+        floors = self.num_unbroken_floors_columns()
+        # pretty
+        # print(map_gen.unbroken_floors_columns_print(floors))
 
-    # get tidy rows from the floors 2d array
-    row_floors = map_gen.unbroken_floors_columns_get(floors)
-    # print(row_floors)
+        # get tidy rows from the floors 2d array
+        row_floors = self.unbroken_floors_columns_get(floors)
+        # print(row_floors)
 
-    largest = map_gen.largest_area_rects(row_floors)
+        largest = self.largest_area_rects(row_floors)
 
-    big_rect = largest[1][0]
-    index = largest[1][1]
-    w = big_rect.x2 - big_rect.x1
-    h = big_rect.y2 - big_rect.y1
+        big_rect = largest[1][0]
+        index = largest[1][1]
+        w = big_rect.x2 - big_rect.x1
+        h = big_rect.y2 - big_rect.y1
 
-    print("Largest: " + "index: " + str(index) + " x " + str(big_rect.x1) + ",y " + str(big_rect.y1) +
-          " w: " + str(w) + " h: " + str(h))
-    # " to x: " + str(big_rect.x2) + ",y: " + str(big_rect.y2))
+        print("Largest: " + "index: " + str(index) + " x " + str(big_rect.x1) + ",y " + str(big_rect.y1) +
+              " w: " + str(w) + " h: " + str(h))
+        # " to x: " + str(big_rect.x2) + ",y: " + str(big_rect.y2))
 
-    #map_gen.fill_big_rect(big_rect)
-    #print_map_string(current_map[0])
+        #map_gen.fill_big_rect(big_rect)
+        #print_map_string(current_map[0])
 
-    return w, h, big_rect.x1, big_rect.y1
+        return w, h, big_rect.x1, big_rect.y1
 
 # testing
 def test_twenty_seeds():
@@ -178,10 +178,10 @@ def test_twenty_seeds():
         map_gen = MainMapGenerator(60, 60, i, lacunarity=6.0)
         current_map = map_gen.generate_map(False)
 
-        print_map_string(current_map)
+        print_map_string(current_map[0])
 
         # test special stuff
-        w, h, _, _ = test_rectangle_detection()
+        w, h, _, _ = map_gen.test_rectangle_detection()
 
         test_results.append((i, (w, h)))
 
@@ -210,7 +210,7 @@ if __name__ == '__main__':
 
     print_map_string(current_map[0])
 
-    w,h,x,y = test_rectangle_detection()
+    w,h,x,y = map_gen.test_rectangle_detection()
     # print_map_string(current_map)
 
     # bigger
