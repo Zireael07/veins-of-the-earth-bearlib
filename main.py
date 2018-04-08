@@ -34,8 +34,12 @@ class obj_Game(object):
         if not basic:
             game_vars.init_seed = self.initialize_seed(init_seed)
             data = level.load_level_data(constants.STARTING_MAP)
-            game_vars.level = level.obj_Level(data[0], init_seed, False)  # level.obj_Level("city")
-            game_vars.level.generate_items_monsters(data[1], data[2])
+            if data is not None:
+                game_vars.level = level.obj_Level(data[0], init_seed, False)
+                game_vars.level.generate_items_monsters(data[1], data[2])
+            else:
+                game_vars.level = level.obj_Level(constants.STARTING_MAP)
+                game_vars.level.generate_items_monsters(6)
 
             game_vars.fov_map = map_make_fov(game_vars.level.current_map, False)
 
