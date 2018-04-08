@@ -152,11 +152,12 @@ def distance_to(start, other):
     return math.sqrt(dx ** 2 + dy ** 2)
 
 def find_grid_in_range(dist, x, y):
+    level = game_vars.level.current_map
     print("Looking for grids in range " + str(dist) + " of " + str(x) + " " + str(y))
     coord_in_range = []
     for i in range(x-dist,x+dist+1):
         for j in range(y-dist, y+dist+1):
-            if i > 0 and i < constants.MAP_WIDTH and j > 0 and j < constants.MAP_HEIGHT:
+            if i > 0 and i < len(level) and j > 0 and j < len(level[0]):
                 distance = distance_to((x,y), (i,j))
                 coord_in_range.append((i, j, distance))
 
@@ -167,12 +168,17 @@ def find_grid_in_range(dist, x, y):
 
 def find_free_grid_in_range(dist, x, y):
     coords = find_grid_in_range(dist, x,y)
+    #print("Grids in range: " + str(coords))
     free = get_free_tiles(game_vars.level.current_map)
+    #print("Free tiles: " + str(free))
     out = []
 
     for c in coords:
+        #print("Checking coords" + str(c[0]) + str(c[1]))
         if (c[0], c[1]) in free:
-            if map_check_for_creature(c[0], c[1], game_vars) is None:
+            #print("Coords are free" + str(c[0]) + str(c[1]))
+            if map_check_for_creature(c[0], c[1]) is None:
+                #print("Appending free grid")
                 out.append((c[0], c[1]))
 
     return out

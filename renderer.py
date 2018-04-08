@@ -142,7 +142,7 @@ def dimmer(x,y, color):
 
 def draw_mouseover(x,y):
     tile_x, tile_y = pix_to_iso(x, y)
-    if 0 < tile_x < constants.MAP_WIDTH and 0 < tile_y < constants.MAP_HEIGHT:
+    if 0 <= tile_x < len(game_vars.level.current_map) and 0 <= tile_y < len(game_vars.level.current_map[0]):
         draw_x, draw_y = draw_iso(tile_x, tile_y, constants.RENDER_POSITIONS)
         blt.color("light yellow")
         blt.put(draw_x, draw_y, 0x2317)

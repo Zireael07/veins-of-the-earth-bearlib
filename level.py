@@ -18,9 +18,6 @@ from map.cavemap import CaveGenerator
 class obj_Level(object):
     def __init__(self, gen_type="dungeon", seed=10, starting_stairs=True):
         print("Level seed: " + str(seed))
-        # new way of storing explored info
-        self.current_explored = [[False for _ in range(0, constants.MAP_HEIGHT)] for _ in range(0, constants.MAP_WIDTH)]
-
         self.current_entities = []
         self.current_effects = []
 
@@ -31,7 +28,8 @@ class obj_Level(object):
             map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
                                   False, seed, constants.DEBUG_MAP)
         elif gen_type == "encampment":
-            map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
+            #map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
+            map_gen = BspCityGenerator(15, 11, constants.ROOM_MIN_SIZE+2, 2,
                                 False, seed, False, constants.DEBUG_MAP)
         elif gen_type == "city":
             map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
@@ -44,6 +42,7 @@ class obj_Level(object):
                                       constants.FULL_ROOMS, seed, constants.DEBUG_MAP)
 
         gen_map = map_gen.generate_map()
+
         # catch degenerate instances
         if gen_type == "cavern":
             max_tiles = constants.MAP_WIDTH * constants.MAP_WIDTH
@@ -54,13 +53,16 @@ class obj_Level(object):
         if len(gen_map) > 1:
             self.current_map, self.map_desc = gen_map[0], gen_map[1]
         else:
-            self.current_map, self.map_desc = gen_map[0], [[ 0 for _ in range(constants.MAP_HEIGHT)] for _ in range(constants.MAP_WIDTH)]
+            self.current_map, self.map_desc = gen_map[0], [[ 0 for _ in range(len(gen_map[0][0]))] for _ in range(len(gen_map[0]))]
         if len(gen_map) > 2:
             self.player_start_x, self.player_start_y = gen_map[2], gen_map[3]
         else:
             self.player_start_x, self.player_start_y = random_free_tile(self.current_map)
         if len(gen_map) > 4:
             self.rooms = gen_map[4]
+
+        # new way of storing explored info
+        self.current_explored = [[False for _ in range(0, len(self.current_map[0]))] for _ in range(0, len(self.current_map))]
 
         # place stairs
         if starting_stairs:

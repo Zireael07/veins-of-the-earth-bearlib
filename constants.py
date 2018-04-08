@@ -28,7 +28,8 @@ def iso_pos(x,y):
     tile_y = (x + y) * HALF_TILE_HEIGHT
     return tile_x, tile_y
 
-RENDER_POSITIONS = [[iso_pos(x, y) for y in range(0, MAP_HEIGHT)] for x in range(0, MAP_WIDTH)]
+# some maximum size
+RENDER_POSITIONS = [[iso_pos(x, y) for y in range(0, 70)] for x in range(0, 70)]
 
 
 
