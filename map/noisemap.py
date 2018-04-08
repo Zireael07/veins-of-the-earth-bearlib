@@ -129,7 +129,7 @@ class NoiseMapGenerator(object):
 
         self.generate_map_from_heightmap()
 
-        return self._map
+        return [self._map]
 
     def get_space_flood(self):
         for x in range(0, self.map_width):

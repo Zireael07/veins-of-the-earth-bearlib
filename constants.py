@@ -54,4 +54,4 @@ ITEMS_JSON_PATH = "data/items.json"
 
 # Debug map
 DEBUG_MAP = True
-STARTING_MAP = "city"
+STARTING_MAP = "main"

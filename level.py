@@ -13,6 +13,7 @@ import item_uses
 from map.bspmap import BspMapGenerator
 from map.bspcity import BspCityGenerator
 from map.cavemap import CaveGenerator
+from map.mainmap import MainMapGenerator
 
 
 class obj_Level(object):
@@ -36,6 +37,8 @@ class obj_Level(object):
                                 False, seed, True, constants.DEBUG_MAP)
         elif gen_type == "cavern":
             map_gen = CaveGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, seed, constants.DEBUG_MAP)
+        elif gen_type == "main":
+            map_gen = MainMapGenerator(40, 40, 2)
         # fallback
         else:
             map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
