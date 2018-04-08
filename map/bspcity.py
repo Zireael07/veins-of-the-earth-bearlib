@@ -114,13 +114,13 @@ class BspCityGenerator(object):
 
     def create_walls(self):
         # walls around the map
-        for x in range(constants.MAP_WIDTH):
+        for x in range(self.map_width):
             self._map[x][0] = get_index(TileTypes.WALL) #0  # .block_path = True
-            self._map[x][constants.MAP_WIDTH - 1] = get_index(TileTypes.WALL) #0  # .block_path = True
+            self._map[x][self.map_height - 1] = get_index(TileTypes.WALL) #0  # .block_path = True
 
-        for y in range(constants.MAP_HEIGHT):
+        for y in range(self.map_height):
             self._map[0][y] = get_index(TileTypes.WALL) #0  # .block_path = True
-            self._map[constants.MAP_HEIGHT - 1][y] = get_index(TileTypes.WALL) #0  # .block_path = True
+            self._map[self.map_width - 1][y] = get_index(TileTypes.WALL) #0  # .block_path = True
 
     def place_decor(self):
         for room in self._rooms:
@@ -202,11 +202,18 @@ class BspCityGenerator(object):
 
 if __name__ == '__main__':
 
-    #test map generation
-    test_attempts = 3
-    for i in range(test_attempts):
-        map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
-                                  False, 2, True)
-        gen_map = map_gen.generate_map()
-        current_map, map_desc = gen_map[0], gen_map[1]
-        print_map_string(current_map)
+    # #test map generation
+    # test_attempts = 3
+    # for i in range(test_attempts):
+    #     map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
+    #                               False, 2, True)
+    #     gen_map = map_gen.generate_map()
+    #     current_map, map_desc = gen_map[0], gen_map[1]
+    #     print_map_string(current_map)
+
+    map_gen = BspCityGenerator(15, 11, constants.ROOM_MIN_SIZE+2, 2, False, 2, True)
+    gen_map = map_gen.generate_map()
+    current_map, map_desc = gen_map[0], gen_map[1]
+
+
+    print_map_string(current_map)
