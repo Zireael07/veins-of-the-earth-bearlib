@@ -145,6 +145,62 @@ class MainMapGenerator(NoiseMapGenerator):
                     self._map[x][y] = get_index(TileTypes.CRATE)
 
 
+def test_rectangle_detection():
+    floors = map_gen.num_unbroken_floors_columns()
+    # pretty
+    # print(map_gen.unbroken_floors_columns_print(floors))
+
+    # get tidy rows from the floors 2d array
+    row_floors = map_gen.unbroken_floors_columns_get(floors)
+    # print(row_floors)
+
+    largest = map_gen.largest_area_rects(row_floors)
+
+    big_rect = largest[1][0]
+    index = largest[1][1]
+    w = big_rect.x2 - big_rect.x1
+    h = big_rect.y2 - big_rect.y1
+
+    print("Largest: " + "index: " + str(index) + " x " + str(big_rect.x1) + ",y " + str(big_rect.y1) +
+          " w: " + str(w) + " h: " + str(h))
+    # " to x: " + str(big_rect.x2) + ",y: " + str(big_rect.y2))
+
+    map_gen.fill_big_rect(big_rect)
+
+    print_map_string(current_map)
+
+    return w, h
+
+# testing
+def test_twenty_seeds():
+    test_results = []
+
+    for i in range(20):
+        map_gen = MainMapGenerator(60, 60, i, lacunarity=6.0)
+        current_map = map_gen.generate_map(False)
+
+        print_map_string(current_map)
+
+        # test special stuff
+        w, h = test_rectangle_detection()
+
+        test_results.append((i, (w, h)))
+
+    print(str(test_results))
+
+    sum_w = 0
+    sum_h = 0
+    for r in test_results:
+        sum_w += r[1][0]
+        sum_h += r[1][1]
+    average_w = sum_w / len(test_results)
+    average_h = sum_h / len(test_results)
+
+    print("Avg: w: " + str(average_w) + " h: " + str(average_h))
+
+
+
+
 if __name__ == '__main__':
 
     #test map generation
@@ -155,33 +211,14 @@ if __name__ == '__main__':
 
     print_map_string(current_map)
 
+    test_rectangle_detection()
+
     # bigger
-    map_gen = MainMapGenerator(60,60,2)
+    map_gen = MainMapGenerator(60, 60, 2)
     current_map = map_gen.generate_map(False)
 
     print_map_string(current_map)
 
+    test_rectangle_detection()
 
-
-    # test special stuff
-    floors = map_gen.num_unbroken_floors_columns()
-    # pretty
-    #print(map_gen.unbroken_floors_columns_print(floors))
-
-    # get tidy rows from the floors 2d array
-    row_floors = map_gen.unbroken_floors_columns_get(floors)
-    #print(row_floors)
-
-    largest = map_gen.largest_area_rects(row_floors)
-
-    big_rect = largest[1][0]
-    index = largest[1][1]
-
-
-    print("Largest: " + "index: " + str(index) + " x " + str(big_rect.x1) + ",y " + str(big_rect.y1) +
-            " w: " + str(big_rect.x2-big_rect.x1) + " h: " + str(big_rect.y2-big_rect.y1))
-          #" to x: " + str(big_rect.x2) + ",y: " + str(big_rect.y2))
-
-    map_gen.fill_big_rect(big_rect)
-
-    print_map_string(current_map)
+    #test_twenty_seeds()
