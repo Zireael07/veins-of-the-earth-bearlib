@@ -69,6 +69,7 @@ class obj_Level(object):
             for i in range(len(inner_map)):
                 for j in range(len(inner_map[0])):
                     gen_map[0][x + i][y + j] = inner_map[i][j]
+                    gen_map[1][x + i][y + j] = map_desc[i][j]
 
         if len(gen_map) > 1:
             self.current_map, self.map_desc = gen_map[0], gen_map[1]
