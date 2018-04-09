@@ -91,7 +91,7 @@ class Rect(object):
 
 def map_make_fov(incoming_map, doryen):
     if doryen:
-        fov_map = libtcod.map_new(constants.MAP_WIDTH, constants.MAP_HEIGHT)
+        fov_map = libtcod.map_new(len(incoming_map), len(incoming_map[0]))
 
         for y in range(len(incoming_map[0])):
             for x in range(len(incoming_map)):

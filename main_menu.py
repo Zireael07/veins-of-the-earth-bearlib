@@ -28,8 +28,8 @@ def main_menu(start_new_game):
         # handle FOV
         game_vars.fov_recompute = True
         # recreate the fov
-        game_vars.fov_map = map_make_fov(game_vars.level.current_map)
-        game_vars.ai_fov_map = map_make_fov(game_vars.level.current_map)
+        game_vars.fov_map = map_make_fov(game_vars.level.current_map, False)
+        game_vars.ai_fov_map = map_make_fov(game_vars.level.current_map, True)
 
         # patch in required stuff
         # init game for submodules
