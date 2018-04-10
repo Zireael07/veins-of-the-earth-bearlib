@@ -71,17 +71,23 @@ class obj_Level(object):
                     gen_map[0][x + i][y + j] = inner_map[i][j]
                     gen_map[1][x + i][y + j] = map_desc[i][j]
 
+            # keep start pos and poi from inner map
+            gen_map[2] = pl_start[0]+x, pl_start[1]+y
+            for p in poi:
+                gen_map[3].append((p[0]+x, p[1]+y))
+
         if len(gen_map) > 1:
             self.current_map, self.map_desc = gen_map[0], gen_map[1]
         else:
             self.current_map, self.map_desc = gen_map[0], [[ 0 for _ in range(len(gen_map[0][0]))] for _ in range(len(gen_map[0]))]
-        if len(gen_map) > 3:
+        if len(gen_map) > 2 and len(gen_map[2]) > 0:
             self.player_start_x, self.player_start_y = gen_map[2]
         else:
             self.player_start_x, self.player_start_y = random_free_tile(self.current_map)
-        if len(gen_map) > 4:
+        if len(gen_map) > 3:
             self.poi = gen_map[3]
-        if len(gen_map) > 5:
+            print("POI: " + str(self.poi))
+        if len(gen_map) > 4:
             self.rooms = gen_map[4]
 
         # new way of storing explored info
