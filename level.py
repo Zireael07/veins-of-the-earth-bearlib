@@ -76,11 +76,11 @@ class obj_Level(object):
         else:
             self.current_map, self.map_desc = gen_map[0], [[ 0 for _ in range(len(gen_map[0][0]))] for _ in range(len(gen_map[0]))]
         if len(gen_map) > 2:
-            self.player_start_x, self.player_start_y = gen_map[2], gen_map[3]
+            self.player_start_x, self.player_start_y = gen_map[2]
         else:
             self.player_start_x, self.player_start_y = random_free_tile(self.current_map)
-        if len(gen_map) > 4:
-            self.rooms = gen_map[4]
+        if len(gen_map) > 3:
+            self.rooms = gen_map[3]
 
         # new way of storing explored info
         self.current_explored = [[False for _ in range(0, len(self.current_map[0]))] for _ in range(0, len(self.current_map))]

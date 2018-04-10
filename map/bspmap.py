@@ -201,7 +201,7 @@ class BspMapGenerator(object):
         self.generate_room_desc()
 
         # TODO: generate monsters, items, etc.
-        return [self._map, self.map_desc, self._rooms_centers[0][0], self._rooms_centers[0][1], self._rooms]
+        return [self._map, self.map_desc, (self._rooms_centers[0][0], self._rooms_centers[0][1]), self._rooms]
 
 
 if __name__ == '__main__':
