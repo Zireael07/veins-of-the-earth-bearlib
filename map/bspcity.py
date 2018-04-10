@@ -172,6 +172,8 @@ class BspCityGenerator(object):
         stairs_x = self._rooms_centers[len(self._rooms_centers)-1][0]
         stairs_y = self._rooms_centers[len(self._rooms_centers)-1][1]
 
+        self.poi = [ c for c in self._rooms_centers if self._rooms_centers.index(c) < len(self._rooms_centers)-1 ]
+
         print("Stairs x :" + str(stairs_x) + " y: " +str(stairs_y))
 
         # city wall before doors
@@ -198,7 +200,7 @@ class BspCityGenerator(object):
         debug_pause(self)
 
         # TODO: generate monsters, items, etc.
-        return [self._map, self.map_desc, (self._rooms_centers[0][0], self._rooms_centers[0][1]), self._rooms]
+        return [self._map, self.map_desc, (self._rooms_centers[0][0], self._rooms_centers[0][1]), self.poi, self._rooms]
 
 if __name__ == '__main__':
 

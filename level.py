@@ -62,7 +62,7 @@ class obj_Level(object):
             # generate inner map
             inner_map_gen = BspCityGenerator(w, h, constants.ROOM_MIN_SIZE + 2, 2, False, 2, False)
             gen_inner_map = inner_map_gen.generate_map()
-            inner_map, map_desc = gen_inner_map[0], gen_inner_map[1]
+            inner_map, map_desc, pl_start, poi = gen_inner_map[0], gen_inner_map[1], gen_inner_map[2], gen_inner_map[3]
             print_map_string(inner_map)
 
             # insert inner map
@@ -75,12 +75,14 @@ class obj_Level(object):
             self.current_map, self.map_desc = gen_map[0], gen_map[1]
         else:
             self.current_map, self.map_desc = gen_map[0], [[ 0 for _ in range(len(gen_map[0][0]))] for _ in range(len(gen_map[0]))]
-        if len(gen_map) > 2:
+        if len(gen_map) > 3:
             self.player_start_x, self.player_start_y = gen_map[2]
         else:
             self.player_start_x, self.player_start_y = random_free_tile(self.current_map)
-        if len(gen_map) > 3:
-            self.rooms = gen_map[3]
+        if len(gen_map) > 4:
+            self.poi = gen_map[3]
+        if len(gen_map) > 5:
+            self.rooms = gen_map[4]
 
         # new way of storing explored info
         self.current_explored = [[False for _ in range(0, len(self.current_map[0]))] for _ in range(0, len(self.current_map))]

@@ -193,6 +193,8 @@ class BspMapGenerator(object):
 
         self._map[stairs_x][stairs_y] = get_index(TileTypes.STAIRS)#4 #.stairs = True
 
+        self.poi = self._rooms_centers
+
         self._map = convert_walls(self._map)
         debug_pause(self)
 
@@ -201,7 +203,7 @@ class BspMapGenerator(object):
         self.generate_room_desc()
 
         # TODO: generate monsters, items, etc.
-        return [self._map, self.map_desc, (self._rooms_centers[0][0], self._rooms_centers[0][1]), self._rooms]
+        return [self._map, self.map_desc, (self._rooms_centers[0][0], self._rooms_centers[0][1]), self.poi, self._rooms]
 
 
 if __name__ == '__main__':
