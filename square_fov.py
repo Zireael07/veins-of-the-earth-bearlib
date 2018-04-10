@@ -32,7 +32,12 @@ class FOVMap(object):
         if x >= self.width or y >= self.height:
             return False
 
-        return self.light[x][y] == self.flag
+        try:
+            return self.light[x][y] == self.flag
+        except:
+            # even more crash prevention
+            return False
+            #raise ValueError, "Error for " + str(x) + " "  + str(y)
 
     def set_lit(self, x, y):
         if 0 <= x < self.width and 0 <= y < self.height:
