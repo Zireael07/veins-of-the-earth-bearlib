@@ -38,7 +38,7 @@ class obj_Game(object):
                 game_vars.level = level.obj_Level(data[0], init_seed, False)
                 game_vars.level.generate_items_monsters(data[1], data[2])
             else:
-                game_vars.level = level.obj_Level(constants.STARTING_MAP)
+                game_vars.level = level.obj_Level(constants.STARTING_MAP, init_seed, False)
                 game_vars.level.generate_items_monsters(6)
 
             game_vars.fov_map = map_make_fov(game_vars.level.current_map, False)
