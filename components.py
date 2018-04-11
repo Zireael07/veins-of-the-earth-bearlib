@@ -100,7 +100,7 @@ class obj_Actor(object):
         #is_visible = libtcod.map_is_in_fov(fov_map, self.x, self.y)
         is_visible = fov_map.lit(self.x,self.y)
 
-        self.visible = is_visible
+        self.visible = is_visible or constants.DEBUG
 
         draw_item = self.item and game_vars.level.current_explored[self.x][self.y]
 
@@ -435,7 +435,7 @@ class com_Creature(object):
             if self.defense > 0:
                 events.notify(events.GameEvent("MESSAGE",
                                             (self.name_instance + " blocks " + str(self.defense) + " damage", "gray")))
-            tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, constants.RENDER_POSITIONS)
+            #tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, constants.RENDER_POSITIONS)
             #draw_blood_splatter(tile_x, tile_y, change)
 
             splatter = com_VisualEffect(self.owner.x, self.owner.y)
