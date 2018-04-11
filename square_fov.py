@@ -17,7 +17,7 @@ class FOVMap(object):
         self.tile_omap = tile_omap
         self.width, self.height = len(tile_omap), len(tile_omap[0])
         self.light = []
-        for i in range(self.width):
+        for _ in range(self.width):
             self.light.append([0] * self.height)
         self.flag = 0
 
@@ -34,7 +34,7 @@ class FOVMap(object):
 
         try:
             return self.light[x][y] == self.flag
-        except:
+        except ValueError:
             # even more crash prevention
             return False
             #raise ValueError, "Error for " + str(x) + " "  + str(y)

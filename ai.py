@@ -57,7 +57,8 @@ class AI(object):
 
         return distance
 
-    def consider_move(self, tx, ty, game_map):
+    @staticmethod
+    def consider_move(tx, ty, game_map):
         if tx >= len(game_map) or tx < 0:
             print("Not in bounds")
             return False
@@ -73,11 +74,11 @@ class AI(object):
         return True
 
     def consider_move_list(self, direction, game_map):
-        list = DIR_TO_LIST[direction]
+        list_try = DIR_TO_LIST[direction]
 
         ret = None
 
-        for d in list:
+        for d in list_try:
             print(str(self.owner.name) + " considering ..." + str(d))
             tx = self.owner.x + d[0]
             ty = self.owner.y + d[1]
@@ -104,9 +105,9 @@ class EnemyAI(AI):
         # if not in fov
         if not libtcod.map_is_in_fov(fov_map, player.x, player.y):
             random_int = libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1)
-            dir = direction_to(self.owner, (self.owner.x+random_int[0], self.owner.y+random_int[1]))
-            if dir is not Directions.CENTER:
-                cons = self.consider_move_list(dir, game_vars.level.current_map)
+            direct = direction_to(self.owner, (self.owner.x+random_int[0], self.owner.y+random_int[1]))
+            if direct is not Directions.CENTER:
+                cons = self.consider_move_list(direct, game_vars.level.current_map)
                 self.owner.creature.move_direction(cons, game_vars.level.current_map)
         else:
             print("Player in fov")
@@ -127,9 +128,9 @@ class NeutralAI(AI):
         # if not in fov
         if not libtcod.map_is_in_fov(fov_map, player.x, player.y):
             random_int = libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1)
-            dir = direction_to(self.owner, (self.owner.x + random_int[0], self.owner.y + random_int[1]))
-            if dir is not Directions.CENTER:
-                cons = self.consider_move_list(dir, game_vars.level.current_map)
+            direct = direction_to(self.owner, (self.owner.x + random_int[0], self.owner.y + random_int[1]))
+            if direct is not Directions.CENTER:
+                cons = self.consider_move_list(direct, game_vars.level.current_map)
                 self.owner.creature.move_direction(cons, game_vars.level.current_map)
         else:
             if not self.target:
