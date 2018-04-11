@@ -7,7 +7,6 @@ import game_loaders
 from map_common import map_make_fov
 
 import components
-import generators
 import renderer
 import hud
 import handle_input
@@ -34,7 +33,6 @@ def main_menu(start_new_game):
         # patch in required stuff
         # init game for submodules
         components.initialize_game(GAME)
-        #generators.initialize_game(GAME)
 
         # init camera for renderer
         renderer.initialize_camera(CAMERA)

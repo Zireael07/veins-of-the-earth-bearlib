@@ -293,7 +293,7 @@ def character_creation_menu(player):
 
         # step II - character stats
         blt.clear()
-        opt = character_stats_menu_outer(player)
+        character_stats_menu_outer(player)
 
         # welcome!
         blt.clear()

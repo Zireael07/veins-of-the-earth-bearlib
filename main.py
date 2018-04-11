@@ -319,7 +319,6 @@ def game_main_loop():
     5. process turns
     """
 
-    redraw = game_vars.redraw
     game_quit = False
 
     fps_update_time = time()
@@ -348,7 +347,7 @@ def game_main_loop():
             blt.puts(2,1, "[color=white]FPS: %d ms %.3f" % (fps_value, 1000/(fps_value * 1.0) if fps_value else 0) )
 
             #mouse
-            pix_x, pix_y, m_x, m_y = game_handle_mouse()
+            pix_x, pix_y, _, _ = game_handle_mouse()
 
             # camera
             CAMERA.update()
