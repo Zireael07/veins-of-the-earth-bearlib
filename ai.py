@@ -3,7 +3,7 @@ import math
 
 import constants
 from tile_lookups import get_block_path
-from map_common import random_free_tile_away
+from map_common import random_free_tile_away, direction_to, Directions
 import events
 import game_vars
 
@@ -12,6 +12,35 @@ import game_vars
     #print("[AI] initialized game")
 #    global GAME
 #    GAME = game
+
+# directions for AI to try in order
+EastDirs = [Directions.EAST, Directions.SOUTHEAST, Directions.NORTHEAST,
+            Directions.SOUTH, Directions.NORTH, Directions.NORTHWEST, Directions.SOUTHWEST, Directions.WEST ]
+WestDirs = [Directions.WEST, Directions.NORTHWEST, Directions.SOUTHWEST,
+            Directions.SOUTH, Directions.NORTH, Directions.NORTHEAST, Directions.SOUTHEAST, Directions.EAST ]
+NorthDirs = [Directions.NORTH, Directions.NORTHWEST, Directions.NORTHEAST,
+             Directions.EAST, Directions.WEST, Directions.SOUTHWEST, Directions.SOUTHEAST, Directions.SOUTH ]
+SouthDirs = [Directions.SOUTH, Directions.SOUTHEAST, Directions.SOUTHWEST,
+             Directions.WEST, Directions.EAST, Directions.NORTHWEST, Directions.NORTHEAST, Directions.NORTH ]
+NEDirs = [Directions.NORTHEAST, Directions.NORTH, Directions.EAST,
+          Directions.NORTHWEST, Directions.SOUTHEAST, Directions.SOUTH, Directions.WEST, Directions.SOUTHWEST ]
+SEDirs = [Directions.SOUTHEAST, Directions.SOUTH, Directions.EAST,
+          Directions.NORTHEAST, Directions.SOUTHWEST, Directions.NORTH, Directions.WEST, Directions.NORTHWEST ]
+NWDirs = [Directions.NORTHWEST, Directions.NORTH, Directions.WEST,
+          Directions.NORTHEAST, Directions.SOUTHWEST, Directions.SOUTH, Directions.EAST, Directions.SOUTHEAST ]
+SWDirs = [Directions.SOUTHWEST, Directions.SOUTH, Directions.WEST,
+          Directions.NORTHWEST, Directions.SOUTHEAST, Directions.NORTH, Directions.EAST, Directions.NORTHEAST ]
+
+DIR_TO_LIST = {
+    Directions.EAST: EastDirs,
+    Directions.WEST: WestDirs,
+    Directions.NORTH: NorthDirs,
+    Directions.SOUTH: SouthDirs,
+    Directions.NORTHEAST: NEDirs,
+    Directions.SOUTHEAST: SEDirs,
+    Directions.NORTHWEST: NWDirs,
+    Directions.SOUTHWEST: SWDirs,
+}
 
 # AI
 class AI(object):
@@ -28,6 +57,39 @@ class AI(object):
 
         return distance
 
+    def consider_move(self, tx, ty, game_map):
+        if tx >= len(game_map) or tx < 0:
+            print("Not in bounds")
+            return False
+
+        if ty >= len(game_map[0]) or ty < 0:
+            print("Not in bounds")
+            return False
+
+        if get_block_path(game_map[tx][ty]) == True:
+            print("Blocked")
+            return False
+
+        return True
+
+    def consider_move_list(self, direction, game_map):
+        list = DIR_TO_LIST[direction]
+
+        ret = None
+
+        for d in list:
+            print(str(self.owner.name) + " considering ..." + str(d))
+            tx = self.owner.x + d[0]
+            ty = self.owner.y + d[1]
+
+            if self.consider_move(tx, ty, game_map):
+                ret = d
+                print(str(self.owner.name) + " picked: " + str(ret))
+                break
+
+        return ret
+
+
 class EnemyAI(AI):
     def take_turn(self, player, fov_map):
         #print("AI taking turn")
@@ -41,10 +103,17 @@ class EnemyAI(AI):
 
         # if not in fov
         if not libtcod.map_is_in_fov(fov_map, player.x, player.y):
-            self.owner.creature.move(libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1), game_vars.level.current_map)
+            random_int = libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1)
+            dir = direction_to(self.owner, (self.owner.x+random_int[0], self.owner.y+random_int[1]))
+            if dir is not Directions.CENTER:
+                cons = self.consider_move_list(dir, game_vars.level.current_map)
+                self.owner.creature.move_direction(cons, game_vars.level.current_map)
         else:
             print("Player in fov")
-            move_astar(self.owner, player, game_vars.level.current_map)
+            cons = self.consider_move_list(direction_to(self.owner, player), game_vars.level.current_map)
+            self.owner.creature.move_direction(cons, game_vars.level.current_map)
+
+            #move_astar(self.owner, player, game_vars.level.current_map)
             #self.owner.creature.move_towards(player.x, player.y, game.level.current_map)
 
 class NeutralAI(AI):
@@ -57,13 +126,18 @@ class NeutralAI(AI):
 
         # if not in fov
         if not libtcod.map_is_in_fov(fov_map, player.x, player.y):
-            self.owner.creature.move(libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1),
-                                     game_vars.level.current_map)
+            random_int = libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1)
+            dir = direction_to(self.owner, (self.owner.x + random_int[0], self.owner.y + random_int[1]))
+            if dir is not Directions.CENTER:
+                cons = self.consider_move_list(dir, game_vars.level.current_map)
+                self.owner.creature.move_direction(cons, game_vars.level.current_map)
         else:
             if not self.target:
                 self.target = random_free_tile_away(game_vars.level.current_map, 6, (self.owner.x, self.owner.y))
 
-            move_astar(self.owner, self.target, game_vars.level.current_map)
+            self.owner.creature.move_direction(direction_to(self.owner, self.target), game_vars.level.current_map)
+
+           #move_astar(self.owner, self.target, game_vars.level.current_map)
 
 
 
