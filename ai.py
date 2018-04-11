@@ -46,6 +46,7 @@ DIR_TO_LIST = {
 class AI(object):
     def __init__(self):
         self.target = None
+        self.last_move_dir = Directions.CENTER # dummy
 
     def distance(self, player):
         # check distance to player
@@ -127,16 +128,44 @@ class NeutralAI(AI):
 
         # if not in fov
         if not libtcod.map_is_in_fov(fov_map, player.x, player.y):
-            random_int = libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1)
-            direct = direction_to(self.owner, (self.owner.x + random_int[0], self.owner.y + random_int[1]))
+            if not self.target:
+                self.target = game_vars.level.poi[0]
+
+            direct = direction_to(self.owner, self.target)
             if direct is not Directions.CENTER:
                 cons = self.consider_move_list(direct, game_vars.level.current_map)
-                self.owner.creature.move_direction(cons, game_vars.level.current_map)
+
+                # are we trying to move in opposite direction to last move?
+                if cons == (self.last_move_dir[0] * -1, self.last_move_dir[1] *-1):
+                    print("Trying to move in opposite direction")
+                    # fall back to astar because we're stuck
+                    move_astar(self.owner, self.target, game_vars.level.current_map)
+                else:
+                    self.owner.creature.move_direction(cons, game_vars.level.current_map)
+                    self.last_move_dir = cons
+            else:
+                self.last_move_dir = Directions.CENTER
+
+            # random_int = libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1)
+            # direct = direction_to(self.owner, (self.owner.x + random_int[0], self.owner.y + random_int[1]))
+            # if direct is not Directions.CENTER:
+            #     cons = self.consider_move_list(direct, game_vars.level.current_map)
+            #     self.owner.creature.move_direction(cons, game_vars.level.current_map)
         else:
             if not self.target:
-                self.target = random_free_tile_away(game_vars.level.current_map, 6, (self.owner.x, self.owner.y))
+                self.target = game_vars.level.poi[0]
+                #self.target = random_free_tile_away(game_vars.level.current_map, 6, (self.owner.x, self.owner.y))
 
-            self.owner.creature.move_direction(direction_to(self.owner, self.target), game_vars.level.current_map)
+            direct = direction_to(self.owner, self.target)
+            if direct is not Directions.CENTER:
+                cons = self.consider_move_list(direct, game_vars.level.current_map)
+
+                self.owner.creature.move_direction(cons, game_vars.level.current_map)
+                self.last_move_dir = cons
+            else:
+                self.last_move_dir = Directions.CENTER
+
+            #self.owner.creature.move_direction(direction_to(self.owner, self.target), game_vars.level.current_map)
 
            #move_astar(self.owner, self.target, game_vars.level.current_map)
 
@@ -164,7 +193,7 @@ def death_monster(monster):
     game_vars.level.current_entities.remove(monster)
 
 def move_astar(actor, target, inc_map):
-    #print("Astar target: " + str(target))
+    print("Astar target: " + str(target))
 
 
     #Create a FOV map that has the dimensions of the map
@@ -190,6 +219,12 @@ def move_astar(actor, target, inc_map):
     if hasattr(target, "x"):
         target = (target.x, target.y)
 
+    # check again to uncheck any creatures standing on target
+    # prevent deadlocks if the target is given as position and is occupied by a creature
+    for ent in game_vars.level.current_entities:
+        if ent.creature and ent.x == target[0] and ent.y == target[1]:
+            libtcod.map_set_properties(fov, ent.x, ent.y, True, True)
+
     #Allocate a A* path
     #The 1.41 is the normal diagonal cost of moving, it can be set as 0.0 if diagonal moves are prohibited
     my_path = libtcod.path_new_using_map(fov, 1.41)
@@ -197,15 +232,22 @@ def move_astar(actor, target, inc_map):
     #Compute the path between self's coordinates and the target's coordinates
     libtcod.path_compute(my_path, actor.x, actor.y, target[0], target[1])
 
-    #Check if the path exists, and in this case, also the path is shorter than 25 tiles
+    #Check if the path exists, and in this case, also the path is shorter than 40 tiles
     #The path size matters if you want the monster to use alternative longer paths (for example through other rooms) if for example the player is in a corridor
     #It makes sense to keep path size relatively low to keep the monsters from running around the map if there's an alternative path really far away
-    if not libtcod.path_is_empty(my_path) and libtcod.path_size(my_path) < 25:
+    if not libtcod.path_is_empty(my_path) and libtcod.path_size(my_path) < 40:
         #Find the next coordinates in the computed full path
         x, y = libtcod.path_walk(my_path, True)
         if x or y:
             # Move to next path
-            actor.creature.move_towards(x,y, inc_map)
+            direct = direction_to(actor, (x,y))
+            actor.creature.move_direction(direct, inc_map)
+            actor.ai.last_move_dir = direct
+            #actor.creature.move_towards(x,y, inc_map)
+            #print("Move to " + str(x) + " " + str(y))
+    else:
+        if not libtcod.path_is_empty(my_path):
+            print("Path size too large?" + str(libtcod.path_size(my_path)))
     #else:
         #Keep the old move function as a backup so that if there are no paths (for example another monster blocks a corridor)
         #it will still try to move towards the player (closer to the corridor opening)
