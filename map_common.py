@@ -48,7 +48,12 @@ Directions = Constants(
     NORTH = (0, -1),
     SOUTH = (0, 1),
     EAST = (1, 0),
-    WEST = (-1, 0)
+    WEST = (-1, 0),
+    NORTHEAST = (1, -1),
+    NORTHWEST = (-1, -1),
+    SOUTHEAST = (1, 1),
+    SOUTHWEST = (-1, 1),
+    CENTER = (0,0),
 )
 
 
@@ -150,6 +155,39 @@ def distance_to(start, other):
     dx = other[0] - start[0]
     dy = other[1] - start[1]
     return math.sqrt(dx ** 2 + dy ** 2)
+
+# lifted from Incursion
+def direction_to(start, target):
+    # convert to tuple if not already one
+    if hasattr(start, "x"):
+        start = (start.x, start.y)
+    if hasattr(target, "x"):
+        target = (target.x, target.y)
+
+
+    sx, sy = start[0], start[1]
+    tx, ty = target[0], target[1]
+
+    if tx == sx:
+        if ty > sy:
+            return Directions.SOUTH
+        if ty < sy:
+            return Directions.NORTH
+        else:
+            return Directions.CENTER
+    if tx < sx:
+        if ty > sy:
+            return Directions.SOUTHWEST
+        if ty < sy:
+            return Directions.NORTHWEST
+        else:
+            return Directions.WEST
+    if ty > sy:
+        return Directions.SOUTHEAST
+    if ty < sy:
+        return Directions.NORTHEAST
+
+    return Directions.EAST
 
 def find_grid_in_range(dist, x, y):
     level = game_vars.level.current_map

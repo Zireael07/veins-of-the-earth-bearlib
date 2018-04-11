@@ -457,6 +457,7 @@ class com_Creature(object):
         if self.owner.visible:
             events.notify(events.GameEvent("MESSAGE", (self.name_instance + " heals!", "lighter red")))
 
+    # movement functions
     def move(self, dx, dy, game_map):
         if self.owner.y + dy >= len(game_map[0]) or self.owner.y + dy < 0:
             print("Tried to move out of map")
@@ -527,6 +528,7 @@ class com_Creature(object):
             #flag so that we don't recalculate FOV/camera needlessly
             return True
 
+    # those come from the libtcod tutorial
     def move_towards(self, target_x, target_y, game_map):
         # vector from this object to the target, and distance
         dx = target_x - self.owner.x
@@ -545,6 +547,9 @@ class com_Creature(object):
         dy = y - self.owner.y
         return self.move(dx, dy, game_map)
 
+    # this is based on Direction constants
+    def move_direction(self, direction, game_map):
+        return self.move(direction[0], direction[1], game_map)
 
 class com_Container(object):
     def __init__(self, inventory = None):

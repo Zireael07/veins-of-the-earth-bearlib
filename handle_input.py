@@ -4,7 +4,7 @@ import constants
 from game_states import GameStates
 import gui_menus
 from renderer import pix_to_iso
-from map_common import map_check_for_items, find_unexplored_closest
+from map_common import map_check_for_items, find_unexplored_closest, Directions
 from tile_lookups import TileTypes, get_index
 
 import game_vars
@@ -113,8 +113,8 @@ def game_handle_mouse_input(key):
 # TODO: implement vi-keys as an option (note: it requires moving 'log' to some other key)
 def game_key_move(key):
     KEY_TO_DIR = {
-        'UP': (0, -1), 'DOWN': (0, 1), 'LEFT': (-1, 0), 'RIGHT': (1, 0),
-        'HOME': (-1,-1), 'PAGEUP': (1,-1), 'PAGEDOWN': (-1,1), 'END': (1,1)
+        'UP': Directions.NORTH, 'DOWN': Directions.SOUTH, 'LEFT': Directions.WEST, 'RIGHT': Directions.EAST,
+        'HOME': Directions.NORTHWEST, 'PAGEUP': Directions.NORTHEAST, 'PAGEDOWN': Directions.SOUTHWEST, 'END': Directions.SOUTHEAST
     }
 
     if PLAYER.creature.move(KEY_TO_DIR[key][0], KEY_TO_DIR[key][1], game_vars.level.current_map):
