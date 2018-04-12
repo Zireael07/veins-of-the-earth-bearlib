@@ -180,6 +180,21 @@ def draw_bar(x, y, total_width, name, value, maximum, bar_color, bg_color, label
         blt.puts(x+int(total_width/2), y, label)
 
 # GUI
+
+# basic
+def draw_box(x,y,w,h):
+    # upper border
+    border = '┌' + '─' * (w) + '┐'
+    blt.puts(x - 1, y - 1, border)
+    # sides
+    for i in range(h):
+        blt.puts(x - 1, y + i, '│')
+        blt.puts(x + w, y + i, '│')
+    # lower border
+    border = '└' + '─' * (w) + '┘'
+    blt.puts(x - 1, y + h, border)
+
+
 # based on https://github.com/FirstAidKitten/Roguelike-Sandbox
 def create_window(x, y, w, h, title=None, border=True, layer=3):
     # test
@@ -203,18 +218,8 @@ def create_window(x, y, w, h, title=None, border=True, layer=3):
 
     # otherwise border overlaps header text
     blt.composition(False)
-
     if border:
-        # upper border
-        border = '┌' + '─' * (w) + '┐'
-        blt.puts(x - 1, y - 1, border)
-        # sides
-        for i in range(h):
-            blt.puts(x - 1, y + i, '│')
-            blt.puts(x + w, y + i, '│')
-        # lower border
-        border = '└' + '─' * (w) + '┘'
-        blt.puts(x - 1, y + h, border)
+        draw_box(x,y,w,h)
 
     if title is not None:
         leng = len(title)
@@ -520,20 +525,9 @@ def multicolumn_menu_inner(title, columns, width, col_width, current, values):
             return None
 
 
-# used for inventory menu
-def draw_box(x,y,w,h):
-    # upper border
-    border = '┌' + '─' * (w) + '┐'
-    blt.puts(x - 1, y - 1, border)
-    # sides
-    for i in range(h):
-        blt.puts(x - 1, y + i, '│')
-        blt.puts(x + w, y + i, '│')
-    # lower border
-    border = '└' + '─' * (w) + '┘'
-    blt.puts(x - 1, y + h, border)
 
 
+# inventory menu
 def draw_slot(x,y,char=None):
     blt.layer(4)
     draw_box(x, y, 2, 1)
