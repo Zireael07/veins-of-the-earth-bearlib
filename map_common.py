@@ -5,7 +5,7 @@ import sys
 import math
 from operator import itemgetter
 
-import constants
+from enum_constants import Constants
 from tile_lookups import TileTypes, get_map_str, get_index, get_block_path
 import game_vars
 import square_fov
@@ -19,30 +19,6 @@ room_desc = [
     "This is an interior of a hut.",
 ]
 
-# from https://stackoverflow.com/questions/2682745/how-do-i-create-a-constant-in-python/20508128#20508128
-class Constants(object):
-    """
-    Create objects that can be accessed with Constants.WHATEVER
-    """
-
-    def __init__(self, *args, **kwargs):
-        self.dict = dict(*args, **kwargs)
-
-    def __iter__(self):
-        return iter(self.dict)
-
-    def __len__(self):
-        return len(self.dict)
-
-    # NOTE: This is only called if self lacks the attribute.
-    # So it does not interfere with get of 'self.dict', etc.
-    def __getattr__(self, name):
-        return self.dict[name]
-
-    # ASSUMES '_..' attribute is OK to set. Need this to initialize 'self.dict', etc.
-    #If use as keys, they won't be constant.
-    def __setattr__(self, name, value):
-        super(Constants, self).__setattr__(name, value)
 
 Directions = Constants(
     NORTH = (0, -1),

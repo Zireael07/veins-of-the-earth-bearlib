@@ -1,41 +1,4 @@
-# based on https://stackoverflow.com/questions/2682745/how-do-i-create-a-constant-in-python/20508128#20508128
-
-class Tile_Lookups(object):
-    """
-    Create objects that can be accessed with Tile_Lookups.WALL
-
-    """
-
-    def __init__(self, *args, **kwargs):
-        self.dict = dict(*args, **kwargs)
-
-        # this assumes values are tuples
-        self.test = dict((value) for key, value in self.dict.iteritems())
-
-        #self.reverse = dict((value, key) for key, value in self.dict.iteritems())
-
-    def __iter__(self):
-        return iter(self.dict)
-
-    def __len__(self):
-        return len(self.dict)
-
-    # NOTE: This is only called if self lacks the attribute.
-    # So it does not interfere with get of 'self.dict', etc.
-    def __getattr__(self, name):
-        return self.dict[name]
-
-    # ASSUMES '_..' attribute is OK to set. Need this to initialize 'self.dict', etc.
-    #If use as keys, they won't be constant.
-    def __setattr__(self, name, value):
-        super(Tile_Lookups, self).__setattr__(name, value)
-
-        # we don't need the locking behavior and this prevented iteritems() from working
-        # if (name[0] == '_'):
-        #     super(Constants, self).__setattr__(name, value)
-        #     #print(value)
-        # else:
-        #     raise ValueError("setattr while locked", self)
+from enum_constants import Tile_Lookups
 
 class struc_Tile(object):
     def __init__(self, name, tile_put, map_str, block_path):
