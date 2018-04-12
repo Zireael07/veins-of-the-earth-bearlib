@@ -5,6 +5,7 @@ import libtcodpy as libtcod
 import math
 from timeit import default_timer
 
+from map_common import map_check_for_creature
 from renderer import draw_iso, draw_floating_text
 from gui_menus import dialogue_window
 from tile_lookups import get_block_path
@@ -22,32 +23,6 @@ def initialize_game(game):
     global GAME
     GAME = game
 
-def map_check_for_creature(x, y, exclude_entity = None):
-
-    target = None
-
-    # find entity that isn't excluded
-    if exclude_entity:
-        for ent in game_vars.level.current_entities:
-            if (ent is not exclude_entity
-                and ent.x == x
-                and ent.y == y
-                and ent.creature):
-                target = ent
-
-            if target:
-                return target
-
-    # find any entity if no exclusions
-    else:
-        for ent in game_vars.level.current_entities:
-            if (ent.x == x
-                and ent.y == y
-                and ent.creature):
-                target = ent
-
-            if target:
-                return target
 
 # returns the equipment in a slot, or None if it's empty
 def get_equipped_in_slot(actor, slot):
