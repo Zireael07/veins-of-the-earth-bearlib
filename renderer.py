@@ -228,6 +228,19 @@ def create_window(x, y, w, h, title=None, border=True, layer=3):
 
     blt.composition(True)
 
+def setup_window(header_height, width, title):
+    #GAME.fov_recompute = True
+    menu_x = int((120 - width) / 2)
+
+    menu_h = int(header_height + 1 + 26)
+    menu_y = int((50 - menu_h) / 2)
+
+    # create a window
+
+    create_window(menu_x, menu_y, width, menu_h, title)
+
+    return menu_x, menu_y, menu_h
+
 def options_menu(header, options, width, title=None, layer=3):
     #GAME.fov_recompute = True
 
@@ -534,20 +547,17 @@ def draw_slot(x,y,char=None):
     if char is not None:
         blt.put_ext(x, y, 2, -1, char)
 
+def quit_inventory_screen():
+    blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+    blt.layer(4)
+    blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+    blt.layer(5)
+    blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
+    # blt.layer(3)
+
 def inventory_menu_test(header, width, title, equipped_items, inventory):
-    #GAME.fov_recompute = True
-
-    menu_x = int((120 - width) / 2)
-
     header_height = 2
-
-    menu_h = int(header_height + 1 + 26)
-    menu_y = int((50 - menu_h) / 2)
-
-    # create a window
-
-    create_window(menu_x, menu_y, width, menu_h, title)
-
+    menu_x, menu_y, _ = setup_window(header_height, width, title)
 
     blt.puts(menu_x, menu_y, header)
 
@@ -569,7 +579,7 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
     #y = menu_y + 6
 
     # draw equipped items
-    blt.layer(1)
+    blt.layer(4)
     # reverse mapping of a custom enum is a dict that we can iterate on
     for slot in EquipmentSlots.reverse_mapping:
         name = str(EquipmentSlots.reverse_mapping[slot]).lower()
@@ -640,38 +650,17 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
             if 0 <= index < len(inventory):
                 blt.set('input: filter = [keyboard, mouse+]')
                 blt.composition(True)
-                blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
-                blt.layer(4)
-                blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
-                blt.layer(5)
-                blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
-                #blt.layer(3)
+                quit_inventory_screen()
                 return index
         else:
             blt.set('input: filter = [keyboard, mouse+]')
             blt.composition(True)
-            blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
-            blt.layer(4)
-            blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
-            blt.layer(5)
-            blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
-            # blt.layer(3)
+            quit_inventory_screen()
             return None
 
 def dialogue_menu(header, width, title, text, answers):
-    #GAME.fov_recompute = True
-
-    menu_x = int((120 - width) / 2)
-
     header_height = 2
-
-    menu_h = int(header_height + 1 + 26)
-    menu_y = int((50 - menu_h) / 2)
-
-    # create a window
-
-    create_window(menu_x, menu_y, width, menu_h, title)
-
+    menu_x, menu_y, menu_h = setup_window(header_height, width, title)
 
     blt.puts(menu_x, menu_y, header)
 
@@ -723,19 +712,8 @@ def dialogue_menu(header, width, title, text, answers):
             return None
 
 def text_menu(header, width, title, text):
-    #GAME.fov_recompute = True
-
-    menu_x = int((120 - width) / 2)
-
     header_height = 2
-
-    menu_h = int(header_height + 1 + 26)
-    menu_y = int((50 - menu_h) / 2)
-
-    # create a window
-
-    create_window(menu_x, menu_y, width, menu_h, title)
-
+    menu_x, menu_y, _ = setup_window(header_height, width, title)
 
     blt.puts(menu_x, menu_y, header)
 
