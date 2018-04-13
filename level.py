@@ -15,6 +15,23 @@ from map.bspcity import BspCityGenerator
 from map.cavemap import CaveGenerator
 from map.mainmap import MainMapGenerator
 
+# (type, kwargs, do we use the passed seed?, more kwargs if any)
+generator_list = {
+    "dungeon" : (BspMapGenerator, {"map_width":constants.MAP_WIDTH, "map_height":constants.MAP_HEIGHT,
+                                   "min_room_size":constants.ROOM_MIN_SIZE, "generation_depth":constants.DEPTH,
+                                  "full_rooms":False}, True, {"debug":constants.DEBUG_MAP}),
+    "encampment": (BspCityGenerator, {"map_width":15, "map_height":11, "min_room_size":constants.ROOM_MIN_SIZE+2,
+                                      "generation_depth":2, "full_rooms":False}, True, {"wall":False, "debug":constants.DEBUG_MAP}),
+    "city": (BspCityGenerator, {"map_width":constants.MAP_WIDTH, "map_height":constants.MAP_HEIGHT,
+                                "min_room_size":constants.ROOM_MIN_SIZE+2, "generation_depth":2, "full_rooms":False}, True,
+             {"wall":True, "debug":constants.DEBUG_MAP}),
+    "cavern": (CaveGenerator, {"map_width":constants.MAP_WIDTH, "map_height":constants.MAP_HEIGHT}, True, {"debug":constants.DEBUG_MAP}),
+    "main": (MainMapGenerator, {"map_width":40, "map_height":40, "seed":2}, False, {}),
+    "fallback": (BspMapGenerator, {"map_width":constants.MAP_WIDTH, "map_height":constants.MAP_HEIGHT,
+                                   "min_room_size":constants.ROOM_MIN_SIZE, "generation_depth":constants.DEPTH,
+                                   "full_rooms":constants.FULL_ROOMS}, True, {"debug":constants.DEBUG_MAP})
+}
+
 
 class obj_Level(object):
     def __init__(self, gen_type="dungeon", seed=10, starting_stairs=True):
@@ -24,25 +41,23 @@ class obj_Level(object):
 
         # level gen
         self.gen_type = gen_type
-        # map gen
-        if gen_type == "dungeon":
-            map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-                                  False, seed, constants.DEBUG_MAP)
-        elif gen_type == "encampment":
-            #map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
-            map_gen = BspCityGenerator(15, 11, constants.ROOM_MIN_SIZE+2, 2,
-                                False, seed, False, constants.DEBUG_MAP)
-        elif gen_type == "city":
-            map_gen = BspCityGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE+2, 2,
-                                False, seed, True, constants.DEBUG_MAP)
-        elif gen_type == "cavern":
-            map_gen = CaveGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, seed, constants.DEBUG_MAP)
-        elif gen_type == "main":
-            map_gen = MainMapGenerator(40, 40, 2)
+        # map gen choice
         # fallback
+        if not gen_type in generator_list:
+            gen_type = "fallback"
+
+        # magic!
+        params = generator_list[gen_type][1]
+        params.update(generator_list[gen_type][3])
+        use_seed = generator_list[gen_type][2]
+        if use_seed:
+            # we have to use kwargs since one can't use args and a keyword argument in 2.7
+            # https://docs.python.org/2.7/reference/expressions.html point 5.3.4
+            map_gen = generator_list[gen_type][0](seed=seed, **params)
         else:
-            map_gen = BspMapGenerator(constants.MAP_WIDTH, constants.MAP_HEIGHT, constants.ROOM_MIN_SIZE, constants.DEPTH,
-                                      constants.FULL_ROOMS, seed, constants.DEBUG_MAP)
+            map_gen = generator_list[gen_type][0](**params)
+
+        # specific stuff
         if gen_type == "main":
             gen_map = map_gen.generate_map(False)
         else:
