@@ -90,8 +90,8 @@ def game_handle_mouse_input(key):
 
             click_x, click_y = pix_to_iso(pix_x, pix_y)
 
-            if click_x > 0 and click_x < constants.MAP_WIDTH - 1:
-                if click_y > 0 and click_y < constants.MAP_HEIGHT - 1:
+            if click_x >= 0 and click_x < len(game_vars.level.current_map):
+                if click_y >= 0 and click_y < len(game_vars.level.current_map[0]):
                     print "Clicked on tile " + str(click_x) + " " + str(click_y)
 
                     if click_x != PLAYER.x or click_y != PLAYER.y:
@@ -229,9 +229,9 @@ def game_handle_keys():
         if game_vars.labels:
             return "redraw"
 
-
-    #print("Mouse: " + str(game_handle_mouse_input(key)))
-    game_handle_mouse_input(key)
+    if key == blt.TK_MOUSE_LEFT or key == blt.TK_MOUSE_RIGHT:
+        #print("Mouse input")
+        return game_handle_mouse_input(key)
 
     if game_vars.game_state == GameStates.PLAYER_TURN:
         #print (game_player_turn_input(key))
