@@ -110,13 +110,13 @@ def game_handle_mouse_input(key):
 
         return "mouse_click"
 
+KEY_TO_DIR = {
+        blt.TK_UP: Directions.NORTH, blt.TK_DOWN: Directions.SOUTH, blt.TK_LEFT: Directions.WEST, blt.TK_RIGHT: Directions.EAST,
+        blt.TK_HOME: Directions.NORTHWEST, blt.TK_PAGEUP: Directions.NORTHEAST,
+        blt.TK_PAGEDOWN: Directions.SOUTHWEST, blt.TK_END: Directions.SOUTHEAST
+    }
 # TODO: implement vi-keys as an option (note: it requires moving 'log' to some other key)
 def game_key_move(key):
-    KEY_TO_DIR = {
-        'UP': Directions.NORTH, 'DOWN': Directions.SOUTH, 'LEFT': Directions.WEST, 'RIGHT': Directions.EAST,
-        'HOME': Directions.NORTHWEST, 'PAGEUP': Directions.NORTHEAST, 'PAGEDOWN': Directions.SOUTHWEST, 'END': Directions.SOUTHEAST
-    }
-
     if PLAYER.creature.move(KEY_TO_DIR[key][0], KEY_TO_DIR[key][1], game_vars.level.current_map):
         CAMERA.move(KEY_TO_DIR[key][0], KEY_TO_DIR[key][1])
         game_vars.fov_recompute = True
@@ -124,22 +124,8 @@ def game_key_move(key):
     return "player-moved"
 
 def game_player_turn_input(key):
-    if key == blt.TK_UP:
-        return game_key_move('UP')
-    if key == blt.TK_DOWN:
-        return game_key_move('DOWN')
-    if key == blt.TK_LEFT:
-        return game_key_move('LEFT')
-    if key == blt.TK_RIGHT:
-        return game_key_move('RIGHT')
-    if key == blt.TK_HOME:
-        return game_key_move('HOME')
-    if key == blt.TK_PAGEUP:
-        return game_key_move('PAGEUP')
-    if key == blt.TK_PAGEDOWN:
-        return game_key_move('PAGEDOWN')
-    if key == blt.TK_END:
-        return game_key_move('END')
+    if key in KEY_TO_DIR:
+        return game_key_move(key)
 
     if key == blt.TK_PERIOD and blt.check(blt.TK_SHIFT):
         if game_vars.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS):  # .stairs:
