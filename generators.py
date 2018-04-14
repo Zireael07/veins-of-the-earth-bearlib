@@ -21,8 +21,24 @@ def roll(dice, sides):
     #print 'Rolling ' + str(dice) + "d" + str(sides) + " result: " + str(result)
     return result
 
+def get_chance_roll_table(chances, pad=False):
+    num = 0
+    chance_roll = []
+    for chance in chances:
+        old_num = num + 1
+        num += 1 + chance[1]
+        # clip top number to 100
+        if num > 100:
+            num = 100
+        chance_roll.append((chance[0], old_num, num))
 
+    if pad:
+        # pad out to 100
+        logger.debug("Last number is " + str(num))
+        # print "Last number is " + str(num)
+        chance_roll.append(("None", num, 100))
 
+    return chance_roll
 
 
 
@@ -38,18 +54,8 @@ def generate_item_rarity():
     chances.append(("Great", 10))
     chances.append(("Unique", 5))
 
-    num = 0
-    chance_roll = []
-    for chance in chances:
-        old_num = num + 1
-        num += 1 + chance[1]
-        # clip top number to 100
-        if num > 100:
-            num = 100
-        chance_roll.append((chance[0], old_num, num))
+    return get_chance_roll_table(chances)
 
-    #print chance_roll
-    return chance_roll
 
 def generate_item_type():
     chances = []
@@ -58,17 +64,7 @@ def generate_item_type():
     chances.append(("Weapons", 35)) #22 in d20 SRD
     chances.append(("Tools", 15)) #16 in d20 SRD
 
-    num = 0
-    chance_roll = []
-    for chance in chances:
-        old_num = num + 1
-        num += 1 + chance[1]
-        # clip top number to 100
-        if num > 100:
-            num = 100
-        chance_roll.append((chance[0], old_num, num))
-
-    return chance_roll
+    return get_chance_roll_table(chances)
 
 def get_weapons_bonus_rarity():
     chances = []
@@ -79,14 +75,7 @@ def get_weapons_bonus_rarity():
     #print chances
     logger.debug(chances)
 
-    num = 0
-    chance_roll = []
-    for chance in chances:
-        old_num = num+1
-        num += 1+chance[1]
-        chance_roll.append((chance[0], old_num, num))
-
-    #print chance_roll
+    chance_roll = get_chance_roll_table(chances)
     logger.debug(chance_roll)
     return chance_roll
 
@@ -115,19 +104,9 @@ def get_armor_material_rarity():
     #print chances
     logger.debug(chances)
 
-    num = 0
-    chance_roll = []
-    for chance in chances:
-        old_num = num+1
-        num += 1+chance[1]
-        chance_roll.append((chance[0], old_num, num))
+    chance_roll = get_chance_roll_table(chances, True)
 
-    #pad out to 100
-    logger.debug("Last number is " + str(num))
-    #print "Last number is " + str(num)
-    chance_roll.append(("None", num, 100))
 
-    #print chance_roll
     logger.debug(chance_roll)
 
     return chance_roll
@@ -273,22 +252,7 @@ def get_monster_chances():
         if monster_data[data_id]['rarity']:
             chances.append((monster_data[data_id]['name'], monster_data[data_id]['rarity']))
 
-    #print chances
-    logger.debug(chances)
-
-    num = 0
-    chance_roll = []
-    for chance in chances:
-        old_num = num+1
-        num += 1+chance[1]
-        chance_roll.append((chance[0], old_num, num))
-
-    #pad out to 100
-    #print "Last number is " + str(num)
-    logger.debug("Last number is " + str(num))
-    chance_roll.append(("None", num, 100))
-
-    #print chance_roll
+    chance_roll = get_chance_roll_table(chances, True)
 
     return chance_roll
 
