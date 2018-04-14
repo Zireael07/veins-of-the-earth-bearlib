@@ -4,6 +4,7 @@ import random
 import constants
 from map_common import Rect, print_map_string, room_desc, convert_walls, debug_pause
 from tile_lookups import TileTypes, get_index
+from bspmap import create_room_bsp
 
 class BspCityGenerator(object):
     def __init__(self, map_width, map_height, min_room_size, generation_depth, full_rooms, seed,
@@ -24,25 +25,7 @@ class BspCityGenerator(object):
     def _traverse_node(self, node, dat):
         # Create room
         if libtcod.bsp_is_leaf(node):
-            minx = node.x + 1
-            maxx = node.x + node.w - 1
-            miny = node.y + 1
-            maxy = node.y + node.h - 1
-            if maxx == self.map_width - 1:
-                maxx -= 1
-            if maxy == self.map_height - 1:
-                maxy -= 1
-
-            if self.full_rooms == False:
-                minx = libtcod.random_get_int(None, minx, maxx - self.min_room_size + 1)
-                miny = libtcod.random_get_int(None, miny, maxy - self.min_room_size + 1)
-                maxx = libtcod.random_get_int(None, minx + self.min_room_size - 2, maxx)
-                maxy = libtcod.random_get_int(None, miny + self.min_room_size - 2, maxy)
-
-            node.x = minx
-            node.y = miny
-            node.w = maxx - minx + 1
-            node.h = maxy - miny + 1
+            minx, maxx, miny, maxy, node.w, node.h = create_room_bsp(self, node)
 
             # Make building
             # Make walls
