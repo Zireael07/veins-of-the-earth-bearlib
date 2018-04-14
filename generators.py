@@ -40,7 +40,17 @@ def get_chance_roll_table(chances, pad=False):
 
     return chance_roll
 
+def get_result(roll, table):
+    breakpoints = [k[2] for k in table if k[2] < 100]
+    breakpoints.sort()
 
+    # print breakpoints
+    logger.debug(breakpoints)
+
+    i = bisect.bisect(breakpoints, roll)
+    res = table[i][0]
+
+    return res
 
 # Generating stuff
 # Item generation
@@ -84,14 +94,8 @@ def get_random_weapon_bonus():
 
     d100 = roll(1, 100)
 
-    breakpoints = [k[2] for k in bonus_rarity]
-    breakpoints.sort()
+    res = get_result(d100, bonus_rarity)
 
-    #print breakpoints
-    logger.debug(breakpoints)
-
-    i = bisect.bisect(breakpoints, d100)
-    res = bonus_rarity[i][0]
     print "Random weapon bonus is " + res
     return res
 
@@ -116,14 +120,8 @@ def get_random_armor_material():
 
     d100 = roll(1, 100)
 
-    breakpoints = [k[2] for k in material_rarity if k[2] < 100]
-    breakpoints.sort()
+    res = get_result(d100, material_rarity)
 
-    #print breakpoints
-    logger.debug(breakpoints)
-
-    i = bisect.bisect(breakpoints, d100)
-    res = material_rarity[i][0]
     logger.info("Random material is " + res)
     #print "Random material is " + res
     return res
@@ -134,14 +132,8 @@ def get_random_item():
 
     d100 = roll(1, 100)
 
-    breakpoints = [k[2] for k in item_rarity if k[2] < 100]
-    breakpoints.sort()
+    res = get_result(d100, item_rarity)
 
-    #print breakpoints
-    logger.debug(breakpoints)
-
-    i = bisect.bisect(breakpoints, d100)
-    res = item_rarity[i][0]
     logger.info("Random item rarity is " + res)
     #print "Random item rarity is " + res
 
@@ -149,14 +141,8 @@ def get_random_item():
     item_types = generate_item_type()
     d100 = roll(1, 100)
 
-    breakpoints = [k[2] for k in item_types if k[2] < 100]
-    breakpoints.sort()
+    it_type = get_result(d100, item_types)
 
-    logger.debug(breakpoints)
-    #print breakpoints
-
-    i = bisect.bisect(breakpoints, d100)
-    it_type = item_types[i][0]
     logger.info("Random item type is " + it_type)
     #print "Random item type is " + it_type
 
@@ -264,14 +250,8 @@ def generate_random_mon():
 
     #print "Rolled " + str(d100) + " on random monster gen table"
 
-    breakpoints = [k[2] for k in mon_chances if k[2] != 100]
-    breakpoints.sort()
+    res = get_result(d100, mon_chances)
 
-    #print breakpoints
-    logger.debug(breakpoints)
-
-    i = bisect.bisect(breakpoints, d100)
-    res = mon_chances[i][0]
     logger.info("Random monster is " + res)
     #print "Random monster is " + res
     return res
@@ -282,14 +262,8 @@ def test_force_roll(force):
 
     d100 = force
 
-    breakpoints = [k[2] for k in mon_chances if k[2] != 100]
-    breakpoints.sort()
+    res = get_result(d100, mon_chances)
 
-    #print breakpoints
-    logger.debug(breakpoints)
-
-    i = bisect.bisect(breakpoints, d100)
-    res = mon_chances[i][0]
     logger.info("Random monster is " + res)
     #print "Random monster is " + res
     return res
