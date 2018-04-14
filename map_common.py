@@ -296,17 +296,22 @@ def get_map_string(inc_map):
     #print string
     return string
 
+def check_map_neighbors(inc_map, x,y):
+    tile_str = get_map_str(inc_map[x][y])
+
+    # print("Checking neighbors of " + str(x) + " " + str(y))
+
+    north = y - 1 > 0 and get_map_str(inc_map[x + Directions.NORTH[0]][y + Directions.NORTH[1]]) == "#"
+    south = y + 1 < len(inc_map[0]) and get_map_str(inc_map[x + Directions.SOUTH[0]][y + Directions.SOUTH[1]]) == "#"
+    west = x - 1 > 0 and get_map_str(inc_map[x + Directions.WEST[0]][y + Directions.WEST[1]]) == "#"
+    east = x + 1 < len(inc_map) and get_map_str(inc_map[x + Directions.EAST[0]][y + Directions.EAST[1]]) == "#"
+
+    return tile_str, north, south, west, east
+
 def convert_to_box_drawing(inc_map):
     for y in range(len(inc_map[0])):
         for x in range(len(inc_map)):
-            tile_str = get_map_str(inc_map[x][y])
-
-            #print("Checking neighbors of " + str(x) + " " + str(y))
-
-            north = y-1 > 0 and get_map_str(inc_map[x+Directions.NORTH[0]][y+Directions.NORTH[1]]) == "#"
-            south = y+1 < len(inc_map[0]) and get_map_str(inc_map[x+Directions.SOUTH[0]][y+Directions.SOUTH[1]]) == "#"
-            west = x-1 > 0 and get_map_str(inc_map[x+Directions.WEST[0]][y+Directions.WEST[1]]) == "#"
-            east = x+1 < len(inc_map) and get_map_str(inc_map[x+Directions.EAST[0]][y+Directions.EAST[1]]) == "#"
+            tile_str, north, south, west, east = check_map_neighbors(inc_map, x,y)
 
             # if north:
             #     print("Wall to the north")
@@ -345,19 +350,7 @@ def convert_to_box_drawing(inc_map):
 def convert_walls(inc_map):
     for y in range(len(inc_map[0])):
         for x in range(len(inc_map)):
-            tile_str = get_map_str(inc_map[x][y])
-
-            #print("Checking neighbors of " + str(x) + " " + str(y))
-
-            north = y-1 > 0 and get_map_str(inc_map[x+Directions.NORTH[0]][y+Directions.NORTH[1]]) == "#"
-            #north = y-1 > 0 and get_map_str(inc_map[x][y-1]) == "#"
-            south = y+1 < len(inc_map[0]) and get_map_str(inc_map[x+Directions.SOUTH[0]][y+Directions.SOUTH[1]]) == "#"
-            #south = y+1 < len(inc_map) and get_map_str(inc_map[x][y+1]) == "#"
-            west = x-1 > 0 and get_map_str(inc_map[x+Directions.WEST[0]][y+Directions.WEST[1]]) == "#"
-            #west = x-1 > 0 and get_map_str(inc_map[x-1][y]) == "#"
-            east = x+1 < len(inc_map) and get_map_str(inc_map[x+Directions.EAST[0]][y+Directions.EAST[1]]) == "#"
-            #east = x+1 < len(inc_map[0]) and get_map_str(inc_map[x+1][y]) == "#"
-
+            tile_str, north, south, west, east = check_map_neighbors(inc_map, x,y)
             if tile_str == "#":
                 # detect direction
                 if west and east:
