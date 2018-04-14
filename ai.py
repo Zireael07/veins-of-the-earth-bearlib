@@ -80,24 +80,43 @@ class AI(object):
         ret = None
 
         for d in list_try:
-            print(str(self.owner.name) + " considering ..." + str(d))
+            #print(str(self.owner.name) + " considering ..." + str(d))
             tx = self.owner.x + d[0]
             ty = self.owner.y + d[1]
 
             if self.consider_move(tx, ty, game_map):
                 ret = d
-                print(str(self.owner.name) + " picked: " + str(ret))
+                #print(str(self.owner.name) + " picked: " + str(ret))
                 break
 
         return ret
 
+    def random_move(self):
+        random_int = libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1)
+        direct = direction_to(self.owner, (self.owner.x + random_int[0], self.owner.y + random_int[1]))
+        if direct is not Directions.CENTER:
+            cons = self.consider_move_list(direct, game_vars.level.current_map)
+            self.owner.creature.move_direction(cons, game_vars.level.current_map)
+
+    def move_to_map_target(self):
+        direct = direction_to(self.owner, self.target)
+        if direct is not Directions.CENTER:
+            cons = self.consider_move_list(direct, game_vars.level.current_map)
+
+            # are we trying to move in opposite direction to last move?
+            if cons == (self.last_move_dir[0] * -1, self.last_move_dir[1] * -1):
+                print("Trying to move in opposite direction")
+                # fall back to astar because we're stuck
+                move_astar(self.owner, self.target, game_vars.level.current_map)
+            else:
+                self.owner.creature.move_direction(cons, game_vars.level.current_map)
+                self.last_move_dir = cons
+        else:
+            self.last_move_dir = Directions.CENTER
 
 class EnemyAI(AI):
     def take_turn(self, player, fov_map):
         #print("AI taking turn")
-
-        # if we can see it, it can see us too
-        #if libtcod.map_is_in_fov(fov_map, self.owner.x, self.owner.y):
 
         #ai fov
         libtcod.map_compute_fov(fov_map, self.owner.x, self.owner.y, self.owner.creature.get_light_radius(), constants.FOV_LIGHT_WALLS,
@@ -105,11 +124,7 @@ class EnemyAI(AI):
 
         # if not in fov
         if not libtcod.map_is_in_fov(fov_map, player.x, player.y):
-            random_int = libtcod.random_get_int(0,-1,1), libtcod.random_get_int(0,-1, 1)
-            direct = direction_to(self.owner, (self.owner.x+random_int[0], self.owner.y+random_int[1]))
-            if direct is not Directions.CENTER:
-                cons = self.consider_move_list(direct, game_vars.level.current_map)
-                self.owner.creature.move_direction(cons, game_vars.level.current_map)
+            self.random_move()
         else:
             print("Player in fov")
             cons = self.consider_move_list(direction_to(self.owner, player), game_vars.level.current_map)
@@ -131,39 +146,14 @@ class NeutralAI(AI):
             if not self.target:
                 self.target = game_vars.level.poi[0]
 
-            direct = direction_to(self.owner, self.target)
-            if direct is not Directions.CENTER:
-                cons = self.consider_move_list(direct, game_vars.level.current_map)
+            self.move_to_map_target()
 
-                # are we trying to move in opposite direction to last move?
-                if cons == (self.last_move_dir[0] * -1, self.last_move_dir[1] *-1):
-                    print("Trying to move in opposite direction")
-                    # fall back to astar because we're stuck
-                    move_astar(self.owner, self.target, game_vars.level.current_map)
-                else:
-                    self.owner.creature.move_direction(cons, game_vars.level.current_map)
-                    self.last_move_dir = cons
-            else:
-                self.last_move_dir = Directions.CENTER
-
-            # random_int = libtcod.random_get_int(0, -1, 1), libtcod.random_get_int(0, -1, 1)
-            # direct = direction_to(self.owner, (self.owner.x + random_int[0], self.owner.y + random_int[1]))
-            # if direct is not Directions.CENTER:
-            #     cons = self.consider_move_list(direct, game_vars.level.current_map)
-            #     self.owner.creature.move_direction(cons, game_vars.level.current_map)
         else:
             if not self.target:
                 self.target = game_vars.level.poi[0]
                 #self.target = random_free_tile_away(game_vars.level.current_map, 6, (self.owner.x, self.owner.y))
 
-            direct = direction_to(self.owner, self.target)
-            if direct is not Directions.CENTER:
-                cons = self.consider_move_list(direct, game_vars.level.current_map)
-
-                self.owner.creature.move_direction(cons, game_vars.level.current_map)
-                self.last_move_dir = cons
-            else:
-                self.last_move_dir = Directions.CENTER
+            self.move_to_map_target()
 
             #self.owner.creature.move_direction(direction_to(self.owner, self.target), game_vars.level.current_map)
 
