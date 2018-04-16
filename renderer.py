@@ -759,11 +759,13 @@ def input_menu(header, width):
         blt.refresh()
 
         # after confirming with enter, the function returns the string
-        if string > 0:
+        if len(string[1]) > 0:
             blt.set('input: filter = [keyboard, mouse+]')
             blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
-            #print("Str" + str(string))
+            print("Str" + str(string))
             return string
+        else:
+            print("Invalid string")
 
 
 # drawing special effects

@@ -1,5 +1,6 @@
 # coding: utf8
 
+import sys
 from bearlibterminal import terminal as blt
 
 import constants
@@ -308,8 +309,8 @@ def character_creation_menu(player):
     # pressed ESC while in character creation I
     else:
         print("Pressed ESC")
-        # quit
-        blt.close()
+        # quit cleanly
+        sys.exit()
 
 def inventory_menu(header, player):
     index = renderer.inventory_menu_test(header, 50, 'INVENTORY', player.container.equipped_items, player.container.inventory)
