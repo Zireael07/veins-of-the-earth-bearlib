@@ -343,11 +343,23 @@ class com_Creature(object):
         elif react > 0:
             return "blue"
 
+
+
     def set_body_parts(self, parts):
+        BP_TO_HP = {
+            "head": 0.33,
+            "torso": 0.4,
+            "arm": 0.25,
+            "leg": 0.25,
+        }
+
         print("Setting body parts...")
         for p in parts:
             print("Setting " + str(p))
-            self.body_parts.append(p)
+
+            if p in BP_TO_HP:
+                print("Looking up hp.." + str(int(BP_TO_HP[p]*self.max_hp)))
+                self.body_parts.append((p, int(BP_TO_HP[p]*self.max_hp)))
 
     def skill_test(self, skill):
         if self.owner.visible:
