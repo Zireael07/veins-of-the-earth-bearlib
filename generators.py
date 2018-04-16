@@ -297,6 +297,14 @@ def generate_stats(array="standard", kind="melee"):
 
     return temp
 
+def generate_body_types(kind="humanoid"):
+    if kind in body_types_data:
+        return body_types_data[kind]
+    else:
+        print("Bad body type requested: " + str(kind))
+        return None
+
+
 # X,Y need to come after ID because we want to use tuple unpacking
 def generate_monster(m_id, x,y):
     if m_id == 'None' or m_id == None:
@@ -421,6 +429,10 @@ with open("data/dialogue.json") as json_data:
     dialogue_data = json.load(json_data)
     logger.debug(dialogue_data)
 
+
+with open("data/body_types.json") as json_data:
+    body_types_data = json.load(json_data)
+    logger.debug(body_types_data)
 
 if __name__ == '__main__':
     test_force_roll(100)

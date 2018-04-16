@@ -1,0 +1,27 @@
+{
+
+ "humanoid":[
+             "head",
+             "torso",
+             "arm",
+             "arm",
+             "leg",
+             "leg"
+ ],
+ "animal":[
+             "head",
+             "torso",
+             "paw",
+             "paw",
+             "paw",
+             "paw"
+ ],
+ "bird":[
+             "head",
+             "torso",
+             "wing",
+             "wing",
+             "talon",
+             "talon"
+]
+}

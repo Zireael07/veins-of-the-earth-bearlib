@@ -138,6 +138,8 @@ class com_Creature(object):
         self.num_dice = num_dice
         self.damage_dice = damage_dice
         self.base_def = base_def
+        # body parts
+        self.body_parts = []
         # the 6 stats
         self.base_str = base_str
         self.base_dex = base_dex
@@ -340,6 +342,12 @@ class com_Creature(object):
             return "cyan"
         elif react > 0:
             return "blue"
+
+    def set_body_parts(self, parts):
+        print("Setting body parts...")
+        for p in parts:
+            print("Setting " + str(p))
+            self.body_parts.append(p)
 
     def skill_test(self, skill):
         if self.owner.visible:

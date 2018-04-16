@@ -552,6 +552,10 @@ def generate_player():
                                             base_cha=player_array[5],
                                             player=player_com1, faction="player", death_function=death_player)
 
+    # body parts
+    creature_com1.set_body_parts(generators.generate_body_types())
+
+
     # check that x,y isn't taken
     x,y = game_vars.level.player_start_x, game_vars.level.player_start_y
     taken = map_check_for_creature(x,y)
