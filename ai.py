@@ -3,7 +3,7 @@ import math
 
 import constants
 from tile_lookups import get_block_path
-from map_common import random_free_tile_away, direction_to, Directions
+from map_common import random_free_tile_away, direction_to, Directions, distance_to
 import events
 import game_vars
 
@@ -48,10 +48,13 @@ class AI(object):
         self.target = None
         self.last_move_dir = Directions.CENTER # dummy
 
-    def distance(self, player):
+    def distance(self, target):
+        # convert to tuple if not tuple already
+        if hasattr(target, "x"):
+            target = (target.x, target.y)
         # check distance to player
-        dx = player.x - self.owner.x
-        dy = player.y - self.owner.y
+        dx = target[0] - self.owner.x
+        dy = target[1] - self.owner.y
         distance = math.sqrt(dx ** 2 + dy ** 2)
 
         # print("Distance to player is " + str(distance))
@@ -114,6 +117,37 @@ class AI(object):
         else:
             self.last_move_dir = Directions.CENTER
 
+    def flee(self, actor):
+        if self.distance(actor) >= self.owner.creature.get_light_radius():
+            print("We're out of sight radius already!")
+            return None
+
+        distance = distance_to((self.owner.x, self.owner.y), (actor.x, actor.y))
+        #print("Current distance " + str(distance) + " to target @" + str(actor.x) + " " + str(actor.y))
+        target = None
+
+        game_map = game_vars.level.current_map
+
+        for y in range(self.owner.y - 1, self.owner.y + 2):
+            for x in range(self.owner.x - 1, self.owner.x + 2):
+                if x in range(0, len(game_map)) and y in range(0, len(game_map[0])):
+                    # don't check own position
+                    if get_block_path(game_map[x][y]) == False and self.owner.x != x and self.owner.y != y:
+                        #print("Checking position for fleeing: " + str(x) + " " + str(y))
+                        #print("Distance... " + str(distance_to((actor.x, actor.y),(x,y))))
+
+                        if distance_to((actor.x, actor.y), (x, y)) > distance:
+                            #print("Distance " + str(distance_to((actor.x, actor.y),(x,y))) + " is bigger than " + str(distance))
+                            distance = distance_to((actor.x, actor.y), (x, y))
+                            target = (x, y)
+
+        if target != None:
+            self.target = target
+
+            return target
+
+        return None
+
 class EnemyAI(AI):
     def take_turn(self, player, fov_map):
         #print("AI taking turn")
@@ -127,8 +161,22 @@ class EnemyAI(AI):
             self.random_move()
         else:
             print("Player in fov")
-            cons = self.consider_move_list(direction_to(self.owner, player), game_vars.level.current_map)
-            self.owner.creature.move_direction(cons, game_vars.level.current_map)
+
+            if self.owner.creature.hp < int(self.owner.creature.max_hp*0.5):
+                print("Fleeing!")
+                # flee
+                target = self.flee(player)
+                if target:
+                    print("Target: " + str(target))
+                    cons = self.consider_move_list(direction_to(self.owner, target), game_vars.level.current_map)
+                    self.owner.creature.move_direction(cons, game_vars.level.current_map)
+                # safety!
+                else:
+                    self.random_move()
+            else:
+                target = player
+                cons = self.consider_move_list(direction_to(self.owner, target), game_vars.level.current_map)
+                self.owner.creature.move_direction(cons, game_vars.level.current_map)
 
             #move_astar(self.owner, player, game_vars.level.current_map)
             #self.owner.creature.move_towards(player.x, player.y, game.level.current_map)
