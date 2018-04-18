@@ -581,8 +581,17 @@ def inventory_menu_test(header, width, title, equipped_items, inventory):
     # draw equipped items
     blt.layer(4)
     # reverse mapping of a custom enum is a dict that we can iterate on
-    for slot in EquipmentSlots.reverse_mapping:
-        name = str(EquipmentSlots.reverse_mapping[slot]).lower()
+    for index in range(1, len(EquipmentSlots.reverse_mapping)+1):
+        slot = EquipmentSlots.reverse_mapping[index]
+
+        name = str(slot).lower()
+
+        # line change every three slots
+        if index % 4 == 0:
+            x = menu_x + 10
+            y = y + 5
+
+
         # slot label
         blt.puts(x-1,y+2, name.capitalize())
 
