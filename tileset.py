@@ -29,6 +29,8 @@ def set_tiles():
     blt.set("0x1F35E: gfx/food.png, align=center")  # bread unicode symbol
     blt.set("0x2615: gfx/flask.png, align=center")  # hot beverage symbol
     blt.set("0x2053: gfx/torch.png, align=center")
+    blt.set("0x3C9: gfx/boots.png, align=center") # "ω"
+    blt.set("0x3009: gfx/shield_light_wooden.png, align=center") #"〉"
 
     # gfx
     blt.set("0x2317: gfx/mouseover.png, align=center")  # "⌗"

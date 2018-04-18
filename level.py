@@ -167,6 +167,8 @@ class obj_Level(object):
         self.spawn_item_by_id("dagger")
         self.spawn_item_by_id("studded armor")
         self.spawn_item_by_id("chainmail")
+        self.spawn_item_by_id("boots")
+        self.spawn_item_by_id("light wooden shield")
 
         self.add_entity(generators.generate_monster("human", *random_free_tile(self.current_map)))
 

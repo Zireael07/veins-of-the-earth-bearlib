@@ -52,6 +52,18 @@
            "type": "armor",
            "combat_armor": 4
  },
+ "boots":{
+          "char": "0x3C9",
+          "name": "boots",
+          "slot": "legs",
+          "type": "other"
+ },
+ "light wooden shield":{
+          "char": "0x3009",
+          "name": "light wooden shield",
+          "slot": "off_hand",
+          "type": "shield"
+ },
  "torch": {
           "char": "0x2053",
           "name": "torch",
