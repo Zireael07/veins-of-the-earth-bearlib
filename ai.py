@@ -196,12 +196,19 @@ class NeutralAI(AI):
 
             self.move_to_map_target()
 
+            if self.owner.x == self.target[0] and self.owner.y == self.target[1]:
+                print("We reached the target")
+                self.target = random_free_tile_away(game_vars.level.current_map, 6, (self.owner.x, self.owner.y))
         else:
             if not self.target:
                 self.target = game_vars.level.poi[0]
-                #self.target = random_free_tile_away(game_vars.level.current_map, 6, (self.owner.x, self.owner.y))
+
 
             self.move_to_map_target()
+
+            if self.owner.x == self.target[0] and self.owner.y == self.target[1]:
+                print("We reached the target")
+                self.target = random_free_tile_away(game_vars.level.current_map, 6, (self.owner.x, self.owner.y))
 
             #self.owner.creature.move_direction(direction_to(self.owner, self.target), game_vars.level.current_map)
 

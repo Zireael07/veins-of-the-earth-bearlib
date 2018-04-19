@@ -184,7 +184,7 @@ class obj_Level(object):
              self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
              self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
 
-        else:
+        elif self.gen_type != "main":
              # test: force spawn a monster on top of the player
              self.add_entity(generators.generate_monster("goblin", self.player_start_x, self.player_start_y))
 
