@@ -3,7 +3,7 @@ import math
 
 import constants
 from tile_lookups import get_block_path
-from map_common import random_free_tile_away, direction_to, Directions, distance_to
+from map_common import random_free_tile_between, direction_to, Directions, distance_to
 import events
 import game_vars
 
@@ -203,7 +203,7 @@ class NeutralAI(AI):
                                (game_vars.level.poi[0][0], game_vars.level.poi[0][1])) > 6:
                     self.target = game_vars.level.poi[0]
                 else:
-                    self.target = random_free_tile_away(game_vars.level.current_map, 4, (self.owner.x, self.owner.y))
+                    self.target = random_free_tile_between(game_vars.level.current_map, (self.owner.x, self.owner.y), 7, 9)
         else:
             if not self.target:
                 self.target = game_vars.level.poi[0]
@@ -217,7 +217,7 @@ class NeutralAI(AI):
                 if distance_to((self.owner.x, self.owner.y), (game_vars.level.poi[0][0], game_vars.level.poi[0][1])) > 6:
                     self.target = game_vars.level.poi[0]
                 else:
-                    self.target = random_free_tile_away(game_vars.level.current_map, 4, (self.owner.x, self.owner.y))
+                    self.target = random_free_tile_between(game_vars.level.current_map, (self.owner.x, self.owner.y), 7, 9)
 
             #self.owner.creature.move_direction(direction_to(self.owner, self.target), game_vars.level.current_map)
 
