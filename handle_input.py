@@ -110,10 +110,12 @@ def game_handle_mouse_input(key):
 
         return "mouse_click"
 
+# these directions mean that up goes up on the displayed map
 KEY_TO_DIR = {
-        blt.TK_UP: Directions.NORTH, blt.TK_DOWN: Directions.SOUTH, blt.TK_LEFT: Directions.WEST, blt.TK_RIGHT: Directions.EAST,
-        blt.TK_HOME: Directions.NORTHWEST, blt.TK_PAGEUP: Directions.NORTHEAST,
-        blt.TK_PAGEDOWN: Directions.SOUTHWEST, blt.TK_END: Directions.SOUTHEAST
+        blt.TK_UP: Directions.NORTHWEST, blt.TK_DOWN: Directions.SOUTHEAST,
+        blt.TK_LEFT: Directions.SOUTHWEST, blt.TK_RIGHT: Directions.NORTHEAST,
+        blt.TK_HOME: Directions.WEST, blt.TK_PAGEUP: Directions.NORTH,
+        blt.TK_PAGEDOWN: Directions.SOUTH, blt.TK_END: Directions.EAST
     }
 # TODO: implement vi-keys as an option (note: it requires moving 'log' to some other key)
 def game_key_move(key):
