@@ -174,11 +174,21 @@ def shop_window(player, creature, items):
 def help_menu():
     # make possible drawing the >
     blt.set("0x003E: none")
-    renderer.text_menu("Keybindings", 70, "HELP", "Arrows to move" + "\n" + "Home to move up-left, PageUp to move up-right" + \
+    renderer.text_menu("Keybindings", 70, "HELP",
+                " Default keys:" + \
+                "\n" + "Arrows to move" + "\n" + "Home to move up-left, PageUp to move up-right" + \
                 "\n" + "PageDown to move left-down, End to move right-down" + \
-                "\n" + " > to ascend/descend stairs" + \
+                "\n" + "L to open log" + \
+                "\n" + \
+                "\n" + " Vi keys:" + \
+                "\n" + "h to move up, j to move down, k to move up, l to move right" + \
+                "\n" + "y to move up-left, u to move up-right, "
+                "\n" + "b to move left-down, n to move left-right, " +
+                "\n" + "Shift+M to open log" + \
+                "\n" + \
+                "\n" + "> to ascend/descend stairs" + \
                 "\n" + "G to pick up items, D to drop items, I to open inventory" + \
-                "\n" + "C to open character sheet, L to open log" + \
+                "\n" + "C to open character sheet" + \
                 "\n" + "? to bring up this menu again")
     # restore drawing
     blt.set("0x003E: gfx/stairs_down.png, align=center")
