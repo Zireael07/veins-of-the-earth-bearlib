@@ -117,25 +117,33 @@ KEY_TO_DIR = {
         blt.TK_HOME: Directions.WEST, blt.TK_PAGEUP: Directions.NORTH,
         blt.TK_PAGEDOWN: Directions.SOUTH, blt.TK_END: Directions.EAST
     }
-# TODO: implement vi-keys as an option (note: it requires moving 'log' to some other key)
+
+KEY_TO_DIR_VI = {
+        blt.TK_K: Directions.NORTHWEST, blt.TK_J: Directions.SOUTHEAST,
+        blt.TK_H: Directions.SOUTHWEST, blt.TK_L: Directions.NORTHEAST,
+        blt.TK_Y: Directions.WEST, blt.TK_U: Directions.NORTH,
+        blt.TK_B: Directions.SOUTH, blt.TK_N: Directions.EAST
+}
+
 def game_key_move(key):
-    if PLAYER.creature.move(KEY_TO_DIR[key][0], KEY_TO_DIR[key][1], game_vars.level.current_map):
-        CAMERA.move(KEY_TO_DIR[key][0], KEY_TO_DIR[key][1])
+    src = KEY_TO_DIR if not constants.VI_KEYS else KEY_TO_DIR_VI
+    if PLAYER.creature.move(src[key][0], src[key][1], game_vars.level.current_map):
+        CAMERA.move(src[key][0], src[key][1])
         game_vars.fov_recompute = True
 
     return "player-moved"
 
 def game_player_turn_input(key):
-    if key in KEY_TO_DIR:
+    if not constants.VI_KEYS and key in KEY_TO_DIR or constants.VI_KEYS and key in KEY_TO_DIR_VI:
         return game_key_move(key)
 
-    if key == blt.TK_PERIOD and blt.check(blt.TK_SHIFT):
+    if blt.check(blt.TK_SHIFT) and key == blt.TK_PERIOD:
         if game_vars.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS):  # .stairs:
             GAME.next_level()
             return "redraw"
             #return "player-moved"
 
-    if key == blt.TK_COMMA and blt.check(blt.TK_SHIFT):
+    if blt.check(blt.TK_SHIFT) and key == blt.TK_COMMA:
         if game_vars.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS_UP):
             GAME.previous_level(game_vars.level.gen_type)
             return "redraw"
@@ -209,14 +217,14 @@ def game_handle_keys():
         if key not in (blt.TK_S, blt.TK_L):
             return "QUIT"
 
-    if key == blt.TK_L:
+    if not constants.VI_KEYS and key == blt.TK_L or constants.VI_KEYS and blt.check(blt.TK_SHIFT) and key == blt.TK_M:
         gui_menus.log_menu("Log history", 0, 26)
 
-    if key == blt.TK_SLASH and blt.check(blt.TK_SHIFT):
+    if blt.check(blt.TK_SHIFT) and key == blt.TK_SLASH:
         gui_menus.help_menu()
 
     # Debugging
-    if key == blt.TK_GRAVE and blt.check(blt.TK_SHIFT):
+    if blt.check(blt.TK_SHIFT) and key == blt.TK_GRAVE:
         # print("Debug mode on")
         # constants.DEBUG = True
         gui_menus.debug_menu(PLAYER)

@@ -46,7 +46,10 @@ FOV_LIGHT_WALLS = True
 
 NUM_MESSAGES = 4
 
+# options that the player can change
 DEBUG = False
+VI_KEYS = True
+
 
 # Data
 NPC_JSON_PATH = "data/test.json"
