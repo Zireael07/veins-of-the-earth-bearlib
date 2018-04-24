@@ -396,14 +396,16 @@ def game_main_loop():
 
             blt.color(4294967295)
 
+            # compass
+            blt.puts(2, 21, "[color=yellow] ↑ NW (%s key) " % (handle_input.get_up_key()))
+
+
             # debug
             #on top of map
             blt.layer(1)
             blt.puts(2,2, "[color=red] player position: %d %d" % (PLAYER.x, PLAYER.y))
             blt.puts(2,5, "[color=red] camera offset: %d %d" % (CAMERA.offset[0], CAMERA.offset[1]))
-            # debugging rooms
-            #blt.puts(2,6, "[color=orange] room index: %s" % (room_index_str()))
-            #blt.puts(2,7, "[color=orange] room center %s" % (get_room_data()))
+            blt.puts(2,6, "[color=red] vi keys: %s " % (str(constants.VI_KEYS)))
 
             # this works on cells
             blt.layer(0)

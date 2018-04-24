@@ -125,6 +125,16 @@ KEY_TO_DIR_VI = {
         blt.TK_B: Directions.SOUTH, blt.TK_N: Directions.EAST
 }
 
+def get_up_key():
+    # no way to convert the integer back to string...
+    #src = KEY_TO_DIR if not constants.VI_KEYS else KEY_TO_DIR_VI
+    #return str(src.keys()[0])
+
+    if constants.VI_KEYS:
+        return "K"
+    else:
+        return "UP"
+
 def game_key_move(key):
     src = KEY_TO_DIR if not constants.VI_KEYS else KEY_TO_DIR_VI
     if PLAYER.creature.move(src[key][0], src[key][1], game_vars.level.current_map):
