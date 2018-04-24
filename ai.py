@@ -47,6 +47,7 @@ class AI(object):
     def __init__(self):
         self.target = None
         self.last_move_dir = Directions.CENTER # dummy
+        self.fleeing = False
 
     def distance(self, target):
         # convert to tuple if not tuple already
@@ -163,7 +164,10 @@ class EnemyAI(AI):
             print("Player in fov")
 
             if self.owner.creature.hp < int(self.owner.creature.max_hp*0.5):
-                print("Fleeing!")
+                if not self.fleeing:
+                    events.notify(events.GameEvent("MESSAGE", (self.owner.creature.name_instance + " is fleeing!", "white")))
+                #print("Fleeing!")
+                self.fleeing = True
                 # flee
                 target = self.flee(player)
                 if target:
