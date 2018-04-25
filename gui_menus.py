@@ -172,24 +172,12 @@ def shop_window(player, creature, items):
 
 
 def help_menu():
+    with open("data/help.txt") as help_f:
+        help = help_f.read()
     # make possible drawing the >
     blt.set("0x003E: none")
     renderer.text_menu("Keybindings", 70, "HELP",
-                " Default keys:" + \
-                "\n" + "Arrows to move" + "\n" + "Home to move up-left, PageUp to move up-right" + \
-                "\n" + "PageDown to move left-down, End to move right-down" + \
-                "\n" + "L to open log" + \
-                "\n" + \
-                "\n" + " Vi keys:" + \
-                "\n" + "h to move up, j to move down, k to move up, l to move right" + \
-                "\n" + "y to move up-left, u to move up-right, "
-                "\n" + "b to move left-down, n to move left-right, " +
-                "\n" + "Shift+M to open log" + \
-                "\n" + \
-                "\n" + "> to ascend/descend stairs" + \
-                "\n" + "G to pick up items, D to drop items, I to open inventory" + \
-                "\n" + "C to open character sheet" + \
-                "\n" + "? to bring up this menu again")
+                help)
     # restore drawing
     blt.set("0x003E: gfx/stairs_down.png, align=center")
 
@@ -309,12 +297,11 @@ def character_creation_menu(player):
         # welcome!
         blt.clear()
         # TODO: text wrap
+        with open("data/welcome.txt") as welcome_f:
+            welcome = welcome_f.read()
+
         renderer.text_menu("", 70, "Welcome to Veins of the Earth",
-                  """Brave adventurer, you are now lost in the underground corridors 
-    of the Veins of the Earth. 
-    There is no way to return to your homeland.
-    How long can you survive...?
-    Press ESC or click to close.""")
+                  welcome)
 
     # pressed ESC while in character creation I
     else:

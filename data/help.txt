@@ -1,0 +1,16 @@
+Default keys:
+Arrows to move
+Home to move up-left, PageUp to move up-right
+PageDown to move left-down, End to move right-down
+L to open log
+
+Vi keys:
+h to move up, j to move down, k to move up, l to move right
+y to move up-left, u to move up-right
+b to move left-down, n to move left-right
+Shift+M to open log
+
+> to ascend/descend stairs
+G to pick up items, D to drop items, I to open inventory
+C to open character sheet
+? to bring up this menu again
