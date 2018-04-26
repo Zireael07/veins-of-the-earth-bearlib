@@ -387,33 +387,7 @@ def game_main_loop():
             renderer.draw_mouseover(pix_x, pix_y)
             blt.color(4294967295)
 
-            # hud bars
-            blt.layer(1)
-            renderer.draw_bar(2, 15, 20, "HP", PLAYER.creature.hp, PLAYER.creature.max_hp, "red", "darker red",
-                              str(PLAYER.creature.hp))
-            renderer.draw_bar(2, 17, 20, "Nutrition", PLAYER.creature.player.nutrition, 500, "green", "darker green")
-            renderer.draw_bar(2, 19, 20, "Thirst", PLAYER.creature.player.thirst, 300, "blue", "darker blue")
-
-            blt.color(4294967295)
-
-            # compass
-            blt.puts(2, 21, "[color=yellow] ↑ NW (%s key) " % (handle_input.get_up_key()))
-
-
-            # debug
-            #on top of map
-            blt.layer(1)
-            blt.puts(2,2, "[color=red] player position: %d %d" % (PLAYER.x, PLAYER.y))
-            blt.puts(2,5, "[color=red] camera offset: %d %d" % (CAMERA.offset[0], CAMERA.offset[1]))
-            blt.puts(2,6, "[color=red] vi keys: %s " % (str(constants.VI_KEYS)))
-
-            # this works on cells
-            blt.layer(0)
-            #mouse_picking(m_x, m_y)
-            blt.layer(1)
-            # this works on map tiles
-            hud.show_tile_desc(pix_x, pix_y, game_vars.fov_map)
-            hud.show_npc_desc(pix_x, pix_y)
+            hud.draw_hud(pix_x, pix_y)
 
         # refresh term
         blt.refresh()

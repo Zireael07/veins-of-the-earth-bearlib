@@ -1,8 +1,11 @@
+# coding: utf8
 from bearlibterminal import terminal as blt
 
 import renderer
 from map_common import distance_to, tiles_distance_to, get_map_desc, map_check_for_creature
 import game_vars
+import constants
+import handle_input
 
 # need the refs
 #def initialize_game(game):
@@ -79,3 +82,28 @@ def show_tile_desc(pix_x, pix_y, fov_map):
     blt.puts(w,h+1, "Dist: real:" + str(dist) + " tiles: " + str(tiles_dist) + " ft: " + str(tiles_dist*5) + " ft.")
     blt.puts(w, h, get_map_desc(iso_x, iso_y, fov_map, game_vars.level.current_explored, game_vars.level.map_desc))
     blt.layer(0)
+
+def draw_hud(pix_x, pix_y):
+    # hud bars
+    blt.layer(1)
+    renderer.draw_bar(2, 15, 20, "HP", PLAYER.creature.hp, PLAYER.creature.max_hp, "red", "darker red",
+                      str(PLAYER.creature.hp))
+    renderer.draw_bar(2, 17, 20, "Nutrition", PLAYER.creature.player.nutrition, 500, "green", "darker green")
+    renderer.draw_bar(2, 19, 20, "Thirst", PLAYER.creature.player.thirst, 300, "blue", "darker blue")
+
+    blt.color(4294967295)
+
+    # compass
+    blt.puts(2, 21, "[color=yellow] ↑ NW (%s key) " % (handle_input.get_up_key()))
+
+    # debug
+    # on top of map
+    blt.layer(1)
+    blt.puts(2, 2, "[color=red] player position: %d %d" % (PLAYER.x, PLAYER.y))
+    blt.puts(2, 5, "[color=red] camera offset: %d %d" % (game_vars.camera.offset[0], game_vars.camera.offset[1]))
+    blt.puts(2, 6, "[color=red] vi keys: %s " % (str(constants.VI_KEYS)))
+
+    blt.layer(1)
+    # this works on map tiles
+    show_tile_desc(pix_x, pix_y, game_vars.fov_map)
+    show_npc_desc(pix_x, pix_y)
