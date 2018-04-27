@@ -358,9 +358,11 @@ class com_Creature(object):
             print("Setting " + str(p))
 
             if p in BP_TO_HP:
-                print("Looking up hp.." + str(int(BP_TO_HP[p]*self.max_hp)))
-                self.body_parts.append((p, int(BP_TO_HP[p]*self.max_hp)))
+                hp = int(BP_TO_HP[p]*self.max_hp)
+                print("Looking up hp.." + str(hp))
+                self.body_parts.append([p, hp, hp])
 
+    # d100 roll under
     def skill_test(self, skill):
         if self.owner.visible:
             events.notify(events.GameEvent("MESSAGE",
@@ -421,11 +423,31 @@ class com_Creature(object):
                                         (self.name_instance + " misses " + target.creature.name_instance + "!", "lighter blue")))
 
 
+    def random_body_part(self):
+        loc = roll(1,20)
+        if loc < 3:
+            return self.body_parts[4] # left "leg"
+        elif loc < 6:
+            return self.body_parts[5] # right leg
+        elif loc < 13:
+            return self.body_parts[1] # torso
+        elif loc < 16:
+            return self.body_parts[2] # left arm
+        elif loc < 19:
+            return self.body_parts[3] # right arm
+        else:
+            return self.body_parts[0] # head
+
     def take_damage(self, damage):
+        # determine body part hit
+        part = self.random_body_part()
+
         change = damage - self.defense
         if change < 0:
             change = 0
-        self.hp -= change
+        #self.hp -= change
+        part[1] -= change
+
         if self.owner.visible:
             if self.defense > 0:
                 events.notify(events.GameEvent("MESSAGE",
@@ -441,9 +463,10 @@ class com_Creature(object):
             game_vars.level.current_effects.append(splatter)
 
             events.notify(events.GameEvent("MESSAGE",
-                                (self.name_instance + "'s hp is " + str(self.hp) + "/" + str(self.max_hp), "white")))
+                                (self.name_instance + "'s " + str(part[0]) + " hp is " + str(part[1]) + "/" + str(part[2]), "white")))
 
-        if self.hp <= 0:
+        #if self.hp <= 0:
+        if (part[0] == "torso" or part[0] == "head") and part[1] <= 0:
             if self.death_function is not None:
                 self.death_function(self.owner)
 

@@ -348,6 +348,9 @@ def generate_monster(m_id, x,y):
                                             chat = mon_chat,
                                             death_function=death)
 
+    # body parts
+    creature_comp.set_body_parts(generate_body_types())
+
     # appropriate AI
     if mon_faction != "enemy":
         ai_comp = ai.NeutralAI()
