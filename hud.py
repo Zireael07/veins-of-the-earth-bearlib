@@ -86,8 +86,14 @@ def show_tile_desc(pix_x, pix_y, fov_map):
 def draw_hud(pix_x, pix_y):
     # hud bars
     blt.layer(1)
-    renderer.draw_bar(2, 15, 20, "HP", PLAYER.creature.hp, PLAYER.creature.max_hp, "red", "darker red",
-                      str(PLAYER.creature.hp))
+    # draw body parts' hp
+    x = 2
+    for p in PLAYER.creature.body_parts:
+        renderer.draw_bar(x,15,p[2], str(p[0]), p[1], p[2], "red", "darker red")
+        x += p[2]+1
+
+    #renderer.draw_bar(2, 15, 20, "HP", PLAYER.creature.hp, PLAYER.creature.max_hp, "red", "darker red",
+    #                  str(PLAYER.creature.hp))
     renderer.draw_bar(2, 17, 20, "Nutrition", PLAYER.creature.player.nutrition, 500, "green", "darker green")
     renderer.draw_bar(2, 19, 20, "Thirst", PLAYER.creature.player.thirst, 300, "blue", "darker blue")
 
