@@ -1,3 +1,4 @@
+#!/usr/bin/python2
 # coding: utf8
 
 from bearlibterminal import terminal as blt

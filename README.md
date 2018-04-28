@@ -7,3 +7,12 @@
 This is a Python version of Veins of the Earth.
 
 Created using Python 2.7. and BearLibTerminal.
+
+## Installation
+
+You will need Python 2.7 installed and two packages:
+
+* jsonpickle (apt-get install python2.7 python-pip python-jsonpickle or pip install jsonpickle)
+* bearlibterminal (pip install bearlibterminal)
+
+Libtcod comes bundled with the game.
