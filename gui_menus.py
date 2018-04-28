@@ -246,7 +246,7 @@ def character_stats_menu(player):
                ("CON: " + str(player.creature.constitution), "white"),
                ("INT: " + str(player.creature.intelligence), "white"),
                ("WIS: " + str(player.creature.wisdom), "white"), ("CHA: " + str(player.creature.charisma), "white"),
-               ("(R)eroll!", "yellow"), ("(E)xit", "white")]
+               ("(R)eroll!", "yellow"), ("(P)roceed", "white")]
 
     key = renderer.menu_colored("STATS", options, 50, 'CHARACTER CREATION II')
 
@@ -259,8 +259,8 @@ def character_stats_menu(player):
         player.creature.wisdom = roll(3,6)
         player.creature.charisma = roll(3,6)
         return True
-    elif key == blt.TK_E or key == blt.TK_ESCAPE:
-        # exit
+    elif key == blt.TK_P or key == blt.TK_ESCAPE:
+        # exit the window
         return None
     else:
         # redraw
