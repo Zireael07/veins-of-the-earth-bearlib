@@ -741,7 +741,7 @@ def text_menu(header, width, title, text):
         blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
         return key
 
-def input_menu(header, width):
+def input_menu(header, width, prompt):
     menu_x = int((120 - width) / 2)
 
     header_height = 2
@@ -751,9 +751,9 @@ def input_menu(header, width):
 
     # create a window
 
-    create_window(menu_x, menu_y, width, menu_h, "")
+    create_window(menu_x, menu_y, width, menu_h, header)
 
-    blt.puts(menu_x, menu_y, header)
+    blt.puts(menu_x, menu_y, prompt)
 
     y = menu_y + header_height + 1
 
