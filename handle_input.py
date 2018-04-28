@@ -115,7 +115,12 @@ KEY_TO_DIR = {
         blt.TK_UP: Directions.NORTHWEST, blt.TK_DOWN: Directions.SOUTHEAST,
         blt.TK_LEFT: Directions.SOUTHWEST, blt.TK_RIGHT: Directions.NORTHEAST,
         blt.TK_HOME: Directions.WEST, blt.TK_PAGEUP: Directions.NORTH,
-        blt.TK_PAGEDOWN: Directions.SOUTH, blt.TK_END: Directions.EAST
+        blt.TK_PAGEDOWN: Directions.SOUTH, blt.TK_END: Directions.EAST,
+    # numpad
+        blt.TK_KP_8: Directions.NORTHWEST, blt.TK_KP_2: Directions.SOUTHEAST,
+        blt.TK_KP_4: Directions.SOUTHWEST, blt.TK_KP_6: Directions.NORTHEAST,
+        blt.TK_KP_7: Directions.WEST, blt.TK_KP_9: Directions.NORTH,
+        blt.TK_KP_1: Directions.SOUTH, blt.TK_KP_3: Directions.EAST
     }
 
 KEY_TO_DIR_VI = {
@@ -133,7 +138,7 @@ def get_up_key():
     if constants.VI_KEYS:
         return "K"
     else:
-        return "UP"
+        return "UP/KP 8"
 
 def game_key_move(key):
     src = KEY_TO_DIR if not constants.VI_KEYS else KEY_TO_DIR_VI
