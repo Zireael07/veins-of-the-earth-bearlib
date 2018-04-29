@@ -401,6 +401,23 @@ with open(constants.NPC_JSON_PATH) as json_data:
 with open(constants.ITEMS_JSON_PATH) as json_data:
     items_data = json.load(json_data)
     logger.debug(items_data)
+
+    # create create multiple body parts' armor from same template
+    # we can't loop directly over dict
+    #for i in items_data:
+    # let's loop over keys instead
+    keys = items_data.keys()
+    for k in keys:
+        if "armor" in k:
+            print(k)
+            for p in ["LEGS"]: # will be expanded later
+                new_i = u'' +str(k) + " greaves"
+                new_item = dict(items_data[k]) # copy it
+                new_item['name'] = items_data[k]['name'] + " greaves"
+                new_item['slot'] = "legs"
+                items_data.update({new_i: new_item})
+
+    #print("Done setup")
     #print items_data
 
 with open("data/armor_materials.json") as json_data:

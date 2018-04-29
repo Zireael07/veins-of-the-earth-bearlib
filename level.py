@@ -166,6 +166,7 @@ class obj_Level(object):
         self.spawn_item_by_id("longsword")
         self.spawn_item_by_id("dagger")
         self.spawn_item_by_id("studded armor")
+        self.spawn_item_by_id("leather armor greaves")
         self.spawn_item_by_id("chainmail")
         self.spawn_item_by_id("boots")
         self.spawn_item_by_id("light wooden shield")
