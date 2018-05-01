@@ -17,13 +17,43 @@ import game_vars
 
 def main_menu():
 
-    key = renderer.menu_colored("MAIN MENU", [("(S)tart new game", "white"), ("(L)oad game", "white"), ("(E)xit game", "white")],
+    key = renderer.menu_colored("MAIN MENU", [("(S)tart new game", "white"), ("(L)oad game", "white"),
+                                              ("(O)ptions", "white"),
+                                              ("(E)xit game", "white")],
                        50, menu_x = int((180 - 50) / 2), border=False)
 
     if key == blt.TK_S or key == 0:
         return 1
     if key == blt.TK_L or key == 1:
         return 2
+    if key == blt.TK_O or key == 2:
+        return 3
+
+def options_menu_outer():
+    ret = options_menu()
+    if ret is not None:
+        # if we are getting input, keep showing the log
+        while ret is not None:
+            print("Option is: " + str(ret))
+            if ret == 1:
+                print("Option 1 toggled")
+                # toggle
+                constants.VI_KEYS = not constants.VI_KEYS
+
+            ret = options_menu()
+
+        print("Ret:" + str(ret))
+        return ret
+
+def options_menu():
+    opts = [("(V)i keys: %s " % (str(constants.VI_KEYS)), "white")]
+
+    key = renderer.menu_colored("OPTIONS", opts, 50, menu_x = int((180 - 50)/2), border=False)
+
+    if key == blt.TK_V or key == 0:
+        return 1
+    else:
+        return None # exit
 
 # individual menus
 def character_sheet_menu(header, player):

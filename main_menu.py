@@ -14,7 +14,12 @@ import handle_input
 import game_vars
 
 
+def main_menu_outer(start_new_game):
+    ret = main_menu(start_new_game)
+    while ret is False:
+        ret = main_menu(start_new_game)
 
+    return ret
 
 def main_menu(start_new_game):
     blt.put(10, 0, 0xE100)
@@ -71,5 +76,15 @@ def main_menu(start_new_game):
 
         return GAME, PLAYER, CAMERA
 
-    else:
+    elif action == 3:
+        # options
+        #blt.layer(4)
+        option = gui_menus.options_menu_outer()
+        #print("Option: " + str(option))
+        if not option:
+            print("Not option, going back")
+            #blt.clear()
+            return False
+
+    else: #quit
         return None

@@ -627,8 +627,8 @@ def game_initialize():
     GAME = obj_Game(True)
     game_vars.game_state = GameStates.MAIN_MENU
 
-    ret = main_menu.main_menu(start_new_game)
-    if ret is not None:
+    ret = main_menu.main_menu_outer(start_new_game)
+    if ret is not False and ret is not None:
         GAME, PLAYER, CAMERA = ret[0], ret[1], ret[2]
     else:
         # quit
