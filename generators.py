@@ -409,12 +409,13 @@ with open(constants.ITEMS_JSON_PATH) as json_data:
     keys = items_data.keys()
     for k in keys:
         if "armor" in k:
-            print(k)
+            #print(k)
             for p in ["LEGS"]: # will be expanded later
                 new_i = u'' +str(k) + " greaves"
                 new_item = dict(items_data[k]) # copy it
                 new_item['name'] = items_data[k]['name'] + " greaves"
                 new_item['slot'] = "legs"
+                new_item['char'] = "0xA7B7"
                 items_data.update({new_i: new_item})
 
     #print("Done setup")

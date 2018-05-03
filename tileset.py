@@ -30,6 +30,7 @@ def set_tiles():
     blt.set("0x2615: gfx/flask.png, align=center")  # hot beverage symbol
     blt.set("0x2053: gfx/torch.png, align=center")
     blt.set("0x3C9: gfx/boots.png, align=center") # "ω"
+    blt.set("0xA7B7: gfx/boots2.png, align=center")
     blt.set("0x3009: gfx/shield_light_wooden.png, align=center") #"〉"
 
     # gfx
