@@ -61,11 +61,15 @@ def character_sheet_menu(header, player):
                ("CON: " + str(player.creature.constitution), "white"), ("INT: " + str(player.creature.intelligence), "white"),
                 ("WIS: " + str(player.creature.wisdom), "white"), ("CHA: " + str(player.creature.charisma), "white"),
                ("Attack: " + str(player.creature.melee), "white"), ("Dodge: " + str(player.creature.dodge), "white"),
-               ("Armor defense: " + str(player.creature.defense) + str(player.creature.defense_str), "white"),
+               #("Armor defense: " + str(player.creature.defense) + str(player.creature.defense_str), "white"),
                ("Light: " + str(player.creature.get_light_radius()), "yellow"),
                ("", "white"),
-               (str(game_vars.calendar_game.get_time_date(game_vars.calendar_game.turn)), "yellow")
+               (str(game_vars.calendar_game.get_time_date(game_vars.calendar_game.turn)), "yellow"),
+               ("Armor defense:", "white")
                ]
+
+    for p in player.creature.body_parts:
+        options.append((str(p.name) + ": " + str(p.defense), "white"))
 
     for m in player.creature.player.money:
         options.append((str(m[0]) + ": " + str(m[1]), "amber"))

@@ -89,8 +89,8 @@ def draw_hud(pix_x, pix_y):
     # draw body parts' hp
     x = 2
     for p in PLAYER.creature.body_parts:
-        renderer.draw_bar(x,15,p[2], str(p[0]), p[1], p[2], "red", "darker red")
-        x += p[2]+1
+        renderer.draw_bar(x,15,p.max_hp, str(p.name), p.hp, p.max_hp, "red", "darker red")
+        x += p.max_hp+1
 
     #renderer.draw_bar(2, 15, 20, "HP", PLAYER.creature.hp, PLAYER.creature.max_hp, "red", "darker red",
     #                  str(PLAYER.creature.hp))

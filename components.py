@@ -16,6 +16,7 @@ from generators import roll
 
 import constants
 import game_vars
+from equipment_slots import EquipmentSlots
 
 # need a reference to global GAME %^$@
 def initialize_game(game):
@@ -278,32 +279,7 @@ class com_Creature(object):
 
         return damage_str
 
-    @property
-    def defense(self):
-        total_def = self.base_def
 
-        if self.owner.container:
-            # get bonuses
-            object_bonuses = [obj.equipment.defense_bonus
-                              for obj in self.owner.container.equipped_items]
-
-            for bonus in object_bonuses:
-                total_def += bonus
-
-        return total_def
-
-    @property
-    def defense_str(self):
-        defense_str = ""
-        if self.owner.container:
-            # get bonuses
-            object_bonuses = ["Bonus:  " + str(obj.name) + " " + str(obj.equipment.defense_bonus)
-                              for obj in self.owner.container.equipped_items if obj.equipment.defense_bonus > 0]
-
-            for bonus in object_bonuses:
-                defense_str = defense_str + " " + bonus
-
-        return defense_str
 
     def get_weapon(self):
         for obj in self.owner.container.equipped_items:
@@ -353,14 +329,19 @@ class com_Creature(object):
             "leg": 0.25,
         }
 
-        print("Setting body parts...")
+        #print("Setting body parts...")
         for p in parts:
-            print("Setting " + str(p))
+            #print("Setting " + str(p))
 
             if p in BP_TO_HP:
                 hp = int(BP_TO_HP[p]*self.max_hp)
                 print("Looking up hp.." + str(hp))
-                self.body_parts.append([p, hp, hp])
+                body_part = com_BodyPart(p, hp, self.base_def)
+                body_part.owner = self
+                self.body_parts.append(body_part)
+
+                # name, hp, max_hp
+                #self.body_parts.append([p, hp, hp])
 
     # d100 roll under
     def skill_test(self, skill):
@@ -442,16 +423,18 @@ class com_Creature(object):
         # determine body part hit
         part = self.random_body_part()
 
-        change = damage - self.defense
+        change = damage - part.defense #self.defense
+        print("Defense: " + str(part.defense))
         if change < 0:
             change = 0
         #self.hp -= change
-        part[1] -= change
+        part.hp -= change
 
         if self.owner.visible:
-            if self.defense > 0:
+            #if self.defense > 0:
+            if part.defense > 0:
                 events.notify(events.GameEvent("MESSAGE",
-                                            (self.name_instance + " blocks " + str(self.defense) + " damage", "gray")))
+                                            (self.name_instance + " blocks " + str(part.defense) + " damage", "gray")))
             #tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, constants.RENDER_POSITIONS)
             #draw_blood_splatter(tile_x, tile_y, change)
 
@@ -463,10 +446,10 @@ class com_Creature(object):
             game_vars.level.current_effects.append(splatter)
 
             events.notify(events.GameEvent("MESSAGE",
-                                (self.name_instance + "'s " + str(part[0]) + " hp is " + str(part[1]) + "/" + str(part[2]), "white")))
+                                (self.name_instance + "'s " + str(part.name) + " hp is " + str(part.hp) + "/" + str(part.max_hp), "white")))
 
         #if self.hp <= 0:
-        if (part[0] == "torso" or part[0] == "head") and part[1] <= 0:
+        if (part.name == "torso" or part.name == "head") and part.hp <= 0:
             if self.death_function is not None:
                 self.death_function(self.owner)
 
@@ -568,6 +551,53 @@ class com_Creature(object):
     # this is based on Direction constants
     def move_direction(self, direction, game_map):
         return self.move(direction[0], direction[1], game_map)
+
+BP_TO_SLOT = {
+    "torso": EquipmentSlots.BODY,
+    "leg": EquipmentSlots.LEGS,
+    "arm": EquipmentSlots.OFF_HAND
+}
+
+
+class com_BodyPart(object):
+    def __init__(self, name, hp, base_def=0):
+        self.name = name
+        self.max_hp = hp
+        self.hp = hp
+        self.base_def = base_def
+
+    @property
+    def defense(self):
+        total_def = self.base_def
+
+        if self.owner.owner.container:
+            # get bonuses
+            #for obj in self.owner.owner.container.equipped_items:
+            #    if self.name in BP_TO_SLOT:
+            #        if obj.equipment.slot == str(EquipmentSlots.reverse_mapping[BP_TO_SLOT[self.name]]).to_lower():
+
+            object_bonuses = [obj.equipment.defense_bonus
+                              for obj in self.owner.owner.container.equipped_items if self.name in BP_TO_SLOT and obj.equipment.slot == str(EquipmentSlots.reverse_mapping[BP_TO_SLOT[self.name]]).lower() ]
+
+            for bonus in object_bonuses:
+                print("Bonus: " + str(bonus))
+                total_def += bonus
+
+        return total_def
+
+    @property
+    def defense_str(self):
+        defense_str = ""
+        if self.owner.owner.container:
+            # get bonuses
+            object_bonuses = ["Bonus:  " + str(obj.name) + " " + str(obj.equipment.defense_bonus)
+                              for obj in self.owner.owner.container.equipped_items if self.name in BP_TO_SLOT and obj.equipment.slot == EquipmentSlots.reverse_mapping[BP_TO_SLOT[self.name]] and obj.equipment.defense_bonus > 0]
+
+            for bonus in object_bonuses:
+ #               print("Bonus: " + str(bonus))
+                defense_str = defense_str + " " + bonus
+
+        return defense_str
 
 class com_Container(object):
     def __init__(self, inventory = None):
