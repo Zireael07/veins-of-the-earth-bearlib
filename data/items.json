@@ -58,6 +58,14 @@
           "slot": "legs",
           "type": "other"
  },
+ "helmet":{
+          "char": "0x2102",
+          "name": "helmet",
+          "paperdoll": "0xE204",
+          "slot": "head",
+          "type": "armor",
+          "combat_armor": 4
+ },
  "light wooden shield":{
           "char": "0x3009",
           "name": "light wooden shield",

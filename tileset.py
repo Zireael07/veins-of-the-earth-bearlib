@@ -32,6 +32,7 @@ def set_tiles():
     blt.set("0x3C9: gfx/boots.png, align=center") # "ω"
     blt.set("0xA7B7: gfx/boots2.png, align=center")
     blt.set("0x3009: gfx/shield_light_wooden.png, align=center") #"〉"
+    blt.set("0x2102: gfx/helmet_metal.png, align=center")
 
     # gfx
     blt.set("0x2317: gfx/mouseover.png, align=center")  # "⌗"
@@ -44,3 +45,4 @@ def set_tiles():
     blt.set("0xE201: gfx/paperdoll/leather_armour.png, align=center")
     blt.set("0xE202: gfx/paperdoll/long_sword_right.png, align=center")
     blt.set("0xE203: gfx/paperdoll/leg_armor04.png, align=center")
+    blt.set("0xE204: gfx/paperdoll/helm_plume.png, align=center")

@@ -554,6 +554,7 @@ class com_Creature(object):
 
 BP_TO_SLOT = {
     "torso": EquipmentSlots.BODY,
+    "head": EquipmentSlots.HEAD,
     "leg": EquipmentSlots.LEGS,
     "arm": EquipmentSlots.OFF_HAND
 }
