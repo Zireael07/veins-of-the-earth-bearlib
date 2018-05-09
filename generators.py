@@ -416,6 +416,7 @@ with open(constants.ITEMS_JSON_PATH) as json_data:
                 new_item['name'] = items_data[k]['name'] + " greaves"
                 new_item['slot'] = "legs"
                 new_item['char'] = "0xA7B7"
+                new_item['paperdoll'] = "0xE203"
                 items_data.update({new_i: new_item})
 
     #print("Done setup")

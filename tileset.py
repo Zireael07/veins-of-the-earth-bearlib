@@ -43,3 +43,4 @@ def set_tiles():
     blt.set("0xE200: gfx/paperdoll/chainmail.png, align=center")
     blt.set("0xE201: gfx/paperdoll/leather_armour.png, align=center")
     blt.set("0xE202: gfx/paperdoll/long_sword_right.png, align=center")
+    blt.set("0xE203: gfx/paperdoll/leg_armor04.png, align=center")
