@@ -5,7 +5,9 @@ import events
 
 # item use effects
 def cast_heal(actor):
-    if actor.creature.hp == actor.creature.max_hp:
+    injuries = actor.creature.injured_body_parts()
+    if len(injuries) < 1:
+    #if actor.creature.hp == actor.creature.max_hp:
         events.notify(events.GameEvent("MESSAGE", ("You are already fully healed!", "red")))
         #GAME.game_message("You are already fully healed!", "red")
         return 'cancelled'

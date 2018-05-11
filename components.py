@@ -4,6 +4,7 @@ from bearlibterminal import terminal as blt
 import libtcodpy as libtcod
 import math
 from timeit import default_timer
+import random
 
 from map_common import map_check_for_creature
 from renderer import draw_iso, draw_floating_text
@@ -419,6 +420,14 @@ class com_Creature(object):
         else:
             return self.body_parts[0] # head
 
+    def injured_body_parts(self):
+        injured = []
+        for p in self.body_parts:
+            if p.hp < p.max_hp:
+                injured.append(self.body_parts.index(p))
+
+        return injured
+
     def take_damage(self, damage):
         # determine body part hit
         part = self.random_body_part()
@@ -454,9 +463,18 @@ class com_Creature(object):
                 self.death_function(self.owner)
 
     def heal(self, amount):
-        self.hp += amount
+        # determine injured body part hit
+        injuries = self.injured_body_parts()
+
+        if len(injuries) < 1:
+            return
+
+        part = self.body_parts[random.choice(injuries)]
+
+        part.hp += amount
+
         if self.owner.visible:
-            events.notify(events.GameEvent("MESSAGE", (self.name_instance + " heals!", "lighter red")))
+            events.notify(events.GameEvent("MESSAGE", (self.name_instance + "'s " + str(part.name) + " heals!", "lighter red")))
 
     # movement functions
     def move(self, dx, dy, game_map):
