@@ -242,7 +242,7 @@ def game_handle_keys():
     if blt.check(blt.TK_SHIFT) and key == blt.TK_GRAVE:
         # print("Debug mode on")
         # constants.DEBUG = True
-        gui_menus.debug_menu(PLAYER)
+        return gui_menus.debug_menu(PLAYER)
 
     # Toggle labels
     if key == blt.TK_TAB:

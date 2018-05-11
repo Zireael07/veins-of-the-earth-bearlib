@@ -227,6 +227,9 @@ def debug_menu(player):
     if key == 0:
         print("Debug mode on")
         constants.DEBUG = True
+
+        # force redraw
+        return "redraw"
     if key == 1:
 
         # make possible drawing the characters
@@ -240,6 +243,9 @@ def debug_menu(player):
         blt.set("0x003E: gfx/stairs_down.png, align=center")
         blt.set("0x3002: gfx/floor_cave.png, align=center")
         blt.set("0x23: gfx/wall_stone.png, align=center")
+
+        # force redraw
+        return "redraw"
 
     if key == 2:
 
@@ -265,6 +271,8 @@ def debug_menu(player):
 
         if sel is not None:
             game_vars.level.add_entity(generators.generate_monster(opt[sel], player.x, player.y))
+            # force redraw
+            return "redraw"
 
 def character_stats_menu_outer(player):
     ret = character_stats_menu(player)
