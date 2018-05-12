@@ -834,9 +834,11 @@ class com_Player(object):
             # actual resting stuff (actually only done once for simplicity)
             if self.rest_cnt == 6:
                 # I think this formula dates back to Incursion
-                heal = ((1+3)*self.owner.constitution)/5
+                healing = ((1+3)*self.owner.constitution)/5
 
-                self.owner.hp = int(min(self.owner.max_hp, self.owner.hp+heal))
+                self.owner.heal(healing)
+
+                #self.owner.hp = int(min(self.owner.max_hp, self.owner.hp+heal))
 
 
             # toggle game state to enemy turn
