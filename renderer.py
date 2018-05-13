@@ -741,7 +741,7 @@ def text_menu(header, width, title, text):
         blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
         return key
 
-def input_menu(header, width, prompt):
+def input_menu(header, width, prompt, numbers_only=True):
     menu_x = int((120 - width) / 2)
 
     header_height = 2
@@ -761,7 +761,10 @@ def input_menu(header, width, prompt):
 
     blt.refresh()
     # present the root console to the player and wait for a key-press
-    blt.set('input: filter = [0123456789, enter, backspace]')
+    if numbers_only:
+        blt.set('input: filter = [0123456789, enter, backspace]')
+    #else:
+    #    blt.set('input: filter = [A-z, enter, backspace]')
     while True:
         # take input
         string = blt.read_str(menu_x, y, input_str, 10)

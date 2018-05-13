@@ -79,7 +79,7 @@ def character_sheet_menu(header, player):
         options.append(("", "white"))
         options.append((ef.name, "green"))
 
-    index = renderer.menu_colored(header, options, 50, 'CHARACTER SHEET')
+    index = renderer.menu_colored(header + ": " + player.creature.name_instance, options, 50, 'CHARACTER SHEET')
 
     if index is None:
         return None
@@ -338,6 +338,10 @@ def character_creation_menu(player):
 
         # welcome!
         blt.clear()
+
+        player.creature.name_instance = character_name_input()
+
+        blt.clear()
         # TODO: text wrap
         with open("data/welcome.txt") as welcome_f:
             welcome = welcome_f.read()
@@ -350,6 +354,11 @@ def character_creation_menu(player):
         print("Pressed ESC")
         # quit cleanly
         sys.exit()
+
+def character_name_input():
+    name = renderer.input_menu("Character name: ", 50, "Name", False)
+    print("Inputed name: " + str(name))
+    return str(name[1])
 
 def inventory_menu(header, player):
     index = renderer.inventory_menu_test(header, 50, 'INVENTORY', player.container.equipped_items, player.container.inventory)
