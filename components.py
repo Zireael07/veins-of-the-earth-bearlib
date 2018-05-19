@@ -46,6 +46,8 @@ class obj_Actor(object):
 
         if self.creature:
             creature.owner = self
+            # set race
+            creature.race = self.name
 
         self.ai = ai
         if self.ai:
@@ -128,6 +130,7 @@ class com_Creature(object):
                  num_dice = 1, damage_dice = 6, base_def = 0, hp=10,
                  base_str = 8, base_dex = 8, base_con = 8, base_int = 8, base_wis = 8, base_cha = 8,
                  dodge=25, melee=55,
+                 gender = "male",
                  faction = "enemy",
                  player = None,
                  text = None,
@@ -152,6 +155,7 @@ class com_Creature(object):
         # skills
         self.dodge = dodge
         self.melee = melee
+        self.gender = gender
 
         # player
         self.player = player

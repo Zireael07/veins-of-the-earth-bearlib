@@ -57,7 +57,8 @@ def options_menu():
 
 # individual menus
 def character_sheet_menu(header, player):
-    options = [("STR: " + str(player.creature.strength), "white"), ("DEX: " + str(player.creature.dexterity), "white"),
+    options = [("Race:" + str(player.name), "white"), ("Gender: " + str(player.creature.gender), "white"),
+                ("STR: " + str(player.creature.strength), "white"), ("DEX: " + str(player.creature.dexterity), "white"),
                ("CON: " + str(player.creature.constitution), "white"), ("INT: " + str(player.creature.intelligence), "white"),
                 ("WIS: " + str(player.creature.wisdom), "white"), ("CHA: " + str(player.creature.charisma), "white"),
                ("Attack: " + str(player.creature.melee), "white"), ("Dodge: " + str(player.creature.dodge), "white"),
@@ -321,12 +322,20 @@ def character_creation_menu(player):
     if key is not None:
         if 0 in key and 2 in key:
             select = tiles[0]
+            player.creature.gender = "male"
+            player.name = "human"
         if 0 in key and 3 in key:
             select = tiles[2]
+            player.creature.gender = "female"
+            player.name = "human"
         if 1 in key and 2 in key:
             select = tiles[1]
+            player.creature.gender = "male"
+            player.name = "drow"
         if 1 in key and 3 in key:
             select = tiles[3]
+            player.creature.gender = "female"
+            player.name = "drow"
 
         blt.set("0x40: " + select + ", align=center")  # "@"
 
