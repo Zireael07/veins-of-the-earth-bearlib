@@ -365,7 +365,7 @@ def character_creation_menu(player):
         sys.exit()
 
 def character_name_input():
-    name = renderer.input_menu("Character name: ", 50, "Name", False)
+    name = renderer.input_menu("Character name: ", 50, "Name", "Zir", False)
     print("Inputed name: " + str(name))
     return str(name[1])
 
@@ -409,6 +409,6 @@ def pickup_menu(entities):
         return entities[index]
 
 def seed_input_menu():
-    seed = renderer.input_menu("Seed", 50, "Seed (numbers only):")
+    seed = renderer.input_menu("Seed", 50, "Seed (numbers only):", 2)
     print("Inputed seed: " + str(seed))
     return int(seed[1])

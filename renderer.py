@@ -741,7 +741,7 @@ def text_menu(header, width, title, text):
         blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
         return key
 
-def input_menu(header, width, prompt, numbers_only=True):
+def input_menu(header, width, prompt, default, numbers_only=True):
     menu_x = int((120 - width) / 2)
 
     header_height = 2
@@ -757,7 +757,7 @@ def input_menu(header, width, prompt, numbers_only=True):
 
     y = menu_y + header_height + 1
 
-    input_str = ""
+    input_str = str(default)
 
     blt.refresh()
     # present the root console to the player and wait for a key-press
