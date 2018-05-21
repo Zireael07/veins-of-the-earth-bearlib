@@ -159,14 +159,24 @@ class obj_Game(object):
 
         # re-make starting level from seed
         data = level.load_level_data(constants.STARTING_MAP)
-        game_vars.level = level.obj_Level(data[0], game_vars.init_seed, False)
+        if data is not None:
+            game_vars.level = level.obj_Level(data[0], game_vars.init_seed, False)
+            game_vars.level.generate_items_monsters(data[1], data[2])
+        else:
+            game_vars.level = level.obj_Level(constants.STARTING_MAP, game_vars.init_seed, False)
+            game_vars.level.generate_items_monsters(6)
 
         self.new_level_set()
 
         # move to down stairs
         if from_level == "cavern":
-            stairs_room = game_vars.level.rooms[len(game_vars.level.rooms) - 1]
-            stairs_x, stairs_y = (stairs_room.x1 + stairs_room.x2 - 1) // 2, (stairs_room.y1 + stairs_room.y2 - 1) // 2
+            if hasattr(game_vars.level, 'rooms'):
+                stairs_room = game_vars.level.rooms[len(game_vars.level.rooms) - 1]
+                stairs_x, stairs_y = (stairs_room.x1 + stairs_room.x2 - 1) // 2, (stairs_room.y1 + stairs_room.y2 - 1) // 2
+            else:
+                # crash prevention
+                stairs_x, stairs_y = (0,0)
+
             print("Move to " + str(stairs_x) + " " + str(stairs_y))
             PLAYER.creature.move_to_target(stairs_x, stairs_y, game_vars.level.current_map)
 
