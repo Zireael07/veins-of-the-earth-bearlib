@@ -172,7 +172,7 @@ class obj_Level(object):
         self.spawn_item_by_id("light wooden shield")
         self.spawn_item_by_id("helmet")
 
-        self.add_entity(generators.generate_monster("human", *random_free_tile(self.current_map)))
+        #self.add_entity(generators.generate_monster("human", *random_free_tile(self.current_map)))
 
         for _ in range(num):
             self.spawn_random_monster()
@@ -180,11 +180,11 @@ class obj_Level(object):
         for d in dists:
             self.spawn_random_monster_dist(d)
 
-        if self.gen_type == "encampment" or self.gen_type == "city":
+        if self.gen_type in ["encampment", "city", "main"]:
              # test spawning on tiles with desc
              self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
              self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
-             self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
+             #self.add_entity(generators.generate_monster("human", *random_tile_with_desc(self.map_desc, 2)))
 
         elif self.gen_type != "main":
              # test: force spawn a monster on top of the player
