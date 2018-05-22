@@ -219,7 +219,7 @@ def help_menu():
 
 def debug_menu(player):
 
-    options = ["Reveal map", "Map overview", "Creatures list", "Spawn creature"]
+    options = ["Reveal map", "Map overview", "Creatures list", "Spawn creature", "Spawn item"]
 
     key = renderer.options_menu("DEBUG", options, 50, "Debug menu")
 
@@ -272,6 +272,23 @@ def debug_menu(player):
 
         if sel is not None:
             game_vars.level.add_entity(generators.generate_monster(opt[sel], player.x, player.y))
+            # force redraw
+            return "redraw"
+
+    if key == 4:
+        import generators
+
+        opt = []
+        for i_id in generators.items_data:
+            opt.append(i_id)
+
+        sel = renderer.options_menu("Spawn item:", opt, 50, "List")
+
+        if sel is not None:
+            item = generators.generate_item(opt[sel], player.x, player.y)
+            game_vars.level.add_entity(item)
+            if item:
+                item.send_to_back()
             # force redraw
             return "redraw"
 
