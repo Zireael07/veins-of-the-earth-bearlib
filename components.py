@@ -6,7 +6,7 @@ import math
 from timeit import default_timer
 import random
 
-from map_common import map_check_for_creature
+from map_common import map_check_for_creature, direction_to
 from renderer import draw_iso, draw_floating_text
 from gui_menus import dialogue_window
 from tile_lookups import get_block_path
@@ -482,6 +482,8 @@ class com_Creature(object):
 
     # movement functions
     def move(self, dx, dy, game_map):
+        #if self.player:
+        #    print("[Player] Moving..." + str(dx) + " " + str(dy))
         if self.owner.y + dy >= len(game_map[0]) or self.owner.y + dy < 0:
             print("Tried to move out of map")
             return
@@ -568,11 +570,11 @@ class com_Creature(object):
         # vector from this object to the target, and distance
         dx = x - self.owner.x
         dy = y - self.owner.y
-        return self.move(dx, dy, game_map)
+        return self.move(dx, dy, game_map), dx, dy
 
     # this is based on Direction constants
     def move_direction(self, direction, game_map):
-        return self.move(direction[0], direction[1], game_map)
+        return self.move(direction[0], direction[1], game_map), direction[0], direction[1]
 
 BP_TO_SLOT = {
     "torso": EquipmentSlots.BODY,
@@ -767,6 +769,7 @@ class com_Player(object):
         self.nutrition = 500
         self.thirst = 300
         self.autoexplore = False
+        self.move_queue = []
         # not tuples because we modify the amounts during the game
         self.money = [ ["bronze", 0],
                        ["silver", 100],
@@ -805,13 +808,57 @@ class com_Player(object):
 
         my_path = libtcod.path_new_using_map(fov, 1.41)
         libtcod.path_compute(my_path, self.owner.owner.x, self.owner.owner.y, target_x, target_y)
+
+        python_path = []
         if not libtcod.path_is_empty(my_path):
-            x, y = libtcod.path_walk(my_path, True)
-            if x or y:
-                # Move to next path
-                return self.owner.move_towards(x, y, inc_map)
+            # test whole path
+            for i in range(libtcod.path_size(my_path)):
+                x, y = libtcod.path_get(my_path, i)
+                python_path.append((x,y))
+
+            # append direction from our position to 0
+            dir = direction_to((self.owner.owner.x, self.owner.owner.y), python_path[0])
+            print("First dir " + str(dir))
+            self.move_queue.append(dir)
+
+
+            # we can't use libtcod.path_get(my_path, i+1) because, well... it crashes
+            for i in range(len(python_path)-1):
+                #x, y = python_path[i]
+                x1, y1 = python_path[i+1]
+                #print("I: " + str(i) + " coord: " + str(x) + " " + str(y) + ", next coord: " + str(x1) + " " + str(y1))
+
+                dir = direction_to(python_path[i], (x1, y1))
+                print(str(dir))
+
+                self.move_queue.append(dir)
+
+
+            # x, y = libtcod.path_walk(my_path, True)
+            # if x or y:
+            #     # Move to next path
+            #     return self.owner.move_towards(x, y, inc_map)
         libtcod.path_delete(my_path)
 
+    def moves_from_queue(self):
+        if len(self.move_queue) > 1:
+            print("Move queue:" + str(self.move_queue))
+            # so that we can remove
+            sel_move = list(self.move_queue)
+            for i in range(len(sel_move)):
+                m = sel_move[i]
+                # move in indicated direction
+                print("Move from queue: " + str(m))
+                moved = self.owner.move_direction(m, game_vars.level.current_map)
+                if moved:
+                    # remove
+                    self.move_queue.remove(m)
+
+                return moved
+
+        else:
+            print("No moves in queue!")
+            return
 
     # resting
     def rest_start(self, turns):

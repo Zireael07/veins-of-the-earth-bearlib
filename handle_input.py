@@ -146,6 +146,11 @@ def game_key_move(key):
         CAMERA.move(src[key][0], src[key][1])
         game_vars.fov_recompute = True
 
+        # clear move queue
+        PLAYER.creature.player.move_queue = []
+        # switch off a-e
+        PLAYER.creature.player.autoexplore = False
+
     return "player-moved"
 
 def game_player_turn_input(key):
@@ -205,6 +210,26 @@ def game_player_turn_input(key):
         PLAYER.creature.player.rest_start(30)
         return "player-moved"
 
+    # # testing
+    # if key == blt.TK_M:
+    #     if PLAYER.creature.player.autoexplore:
+    #
+    #         # do we have a queue?
+    #         if len(PLAYER.creature.player.move_queue) > 1:
+    #             print("We have a queue")
+    #             moved = PLAYER.creature.player.moves_from_queue()
+    #
+    #             if (moved[0]):
+    #                 CAMERA.move(moved[1], moved[2])
+    #                 game_vars.fov_recompute = True
+    #
+    #             return "player-moved"
+    #
+    #         else:
+    #             print("No queue!")
+    #     else:
+    #         print("Not autoexploring")
+
     if key == blt.TK_E:
         # toggle
         if not PLAYER.creature.player.autoexplore:
@@ -213,9 +238,20 @@ def game_player_turn_input(key):
             PLAYER.creature.player.autoexplore = False
 
         if PLAYER.creature.player.autoexplore:
-            x,y = find_unexplored_closest(PLAYER.x, PLAYER.y, game_vars.level.current_map, game_vars.level.current_explored)
-            print("Closest unexplored is " + str(x) + " " + str(y))
-            moved = PLAYER.creature.player.move_towards_autoexplore(x, y, game_vars.level.current_map)
+
+            # do we have a queue?
+            if len(PLAYER.creature.player.move_queue) > 1:
+                print("We have a queue")
+                moved = PLAYER.creature.player.moves_from_queue()
+
+            else:
+                x, y = find_unexplored_closest(PLAYER.x, PLAYER.y, game_vars.level.current_map,
+                                               game_vars.level.current_explored)
+                print("Closest unexplored is " + str(x) + " " + str(y))
+                PLAYER.creature.player.move_towards_autoexplore(x, y, game_vars.level.current_map)
+
+                moved = PLAYER.creature.player.moves_from_queue()
+
             if (moved[0]):
                 CAMERA.move(moved[1], moved[2])
                 game_vars.fov_recompute = True
