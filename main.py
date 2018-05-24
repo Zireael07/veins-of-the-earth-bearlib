@@ -613,7 +613,9 @@ def game_initialize():
 
     blt.open()
     # default terminal size is 80x25
-    blt.set("window: size=160x45, cellsize=auto, title='Veins of the Earth'; font: default")
+    blt.set("window: size=160x45, cellsize=8x16, title='Veins of the Earth'; font: default")
+    # use the full version of Fixedsys Excelsior because we need arrows
+    blt.set("font:font/FSEX300.ttf, size=8x16")
 
     #vsync
     blt.set("output.vsync=true")
