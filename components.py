@@ -770,6 +770,9 @@ class com_Player(object):
         self.thirst = 300
         self.autoexplore = False
         self.move_queue = []
+        self.path = []
+        # debug
+        self.path_moves = []
         # not tuples because we modify the amounts during the game
         self.money = [ ["bronze", 0],
                        ["silver", 100],
@@ -809,30 +812,46 @@ class com_Player(object):
         my_path = libtcod.path_new_using_map(fov, 1.41)
         libtcod.path_compute(my_path, self.owner.owner.x, self.owner.owner.y, target_x, target_y)
 
-        python_path = []
+        # empty path
+        #python_path = []
+        self.path = []
+
+        # empty queue
+        self.move_queue = []
+        # empty debug list
+        self.path_moves = []
+
         if not libtcod.path_is_empty(my_path):
             # test whole path
             for i in range(libtcod.path_size(my_path)):
                 x, y = libtcod.path_get(my_path, i)
-                python_path.append((x,y))
-
-            # append direction from our position to 0
-            dir = direction_to((self.owner.owner.x, self.owner.owner.y), python_path[0])
-            print("First dir " + str(dir))
-            self.move_queue.append(dir)
-
+                self.path.append((x,y))
+                #python_path.append((x,y))
 
             # we can't use libtcod.path_get(my_path, i+1) because, well... it crashes
-            for i in range(len(python_path)-1):
-                #x, y = python_path[i]
-                x1, y1 = python_path[i+1]
-                #print("I: " + str(i) + " coord: " + str(x) + " " + str(y) + ", next coord: " + str(x1) + " " + str(y1))
+            #for i in range(len(python_path)-1):
+            for i in range(len(self.path)-1):
+                x,y = self.path[i]
+                x1, y1 = self.path[i+1]
 
-                dir = direction_to(python_path[i], (x1, y1))
+                #x, y = python_path[i]
+                #x1, y1 = python_path[i+1]
+                print("I: " + str(i) + " coord: " + str(x) + " " + str(y) + ", next coord: " + str(x1) + " " + str(y1))
+                dir = direction_to((x,y), (x1, y1))
+                #dir = direction_to(python_path[i], (x1, y1))
                 print(str(dir))
 
                 self.move_queue.append(dir)
 
+            # debug
+            self.path_moves = zip(self.path, self.move_queue)
+
+            # append direction from our position to 0
+            dir = direction_to((self.owner.owner.x, self.owner.owner.y), self.path[0])  # python_path[0])
+            print("First dir " + str(dir))
+            self.move_queue.insert(0, dir)
+            self.path_moves.insert(0, ((self.owner.owner.x, self.owner.owner.y), dir))
+            #self.move_queue.append(dir)
 
             # x, y = libtcod.path_walk(my_path, True)
             # if x or y:
@@ -842,7 +861,7 @@ class com_Player(object):
 
     def moves_from_queue(self):
         if len(self.move_queue) > 1:
-            print("Move queue:" + str(self.move_queue))
+            #print("Move queue:" + str(self.move_queue))
             # so that we can remove
             sel_move = list(self.move_queue)
             for i in range(len(sel_move)):

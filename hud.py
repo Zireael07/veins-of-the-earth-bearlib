@@ -2,7 +2,7 @@
 from bearlibterminal import terminal as blt
 
 import renderer
-from map_common import distance_to, tiles_distance_to, get_map_desc, map_check_for_creature
+from map_common import distance_to, tiles_distance_to, get_map_desc, map_check_for_creature, Directions
 import game_vars
 import constants
 import handle_input
@@ -83,6 +83,22 @@ def show_tile_desc(pix_x, pix_y, fov_map):
     blt.puts(w, h, get_map_desc(iso_x, iso_y, fov_map, game_vars.level.current_explored, game_vars.level.map_desc))
     blt.layer(0)
 
+
+DIR_TO_ARROW = {
+    Directions.EAST: '↘',
+    Directions.WEST: '↖',
+    Directions.NORTH: '↗',
+    Directions.SOUTH: '↙',
+    Directions.NORTHEAST: '→',
+    Directions.SOUTHEAST: '↓',
+    Directions.NORTHWEST: '↑',
+    Directions.SOUTHWEST: '←',
+    # bug fix
+    Directions.CENTER: '.'
+}
+
+
+
 def draw_hud(pix_x, pix_y):
     # hud bars
     blt.layer(1)
@@ -108,6 +124,29 @@ def draw_hud(pix_x, pix_y):
     blt.puts(2, 2, "[color=red] player position: %d %d" % (PLAYER.x, PLAYER.y))
     blt.puts(2, 5, "[color=red] camera offset: %d %d" % (game_vars.camera.offset[0], game_vars.camera.offset[1]))
     blt.puts(2, 6, "[color=red] vi keys: %s " % (str(constants.VI_KEYS)))
+
+
+    # queue
+    x = 25
+    y = 1
+    for i in range (len(PLAYER.creature.player.move_queue)-1):
+        m = PLAYER.creature.player.move_queue[i]
+        blt.puts(x, y, DIR_TO_ARROW[m])  #str(m))
+
+        x += 2
+
+        # add max length of (x,y) string
+        #x += 8
+
+    # overlay queue on map
+    blt.layer(3)
+    render_pos = constants.RENDER_POSITIONS
+    from renderer import draw_iso
+    for i in range(len(PLAYER.creature.player.path_moves)-1):
+        p, m = PLAYER.creature.player.path_moves[i]
+        x,y = p
+        x,y = draw_iso(x, y, render_pos)
+        blt.puts(x,y, DIR_TO_ARROW[m])
 
     blt.layer(1)
     # this works on map tiles
