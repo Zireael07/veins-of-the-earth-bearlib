@@ -65,15 +65,15 @@ class AI(object):
     @staticmethod
     def consider_move(tx, ty, game_map):
         if tx >= len(game_map) or tx < 0:
-            print("Not in bounds")
+            #print("Not in bounds")
             return False
 
         if ty >= len(game_map[0]) or ty < 0:
-            print("Not in bounds")
+            #print("Not in bounds")
             return False
 
         if get_block_path(game_map[tx][ty]) == True:
-            print("Blocked")
+            #print("Blocked")
             return False
 
         return True
@@ -109,7 +109,7 @@ class AI(object):
 
             # are we trying to move in opposite direction to last move?
             if cons == (self.last_move_dir[0] * -1, self.last_move_dir[1] * -1):
-                print("Trying to move in opposite direction")
+                print("[AI] Trying to move in opposite direction")
                 # fall back to astar because we're stuck
                 move_astar(self.owner, self.target, game_vars.level.current_map)
             else:
@@ -201,7 +201,7 @@ class NeutralAI(AI):
             self.move_to_map_target()
 
             if self.owner.x == self.target[0] and self.owner.y == self.target[1]:
-                print("We reached the target")
+                print("[AI] We reached the target")
                 # go back to poi if far away
                 if distance_to((self.owner.x, self.owner.y),
                                (game_vars.level.poi[0][0], game_vars.level.poi[0][1])) > 6:
@@ -216,7 +216,7 @@ class NeutralAI(AI):
             self.move_to_map_target()
 
             if self.owner.x == self.target[0] and self.owner.y == self.target[1]:
-                print("We reached the target")
+                print("[AI] We reached the target")
                 # go back to poi if far away
                 if distance_to((self.owner.x, self.owner.y), (game_vars.level.poi[0][0], game_vars.level.poi[0][1])) > 6:
                     self.target = game_vars.level.poi[0]
@@ -251,7 +251,7 @@ def death_monster(monster):
     game_vars.level.current_entities.remove(monster)
 
 def move_astar(actor, target, inc_map):
-    print("Astar target: " + str(target))
+    #print("Astar target: " + str(target))
 
 
     #Create a FOV map that has the dimensions of the map
