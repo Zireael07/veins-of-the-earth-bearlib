@@ -426,6 +426,40 @@ def get_map_desc(x,y, fov_map, explored_map, desc_map=None):
             else:
                 return ""
 
+def find_exit_for_pos(x,y):
+    print("Looking up exit for " + str(x) + " " + str(y))
+    dest = []
+    for e in game_vars.level.exits:
+        if e[0] == (x, y):
+            dest.append(e[1])
+
+
+    print(str(len(dest)))
+    if len(dest) > 0:
+        # if there's more than one exit for a position, it's a BUG!
+        print("Found exit " + str(dest[0]))
+        return dest[0]
+    else:
+        print("No exit found")
+        return None
+
+def find_stairs_to(dest):
+    fnd = []
+    stairs = get_tiles_of_type(game_vars.level.current_map, "STAIRS")
+    for e in game_vars.level.exits:
+        if e[1] == dest:
+            print("Found exit to dest: " + str(dest))
+            if e[0] in stairs:
+                print("Position is a stair")
+                fnd.append(e[0])
+
+    if len(fnd) > 0:
+        print("Found stairs at: " + str(fnd[0]))
+        return fnd
+    else:
+        print("No stairs found")
+        return None
+
 # desc is an int corresponding to the description
 def get_tiles_with_desc(desc_map, desc):
     filtered_tiles = []
@@ -443,23 +477,6 @@ def random_tile_with_desc(desc_map, desc):
     y = free_tiles[index][1]
     print("[Random tile with desc " + str(desc) + " Coordinates are " + str(x) + " " + str(y))
     return x, y
-
-def find_exit_for_pos(x,y):
-    print("Looking up exit for " + str(x) + " " + str(y))
-    dest = []
-    for e in game_vars.level.exits:
-        if e[0] == (x, y):
-            dest.append(e[1])
-
-
-    print(str(len(dest)))
-    if len(dest) > 0:
-        # if there's more than one exit for a position, it's a BUG!
-        print("Found exit " + str(dest[0]))
-        return dest[0]
-    else:
-        print("No exit found")
-        return None
 
 
 

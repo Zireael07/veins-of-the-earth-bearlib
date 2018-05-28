@@ -23,7 +23,7 @@ import events
 import game_vars
 import square_fov
 
-from map_common import map_make_fov, map_check_for_creature, find_free_grid_in_range, get_tiles_of_type
+from map_common import map_make_fov, map_check_for_creature, find_free_grid_in_range, find_stairs_to
 
 import handle_input
 from game_states import GameStates
@@ -172,15 +172,12 @@ class obj_Game(object):
         self.new_level_set()
 
         # move to down stairs
-        #if from_level == "cavern":
-        stairs = get_tiles_of_type(game_vars.level.current_map, "STAIRS")
+        #stairs = get_tiles_of_type(game_vars.level.current_map, "STAIRS")
+        stairs = find_stairs_to(from_level)
         print(str(stairs))
         if len(stairs) > 0:
             print("Stairs found, moving to stairs")
             stairs_x, stairs_y = stairs[0]
-        #if hasattr(game_vars.level, 'rooms'):
-        #    stairs_room = game_vars.level.rooms[len(game_vars.level.rooms) - 1]
-        #    stairs_x, stairs_y = (stairs_room.x1 + stairs_room.x2 - 1) // 2, (stairs_room.y1 + stairs_room.y2 - 1) // 2
         else:
             # crash prevention
             stairs_x, stairs_y = (0,0)
