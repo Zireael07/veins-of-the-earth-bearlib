@@ -384,6 +384,18 @@ def print_converted(inc_map):
         # our row ended, add a line break
         sys.stdout.write("\n")
 
+# this takes the readable name
+def get_tiles_of_type(inc_map, type):
+    print("Looking for tiles of type: " + str(type) + " type id: " + str(TileTypes.dict[type][0]))
+
+    ret = []
+    for y in range(len(inc_map[0])):
+        for x in range(len(inc_map)):
+            if inc_map[x][y] == TileTypes.dict[type][0]:
+                ret.append((x,y))
+
+    return ret
+
 def get_map_desc(x,y, fov_map, explored_map, desc_map=None):
     # catch if we don't have descriptions at all
     if desc_map is None:
