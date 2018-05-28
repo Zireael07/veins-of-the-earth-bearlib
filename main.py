@@ -145,11 +145,14 @@ class obj_Game(object):
 
         CAMERA.start_update(PLAYER)
 
-    def next_level(self):
+    def next_level(self, destination=None):
         events.notify(events.GameEvent("MESSAGE", ("You descend deeper in the dungeon", "violet")))
 
+        if not destination:
+            destination = "dungeon"
+
         # make next level
-        game_vars.level = level.obj_Level("cavern")
+        game_vars.level = level.obj_Level(destination)
 
         self.new_level_set()
 
@@ -169,27 +172,27 @@ class obj_Game(object):
         self.new_level_set()
 
         # move to down stairs
-        if from_level == "cavern":
-            stairs = get_tiles_of_type(game_vars.level.current_map, "STAIRS")
-            print(str(stairs))
-            if len(stairs) > 0:
-                print("Stairs found, moving to stairs")
-                stairs_x, stairs_y = stairs[0]
-            #if hasattr(game_vars.level, 'rooms'):
-            #    stairs_room = game_vars.level.rooms[len(game_vars.level.rooms) - 1]
-            #    stairs_x, stairs_y = (stairs_room.x1 + stairs_room.x2 - 1) // 2, (stairs_room.y1 + stairs_room.y2 - 1) // 2
-            else:
-                # crash prevention
-                stairs_x, stairs_y = (0,0)
+        #if from_level == "cavern":
+        stairs = get_tiles_of_type(game_vars.level.current_map, "STAIRS")
+        print(str(stairs))
+        if len(stairs) > 0:
+            print("Stairs found, moving to stairs")
+            stairs_x, stairs_y = stairs[0]
+        #if hasattr(game_vars.level, 'rooms'):
+        #    stairs_room = game_vars.level.rooms[len(game_vars.level.rooms) - 1]
+        #    stairs_x, stairs_y = (stairs_room.x1 + stairs_room.x2 - 1) // 2, (stairs_room.y1 + stairs_room.y2 - 1) // 2
+        else:
+            # crash prevention
+            stairs_x, stairs_y = (0,0)
 
-            print("Move to " + str(stairs_x) + " " + str(stairs_y))
-            PLAYER.creature.move_to_target(stairs_x, stairs_y, game_vars.level.current_map)
+        print("Move to " + str(stairs_x) + " " + str(stairs_y))
+        PLAYER.creature.move_to_target(stairs_x, stairs_y, game_vars.level.current_map)
 
-            # force fov recompute
-            game_vars.fov_recompute = True
-            game_vars.redraw = True
+        # force fov recompute
+        game_vars.fov_recompute = True
+        game_vars.redraw = True
 
-            CAMERA.start_update(PLAYER)
+        CAMERA.start_update(PLAYER)
 
 
 class obj_Camera(object):

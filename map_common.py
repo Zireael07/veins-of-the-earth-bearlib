@@ -444,6 +444,25 @@ def random_tile_with_desc(desc_map, desc):
     print("[Random tile with desc " + str(desc) + " Coordinates are " + str(x) + " " + str(y))
     return x, y
 
+def find_exit_for_pos(x,y):
+    print("Looking up exit for " + str(x) + " " + str(y))
+    dest = []
+    for e in game_vars.level.exits:
+        if e[0] == (x, y):
+            dest.append(e[1])
+
+
+    print(str(len(dest)))
+    if len(dest) > 0:
+        # if there's more than one exit for a position, it's a BUG!
+        print("Found exit " + str(dest[0]))
+        return dest[0]
+    else:
+        print("No exit found")
+        return None
+
+
+
 #debugging
 def debug_pause(mapgen):
     if mapgen.debug:

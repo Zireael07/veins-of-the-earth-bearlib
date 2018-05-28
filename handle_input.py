@@ -4,7 +4,7 @@ import constants
 from game_states import GameStates
 import gui_menus
 from renderer import pix_to_iso
-from map_common import map_check_for_items, find_unexplored_closest, Directions
+from map_common import map_check_for_items, find_unexplored_closest, Directions, find_exit_for_pos
 from tile_lookups import TileTypes, get_index
 
 import game_vars
@@ -159,7 +159,12 @@ def game_player_turn_input(key):
 
     if blt.check(blt.TK_SHIFT) and key == blt.TK_PERIOD:
         if game_vars.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS):  # .stairs:
-            GAME.next_level()
+            if hasattr(game_vars.level, 'exits'):
+                dest = find_exit_for_pos(PLAYER.x, PLAYER.y)
+
+                GAME.next_level(dest)
+            else:
+                GAME.next_level()
             return "redraw"
             #return "player-moved"
 
