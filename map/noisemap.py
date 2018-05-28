@@ -131,7 +131,14 @@ class NoiseMapGenerator(object):
 
         self.map_desc = [[0 for _ in range(self.map_height)] for _ in range(self.map_width)]
 
-        return [self._map, self.map_desc, (), []]
+        stairs_x = libtcod.random_get_int(self.rnd, 0, self.map_width-1)
+        stairs_y = libtcod.random_get_int(self.rnd, 0, self.map_height-1)
+
+        self._map[stairs_x][stairs_y] = get_index(TileTypes.STAIRS)
+        # list of lists not tuples because we want the ability to change the level in some rare cases
+        self.exits = [[(stairs_x, stairs_y), "cavern"]]
+
+        return [self._map, self.map_desc, (), [], self.exits]
 
     def get_space_flood(self):
         for x in range(0, self.map_width):
