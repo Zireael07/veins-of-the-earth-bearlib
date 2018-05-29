@@ -219,7 +219,7 @@ def help_menu():
 
 def debug_menu(player):
 
-    options = ["Reveal map", "Map overview", "Creatures list", "Spawn creature", "Spawn item"]
+    options = ["Reveal map", "Map overview", "Creatures list", "Spawn creature", "Spawn item", "Items list"]
 
     key = renderer.options_menu("DEBUG", options, 50, "Debug menu")
 
@@ -291,6 +291,14 @@ def debug_menu(player):
                 item.send_to_back()
             # force redraw
             return "redraw"
+    if key == 5:
+
+        opt = []
+        for ent in game_vars.level.current_entities:
+            if not ent.creature:
+                opt.append(ent.name + " X: " + str(ent.x) + " Y: " + str(ent.y))
+
+        renderer.options_menu("Item list", opt, 50, "List")
 
 def character_stats_menu_outer(player):
     ret = character_stats_menu(player)
