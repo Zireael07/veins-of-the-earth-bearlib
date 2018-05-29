@@ -13,7 +13,7 @@ from tile_lookups import get_block_path
 import calendar
 import events
 
-from generators import roll
+from generators import roll, generate_item
 
 import constants
 import game_vars
@@ -340,7 +340,7 @@ class com_Creature(object):
 
             if p in BP_TO_HP:
                 hp = int(BP_TO_HP[p]*self.max_hp)
-                print("Looking up hp.." + str(hp))
+                #print("Looking up hp.." + str(hp))
                 body_part = com_BodyPart(p, hp, self.base_def)
                 body_part.owner = self
                 self.body_parts.append(body_part)
@@ -539,7 +539,12 @@ class com_Creature(object):
                 # player initiated conversations
                 if target.creature.chat is not None:
                     items = []
-                    item = game_vars.level.spawn_item_by_id("chainmail")
+
+                    item = generate_item("chainmail", target.x, target.y)
+                    #item = game_vars.level.spawn_item_by_id("chainmail")
+                    # remove from level immediately
+                    #game_vars.level.current_entities.remove(item)
+
                     items.append(item)
 
                     dialogue_window(target.creature, self, items)
@@ -943,3 +948,13 @@ class com_Player(object):
                     m[1] -= v[1]
                     print("Decrementing " + str(m[0]) + " by " + str(v[1]))
                     break
+
+    def check_money(self, kind, amount):
+        for m in self.money:
+            if m[0] == kind:
+                if m[1] > amount:
+                    #print("We have " + str(amount) + " of " + str(kind))
+                    return True
+                else:
+                    #print("We don't have " + str(amount) + "of " + str(kind))
+                    return False
