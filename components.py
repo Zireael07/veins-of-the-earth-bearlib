@@ -930,6 +930,19 @@ class com_Player(object):
         # force redraw
         game_vars.redraw = True
 
+    def city_rest(self):
+        # heal
+        healing = ((1 + 3) * self.owner.constitution) / 5
+        self.owner.heal(healing)
+
+        # passage of time
+        game_vars.calendar_game.turn += calendar.HOUR * 8
+        events.notify(events.GameEvent("MESSAGE", (
+            game_vars.calendar_game.get_time_date(game_vars.calendar_game.turn), "blue")))
+
+        # force redraw
+        game_vars.redraw = True
+
     # money
     def add_money(self, values):
         print(str(values))

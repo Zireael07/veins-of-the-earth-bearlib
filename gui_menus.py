@@ -156,6 +156,7 @@ def dialogue_window(creature, player, items):
         # this resets the index!
         index = renderer.dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat[reply], [])
 
+        # TODO: move individual action code out of here
         if action == "shop":
             # test shop
             item, buy = shop_window(player, creature, items)
@@ -172,6 +173,11 @@ def dialogue_window(creature, player, items):
                     item.item.current_container.inventory.remove(item)
                     creature.shop = []
                     creature.shop.append(item)
+
+        if action == "hooker":
+            if player.player.check_money("silver", 10):
+                player.player.remove_money([("silver", 10)])
+                player.player.city_rest()
 
 
 def shop_window(player, creature, items):

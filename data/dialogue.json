@@ -20,7 +20,8 @@
            "answer": [
                      {
                       "chat": "Oh yeah.",
-                      "reply": "great"
+                      "reply": "great",
+                      "action": "hooker"
                       },
                       {
                       "chat": "No thanks, just passing by",
