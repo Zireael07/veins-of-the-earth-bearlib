@@ -6,7 +6,7 @@ import math
 from timeit import default_timer
 import random
 
-from map_common import map_check_for_creature, direction_to
+from map_common import map_check_for_creature, direction_to, find_free_grid_in_range
 from renderer import draw_iso, draw_floating_text
 from gui_menus import dialogue_window
 from tile_lookups import get_block_path
@@ -514,7 +514,7 @@ class com_Creature(object):
                     events.notify(events.GameEvent("MESSAGE", (self.name_instance + " says: " + self.text, "yellow")))
 
                     # wake player if he's sleeping
-                    if target.creature.player.resting:
+                    if hasattr(target.creature, 'player') and target.creature.player.resting:
                         target.creature.player.resting = False
 
                 if target.creature.text is not None and target.visible:
@@ -971,3 +971,46 @@ class com_Player(object):
                 else:
                     #print("We don't have " + str(amount) + "of " + str(kind))
                     return False
+
+    def generate_kid(self):
+        import generators
+        import ai
+        container_com1 = com_Container()
+        player_array = generators.generate_stats("heroic")
+
+        #player_com1 = components.com_Player()
+        creature_com1 = com_Creature("kid", hp=10,
+                                                base_str=roll(3,6), base_dex=roll(3,6),
+                                                base_con=roll(3,6),
+                                                base_int=roll(3,6), base_wis=roll(3,6),
+                                                base_cha=roll(3,6),
+                                                faction="player") #death_function=death_player)
+
+        ai_comp = ai.NeutralAI()
+
+
+        # body parts
+        creature_com1.set_body_parts(generators.generate_body_types())
+
+        # check that x,y isn't taken
+        x, y = self.owner.owner.x, self.owner.owner.y
+        taken = map_check_for_creature(x, y)
+        if taken is not None:
+            print("Looking for grid in range")
+            grids = find_free_grid_in_range(3, x, y)
+            # grids = find_grid_in_range(3, x,y)
+            if grids is not None:
+                x, y = grids[0]
+            else:
+                print("No grids found")
+        else:
+            print("No creature at " + str(x) + " " + str(y))
+
+
+
+        kid = obj_Actor(x, y, int("0xE003", 16), "kid", creature=creature_com1, ai=ai_comp,
+                                      container=container_com1)
+
+        if kid is not None:
+            game_vars.level.current_entities.append(kid)
+            print("Spawned a kid " + str(kid.name))

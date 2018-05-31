@@ -179,6 +179,9 @@ def dialogue_window(creature, player, items):
                 player.player.remove_money([("silver", 10)])
                 player.player.city_rest()
 
+                # spawn kid
+                player.player.generate_kid()
+
 
 def shop_window(player, creature, items):
     player_inv = [item.display_name() + " (" + str(item.item.price) + ")" for item in player.owner.container.inventory]
