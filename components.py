@@ -507,17 +507,17 @@ class com_Creature(object):
                 damage_details = self.damage_str
                 self.attack(target, damage_dealt, damage_details)
             else:
-                if self.text is not None and self.owner.visible:
+                if self.text is not None and self.owner.visible and target.creature.player:
                     tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, constants.RENDER_POSITIONS)
                     draw_floating_text(tile_x, tile_y-1, self.text)
                     #draw_floating_text_step(tile_x, tile_y-1, self.text)
                     events.notify(events.GameEvent("MESSAGE", (self.name_instance + " says: " + self.text, "yellow")))
 
                     # wake player if he's sleeping
-                    if hasattr(target.creature, 'player') and target.creature.player.resting:
+                    if target.creature.player is not None and target.creature.player.resting:
                         target.creature.player.resting = False
 
-                if target.creature.text is not None and target.visible:
+                if target.creature.text is not None and target.visible and self.player:
                     tile_x, tile_y = draw_iso(target.x, target.y, constants.RENDER_POSITIONS)
                     draw_floating_text(tile_x, tile_y - 1, target.creature.text)
                     # draw_floating_text_step(tile_x, tile_y-1, target.creature.text)
@@ -537,7 +537,7 @@ class com_Creature(object):
                 #         target.creature.player.resting = False
 
                 # player initiated conversations
-                if target.creature.chat is not None:
+                if target.creature.chat is not None and self.player:
                     items = []
 
                     item = generate_item("chainmail", target.x, target.y)
