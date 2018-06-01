@@ -19,6 +19,7 @@ def set_tiles():
     blt.set("0xE001: gfx/goblin.png, align=center")
     blt.set("0xE002: gfx/drow_fighter.png, align=center")
     blt.set("0xE003: gfx/human.png, align=center")
+    blt.set("0xE004: gfx/child.png, align=center")
     # items
     blt.set("0x2215: gfx/longsword.png, align=center")  # "∕"
     blt.set("0x1C0: gfx/dagger.png, align=center")  # "ǀ"

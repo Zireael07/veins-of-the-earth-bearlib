@@ -1008,7 +1008,7 @@ class com_Player(object):
 
 
 
-        kid = obj_Actor(x, y, int("0xE003", 16), "kid", creature=creature_com1, ai=ai_comp,
+        kid = obj_Actor(x, y, int("0xE004", 16), "kid", creature=creature_com1, ai=ai_comp,
                                       container=container_com1)
 
         if kid is not None:
