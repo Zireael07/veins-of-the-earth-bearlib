@@ -102,7 +102,16 @@ class AI(object):
             cons = self.consider_move_list(direct, game_vars.level.current_map)
             self.owner.creature.move_direction(cons, game_vars.level.current_map)
 
+
     def move_to_map_target(self):
+        if len(self.owner.creature.move_queue) > 1:
+            print("[AI] have a queue")
+            # pop from queue
+            self.owner.creature.moves_from_queue()
+        else:
+            self.move_to_map_target_simple()
+
+    def move_to_map_target_simple(self):
         direct = direction_to(self.owner, self.target)
         if direct is not Directions.CENTER:
             cons = self.consider_move_list(direct, game_vars.level.current_map)
@@ -111,7 +120,11 @@ class AI(object):
             if cons == (self.last_move_dir[0] * -1, self.last_move_dir[1] * -1):
                 print("[AI] Trying to move in opposite direction")
                 # fall back to astar because we're stuck
-                move_astar(self.owner, self.target, game_vars.level.current_map)
+                self.owner.creature.move_towards_path_queue(self.target[0], self.target[1], game_vars.level.current_map)
+                # pop first move from queue
+                self.owner.creature.moves_from_queue()
+
+                #move_astar(self.owner, self.target, game_vars.level.current_map)
             else:
                 self.owner.creature.move_direction(cons, game_vars.level.current_map)
                 self.last_move_dir = cons
