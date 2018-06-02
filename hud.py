@@ -129,8 +129,8 @@ def draw_hud(pix_x, pix_y):
     # queue
     x = 25
     y = 1
-    for i in range (len(PLAYER.creature.player.move_queue)-1):
-        m = PLAYER.creature.player.move_queue[i]
+    for i in range (len(PLAYER.creature.move_queue)-1):
+        m = PLAYER.creature.move_queue[i]
         blt.puts(x, y, DIR_TO_ARROW[m])  #str(m))
 
         x += 2
@@ -142,8 +142,8 @@ def draw_hud(pix_x, pix_y):
     blt.layer(3)
     render_pos = constants.RENDER_POSITIONS
     from renderer import draw_iso
-    for i in range(len(PLAYER.creature.player.path_moves)-1):
-        p, m = PLAYER.creature.player.path_moves[i]
+    for i in range(len(PLAYER.creature.path_moves)-1):
+        p, m = PLAYER.creature.path_moves[i]
         x,y = p
         x,y = draw_iso(x, y, render_pos)
         blt.puts(x,y, DIR_TO_ARROW[m])
