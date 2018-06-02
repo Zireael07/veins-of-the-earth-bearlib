@@ -218,11 +218,11 @@ def shop_window(player, creature, items):
 
 def help_menu():
     with open("data/help.txt") as help_f:
-        help = help_f.read()
+        help_t = help_f.read()
     # make possible drawing the >
     blt.set("0x003E: none")
     renderer.text_menu("Keybindings", 70, "HELP",
-                help)
+                help_t)
     # restore drawing
     blt.set("0x003E: gfx/stairs_down.png, align=center")
 

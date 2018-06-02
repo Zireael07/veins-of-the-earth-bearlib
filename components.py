@@ -628,21 +628,21 @@ class com_Creature(object):
                 #x, y = python_path[i]
                 #x1, y1 = python_path[i+1]
                 print("I: " + str(i) + " coord: " + str(x) + " " + str(y) + ", next coord: " + str(x1) + " " + str(y1))
-                dir = direction_to((x,y), (x1, y1))
-                #dir = direction_to(python_path[i], (x1, y1))
+                direct = direction_to((x,y), (x1, y1))
+                #direct = direction_to(python_path[i], (x1, y1))
                 print(str(dir))
 
-                self.move_queue.append(dir)
+                self.move_queue.append(direct)
 
             # debug
             self.path_moves = zip(self.path, self.move_queue)
 
             # append direction from our position to 0
-            dir = direction_to((self.owner.x, self.owner.y), self.path[0])  # python_path[0])
-            print("First dir " + str(dir))
-            self.move_queue.insert(0, dir)
+            direct = direction_to((self.owner.x, self.owner.y), self.path[0])  # python_path[0])
+            print("First dir " + str(direct))
+            self.move_queue.insert(0, direct)
             self.path_moves.insert(0, ((self.owner.x, self.owner.y), dir))
-            #self.move_queue.append(dir)
+            #self.move_queue.append(direct)
 
             # x, y = libtcod.path_walk(my_path, True)
             # if x or y:
@@ -982,9 +982,7 @@ class com_Player(object):
         import generators
         import ai
         container_com1 = com_Container()
-        player_array = generators.generate_stats("heroic")
 
-        #player_com1 = components.com_Player()
         creature_com1 = com_Creature("kid", hp=10,
                                                 base_str=roll(3,6), base_dex=roll(3,6),
                                                 base_con=roll(3,6),

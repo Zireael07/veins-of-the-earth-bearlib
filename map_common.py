@@ -114,10 +114,10 @@ def random_free_tile_away(inc_map, dist, away_from):
     print("[Free tile away] Coordinates are " + str(x) + " " + str(y))
     return x, y
 
-def random_free_tile_between(inc_map, away_from, min, max):
+def random_free_tile_between(inc_map, away_from, mini, max):
     away_tiles = []
     for tile in get_free_tiles(inc_map):
-        if max > tiles_distance_to(away_from, tile) > min:
+        if max > tiles_distance_to(away_from, tile) > mini:
             away_tiles.append(tile)
 
     index = libtcod.random_get_int(0, 0, len(away_tiles) - 1)
@@ -385,13 +385,13 @@ def print_converted(inc_map):
         sys.stdout.write("\n")
 
 # this takes the readable name
-def get_tiles_of_type(inc_map, type):
-    print("Looking for tiles of type: " + str(type) + " type id: " + str(TileTypes.dict[type][0]))
+def get_tiles_of_type(inc_map, typ):
+    print("Looking for tiles of type: " + str(typ) + " type id: " + str(TileTypes.dict[typ][0]))
 
     ret = []
     for y in range(len(inc_map[0])):
         for x in range(len(inc_map)):
-            if inc_map[x][y] == TileTypes.dict[type][0]:
+            if inc_map[x][y] == TileTypes.dict[typ][0]:
                 ret.append((x,y))
 
     return ret
