@@ -34,7 +34,7 @@ class FOVMap(object):
 
         try:
             return self.light[x][y] == self.flag
-        except ValueError:
+        except IndexError:
             # even more crash prevention
             return False
             #raise ValueError, "Error for " + str(x) + " "  + str(y)
