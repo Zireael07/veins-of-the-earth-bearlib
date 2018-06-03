@@ -17,6 +17,7 @@ import generators
 
 import level
 import hud
+import gui_menus
 import main_menu
 import calendar
 import events
@@ -151,6 +152,7 @@ class obj_Game(object):
         if not destination:
             destination = "dungeon"
 
+        print("Destination: " + str(destination))
         # make next level
         game_vars.level = level.obj_Level(destination)
 
@@ -600,6 +602,8 @@ def start_new_game(seed):
     handle_input.initialize_camera(camera)
 
     hud.initialize_player(player)
+
+    gui_menus.initialize_game(game_obj)
 
     # adjust camera position so that player is centered
     camera.start_update(player)

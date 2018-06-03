@@ -10,9 +10,10 @@ import renderer
 
 import game_vars
 
-#def initialize_game(game):
-#    global GAME
-#    GAME = game
+# because of debug menu
+def initialize_game(game):
+    global GAME
+    GAME = game
 
 
 def main_menu():
@@ -229,7 +230,7 @@ def help_menu():
 
 def debug_menu(player):
 
-    options = ["Reveal map", "Map overview", "Creatures list", "Spawn creature", "Spawn item", "Items list"]
+    options = ["Reveal map", "Map overview", "Creatures list", "Spawn creature", "Spawn item", "Items list", "Change level"]
 
     key = renderer.options_menu("DEBUG", options, 50, "Debug menu")
 
@@ -309,6 +310,19 @@ def debug_menu(player):
                 opt.append(ent.name + " X: " + str(ent.x) + " Y: " + str(ent.y))
 
         renderer.options_menu("Item list", opt, 50, "List")
+
+    if key == 6:
+        import level
+        opt = []
+
+        for l in level.levels_data:
+            opt.append(l)
+
+        sel = renderer.options_menu("Go to level:", opt, 50, "List")
+
+        if sel is not None:
+            print("Selected: " + str(opt[sel]))
+            GAME.next_level(opt[sel])
 
 def character_stats_menu_outer(player):
     ret = character_stats_menu(player)
