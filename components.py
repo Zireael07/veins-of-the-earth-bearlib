@@ -627,10 +627,10 @@ class com_Creature(object):
 
                 #x, y = python_path[i]
                 #x1, y1 = python_path[i+1]
-                print("I: " + str(i) + " coord: " + str(x) + " " + str(y) + ", next coord: " + str(x1) + " " + str(y1))
+                #print("I: " + str(i) + " coord: " + str(x) + " " + str(y) + ", next coord: " + str(x1) + " " + str(y1))
                 direct = direction_to((x,y), (x1, y1))
                 #direct = direction_to(python_path[i], (x1, y1))
-                print(str(dir))
+                #print(str(dir))
 
                 self.move_queue.append(direct)
 
@@ -639,7 +639,7 @@ class com_Creature(object):
 
             # append direction from our position to 0
             direct = direction_to((self.owner.x, self.owner.y), self.path[0])  # python_path[0])
-            print("First dir " + str(direct))
+            #print("First dir " + str(direct))
             self.move_queue.insert(0, direct)
             self.path_moves.insert(0, ((self.owner.x, self.owner.y), dir))
             #self.move_queue.append(direct)
