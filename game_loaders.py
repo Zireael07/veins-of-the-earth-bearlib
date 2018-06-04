@@ -47,5 +47,6 @@ def load_game():
 
     game_vars.player = player
     game_vars.camera = camera
+    game_vars.game_obj = game_obj
 
     return game_obj, player, camera

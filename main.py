@@ -375,6 +375,8 @@ def start_new_game(seed):
     # adjust camera position so that player is centered
     cam.start_update(player)
 
+    game_vars.game_obj = game_obj
+
     # put player last
     game_vars.player = player
     game_vars.level.current_entities.append(player)

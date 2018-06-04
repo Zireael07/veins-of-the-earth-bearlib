@@ -21,3 +21,4 @@ labels = False
 
 camera = None
 player = None
+game_obj = None
