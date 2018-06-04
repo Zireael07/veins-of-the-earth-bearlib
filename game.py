@@ -1,7 +1,6 @@
 import game_vars
 import constants
 import level
-import components
 import calendar
 import events
 import square_fov
@@ -28,9 +27,6 @@ class obj_Game(object):
             game_vars.ai_fov_map = map_make_fov(game_vars.level.current_map, True)
 
             game_vars.calendar_game = calendar.obj_Calendar(1371)
-
-            # init game object for submodules
-            components.initialize_game(self)
 
 
             # use events for messages

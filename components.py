@@ -19,12 +19,6 @@ import constants
 import game_vars
 from equipment_slots import EquipmentSlots
 
-# need a reference to global GAME %^$@
-def initialize_game(game):
-    print("[Components] Initializing GAME")
-    global GAME
-    GAME = game
-
 
 # returns the equipment in a slot, or None if it's empty
 def get_equipped_in_slot(actor, slot):
@@ -318,7 +312,7 @@ class com_Creature(object):
         return self.get_marker_color()
 
     def get_marker_color(self):
-        react = GAME.get_faction_reaction(self.faction, "player", False)
+        react = game_vars.game_obj.get_faction_reaction(self.faction, "player", False)
         if react < -50:
             return "red"
         elif react < 0:
@@ -505,7 +499,7 @@ class com_Creature(object):
 
         if target and target.creature.faction != self.faction:
 
-            is_enemy_faction = GAME.get_faction_reaction(self.faction, target.creature.faction, False) < 0
+            is_enemy_faction = game_vars.game_obj.get_faction_reaction(self.faction, target.creature.faction, False) < 0
 
             if is_enemy_faction:
                 #print "Target faction " + target.creature.faction + " is enemy!"

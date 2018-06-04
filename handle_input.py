@@ -9,14 +9,6 @@ from tile_lookups import TileTypes, get_index
 
 import game_vars
 
-# def initialize_camera(camera):
-#     global CAMERA
-#     CAMERA = camera
-
-def initialize_game(game):
-    global GAME
-    GAME = game
-
 def initialize_player(player):
     global PLAYER
     PLAYER = player
@@ -162,15 +154,15 @@ def game_player_turn_input(key):
             if hasattr(game_vars.level, 'exits'):
                 dest = find_exit_for_pos(PLAYER.x, PLAYER.y)
 
-                GAME.next_level(dest)
+                game_vars.game_obj.next_level(dest)
             else:
-                GAME.next_level()
+                game_vars.game_obj.next_level()
             return "redraw"
             #return "player-moved"
 
     if blt.check(blt.TK_SHIFT) and key == blt.TK_COMMA:
         if game_vars.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS_UP):
-            GAME.previous_level(game_vars.level.gen_type)
+            game_vars.game_obj.previous_level(game_vars.level.gen_type)
             return "redraw"
             #return "player-moved"
 
@@ -257,7 +249,7 @@ def game_player_turn_input(key):
 
                 moved = PLAYER.creature.moves_from_queue()
 
-            if (moved[0]):
+            if moved is not None and moved[0]:
                 game_vars.camera.move(moved[1], moved[2])
                 game_vars.fov_recompute = True
 

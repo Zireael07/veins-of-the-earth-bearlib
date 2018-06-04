@@ -36,19 +36,10 @@ def main_menu(start_new_game):
         game_vars.ai_fov_map = map_make_fov(game_vars.level.current_map, True)
 
         # patch in required stuff
-        # init game for submodules
-        components.initialize_game(GAME)
-
-        # init camera for renderer
-        #renderer.initialize_camera(CAMERA)
-
-        #hud.initialize_game(GAME)
         hud.initialize_player(PLAYER)
 
-        # handle input needs all three
-        handle_input.initialize_game(GAME)
+        # handle input needs player
         handle_input.initialize_player(PLAYER)
-        #handle_input.initialize_camera(CAMERA)
 
         # we don't have to reset camera position because it's loaded from the file
         # CAMERA.start_update(PLAYER)

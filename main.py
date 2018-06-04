@@ -363,14 +363,10 @@ def start_new_game(seed):
     # spawn player
     player = generate_player()
 
-    # handle input needs all three
-    handle_input.initialize_game(game_obj)
+    # handle input needs player
     handle_input.initialize_player(player)
-    #handle_input.initialize_camera(cam)
 
     hud.initialize_player(player)
-
-    gui_menus.initialize_game(game_obj)
 
     # adjust camera position so that player is centered
     cam.start_update(player)

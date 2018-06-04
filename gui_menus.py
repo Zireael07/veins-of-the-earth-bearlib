@@ -10,11 +10,6 @@ import renderer
 
 import game_vars
 
-# because of debug menu
-def initialize_game(game):
-    global GAME
-    GAME = game
-
 
 def main_menu():
 
@@ -322,7 +317,7 @@ def debug_menu(player):
 
         if sel is not None:
             print("Selected: " + str(opt[sel]))
-            GAME.next_level(opt[sel])
+            game_vars.game_obj.next_level(opt[sel])
 
 def character_stats_menu_outer(player):
     ret = character_stats_menu(player)
