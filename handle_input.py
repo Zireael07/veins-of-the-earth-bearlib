@@ -9,9 +9,9 @@ from tile_lookups import TileTypes, get_index
 
 import game_vars
 
-def initialize_camera(camera):
-    global CAMERA
-    CAMERA = camera
+# def initialize_camera(camera):
+#     global CAMERA
+#     CAMERA = camera
 
 def initialize_game(game):
     global GAME
@@ -83,10 +83,10 @@ def game_handle_mouse_input(key):
         # press over map
         else:
             # fake an offset of camera offset * cell width
-            pix_x = pix_x - CAMERA.offset[0] * blt.state(blt.TK_CELL_WIDTH)
+            pix_x = pix_x - game_vars.camera.offset[0] * blt.state(blt.TK_CELL_WIDTH)
 
             # fake an offset of camera offset * cell height
-            pix_y = pix_y - CAMERA.offset[1] * blt.state(blt.TK_CELL_HEIGHT)
+            pix_y = pix_y - game_vars.camera.offset[1] * blt.state(blt.TK_CELL_HEIGHT)
 
             click_x, click_y = pix_to_iso(pix_x, pix_y)
 
@@ -97,7 +97,7 @@ def game_handle_mouse_input(key):
                     if click_x != PLAYER.x or click_y != PLAYER.y:
                         moved = PLAYER.creature.move_towards(click_x, click_y, game_vars.level.current_map)
                         if (moved[0]):
-                            CAMERA.move(moved[1], moved[2])
+                            game_vars.camera.move(moved[1], moved[2])
                             game_vars.fov_recompute = True
 
                     return "player-moved"
@@ -143,7 +143,7 @@ def get_up_key():
 def game_key_move(key):
     src = KEY_TO_DIR if not constants.VI_KEYS else KEY_TO_DIR_VI
     if PLAYER.creature.move(src[key][0], src[key][1], game_vars.level.current_map):
-        CAMERA.move(src[key][0], src[key][1])
+        game_vars.camera.move(src[key][0], src[key][1])
         game_vars.fov_recompute = True
 
         # clear move queue
@@ -225,7 +225,7 @@ def game_player_turn_input(key):
     #             moved = PLAYER.creature.player.moves_from_queue()
     #
     #             if (moved[0]):
-    #                 CAMERA.move(moved[1], moved[2])
+    #                 game_vars.camera.move(moved[1], moved[2])
     #                 game_vars.fov_recompute = True
     #
     #             return "player-moved"
@@ -258,7 +258,7 @@ def game_player_turn_input(key):
                 moved = PLAYER.creature.moves_from_queue()
 
             if (moved[0]):
-                CAMERA.move(moved[1], moved[2])
+                game_vars.camera.move(moved[1], moved[2])
                 game_vars.fov_recompute = True
 
             return "player-moved"

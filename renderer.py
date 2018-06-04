@@ -14,9 +14,9 @@ from equipment_slots import EquipmentSlots
 import game_vars
 import colors
 
-def initialize_camera(camera):
-    global CAMERA
-    CAMERA = camera
+# def initialize_camera(camera):
+#     global CAMERA
+#     CAMERA = camera
 
 def roll(dice, sides):
     result = 0
@@ -37,9 +37,11 @@ def draw_iso(x,y, pos):
     # hh = constants.HALF_TILE_HEIGHT
     # tile_x = (x - y) * constants.HALF_TILE_WIDTH + offset_x
     # tile_y = (x + y) * constants.HALF_TILE_HEIGHT
+    cam = game_vars.camera
+
     tile_x, tile_y = pos[x][y]
 
-    return tile_x + CAMERA.offset[0], tile_y + CAMERA.offset[1]
+    return tile_x + cam.offset[0], tile_y + cam.offset[1]
 
 def cell_to_pix(val, width):
     if width:
@@ -67,11 +69,12 @@ def draw_map(map_draw, map_explored, fov_map, debug=False):
     #width = constants.MAP_WIDTH
     #height = constants.MAP_HEIGHT
     #debug = constants.DEBUG
+    cam = game_vars.camera
 
-    width_start = CAMERA.get_width_start()
-    width_end = CAMERA.get_width_end(map_draw)
-    height_start = CAMERA.get_height_start()
-    height_end = CAMERA.get_height_end(map_draw)
+    width_start = cam.get_width_start()
+    width_end = cam.get_width_end(map_draw)
+    height_start = cam.get_height_start()
+    height_end = cam.get_height_end(map_draw)
     render_pos = constants.RENDER_POSITIONS
 
     #for x in range(width_start, width_end):
