@@ -8,10 +8,6 @@ import constants
 import handle_input
 
 # need the refs
-#def initialize_game(game):
-#    global GAME
-#    GAME = game
-
 def initialize_player(player):
     global PLAYER
     PLAYER = player

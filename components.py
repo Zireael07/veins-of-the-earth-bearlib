@@ -641,7 +641,7 @@ class com_Creature(object):
             direct = direction_to((self.owner.x, self.owner.y), self.path[0])  # python_path[0])
             #print("First dir " + str(direct))
             self.move_queue.insert(0, direct)
-            self.path_moves.insert(0, ((self.owner.x, self.owner.y), dir))
+            self.path_moves.insert(0, ((self.owner.x, self.owner.y), direct))
             #self.move_queue.append(direct)
 
             # x, y = libtcod.path_walk(my_path, True)

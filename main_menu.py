@@ -40,7 +40,7 @@ def main_menu(start_new_game):
         components.initialize_game(GAME)
 
         # init camera for renderer
-        renderer.initialize_camera(CAMERA)
+        #renderer.initialize_camera(CAMERA)
 
         #hud.initialize_game(GAME)
         hud.initialize_player(PLAYER)
@@ -48,7 +48,7 @@ def main_menu(start_new_game):
         # handle input needs all three
         handle_input.initialize_game(GAME)
         handle_input.initialize_player(PLAYER)
-        handle_input.initialize_camera(CAMERA)
+        #handle_input.initialize_camera(CAMERA)
 
         # we don't have to reset camera position because it's loaded from the file
         # CAMERA.start_update(PLAYER)
