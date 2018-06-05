@@ -456,6 +456,11 @@ with open("data/body_types.json") as json_data:
     body_types_data = json.load(json_data)
     logger.debug(body_types_data)
 
+
+with open("data/races.json") as json_data:
+    races_data = json.load(json_data)
+    logger.debug(races_data)
+
 if __name__ == '__main__':
     test_force_roll(100)
 

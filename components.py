@@ -19,6 +19,12 @@ import constants
 import game_vars
 from equipment_slots import EquipmentSlots
 
+STAT_NAME_TO_PROP = {
+        "DEX": "dexterity",
+        "CON": "constitution",
+        "INT": "intelligence"
+}
+
 
 # returns the equipment in a slot, or None if it's empty
 def get_equipped_in_slot(actor, slot):
@@ -347,6 +353,17 @@ class com_Creature(object):
 
                 # name, hp, max_hp
                 #self.body_parts.append([p, hp, hp])
+
+
+    def apply_stat_bonuses(self):
+        import generators
+        if self.owner.name in generators.races_data:
+            if 'stat_bonuses' in generators.races_data[self.owner.name]:
+                print(generators.races_data[self.owner.name]['stat_bonuses'])
+                for b in generators.races_data[self.owner.name]['stat_bonuses']:
+                    print(b)
+                    print("Increasing stat " + str(STAT_NAME_TO_PROP[b[0]]) + " by " + str(b[1]))
+                    setattr(self, STAT_NAME_TO_PROP[b[0]], getattr(self, STAT_NAME_TO_PROP[b[0]]) + b[1])
 
     # d100 roll under
     def skill_test(self, skill):

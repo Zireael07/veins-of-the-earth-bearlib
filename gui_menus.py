@@ -393,6 +393,7 @@ def character_creation_menu(player):
         blt.clear()
 
         player.creature.name_instance = character_name_input()
+        player.creature.apply_stat_bonuses()
 
         blt.clear()
         # TODO: text wrap

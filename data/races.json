@@ -1,0 +1,10 @@
+{
+
+ "drow": {
+           "name": "drow",
+           "stat_bonuses": [ ["DEX", 2], ["INT", 2], ["CON", -2]]
+ },
+ "human": {
+           "name": "human"
+ }
+}
