@@ -39,6 +39,7 @@ def generate_player():
                                             base_con=player_array[2],
                                             base_int=player_array[3], base_wis=player_array[4],
                                             base_cha=player_array[5],
+                                            languages=[ u"Common"],
                                             player=player_com1, faction="player", death_function=death_player)
 
     # body parts

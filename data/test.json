@@ -46,6 +46,7 @@
            "damage_dice": 6,
            "damage_number": 1,
            "text": "Hello traveler",
+           "languages": ["Common"],
            "chat": "test"
  },
  "hooker": {
@@ -57,6 +58,7 @@
            "damage_dice": 4,
            "damage_number": 1,
            "text": "Hello sweetie",
+           "languages": ["Common"],
            "chat": "hooker"
  },
  "orc": {

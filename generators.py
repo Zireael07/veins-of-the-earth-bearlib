@@ -335,6 +335,11 @@ def generate_monster(m_id, x,y):
     else:
         mon_chat = None
 
+    if 'languages' in monster_data[m_id]:
+        mon_langs = monster_data[m_id]['languages']
+    else:
+        mon_langs = None
+
     # Defaults
     death = ai.death_monster
 
@@ -346,6 +351,7 @@ def generate_monster(m_id, x,y):
                                             faction=mon_faction,
                                             text = mon_text,
                                             chat = mon_chat,
+                                            languages= mon_langs,
                                             death_function=death)
 
     # body parts

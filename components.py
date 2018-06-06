@@ -135,6 +135,7 @@ class com_Creature(object):
                  player = None,
                  text = None,
                  chat = None,
+                 languages = None,
                  death_function=None,
                  effects=None):
         self.name_instance = name_instance
@@ -171,6 +172,10 @@ class com_Creature(object):
         self.faction = faction
         self.text = text
         self.chat = chat
+        if languages is None:
+            self.languages = []
+        else:
+            self.languages = languages
         self.death_function = death_function
 
         if effects is None:
@@ -563,6 +568,9 @@ class com_Creature(object):
                     #game_vars.level.current_entities.remove(item)
 
                     items.append(item)
+
+                    print("Creature languages: " + str(target.creature.languages) + " player languages " + str(self.languages))
+                    print("Know same languages? " + str(target.creature.languages == self.languages))
 
                     dialogue_window(target.creature, self, items)
 
