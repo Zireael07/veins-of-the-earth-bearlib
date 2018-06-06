@@ -4,24 +4,119 @@ import gui_menus
 import os
 import game_loaders
 
-from map_common import map_make_fov
+from map_common import map_make_fov, map_check_for_creature, find_free_grid_in_range
 
-import components
-import renderer
 import hud
 import handle_input
 
 import game_vars
 
+import camera
+import game
 
-def main_menu_outer(start_new_game):
-    ret = main_menu(start_new_game)
+import generators
+import components
+import events
+from game_states import GameStates
+
+def death_player(player):
+    events.notify(events.GameEvent("MESSAGE", (player.creature.name_instance + " is dead!", "dark red")))
+    # remove from map
+    game_vars.level.current_entities.remove(player)
+    # set game state to player dead
+    game_vars.game_state = GameStates.PLAYER_DEAD
+    #delete savegame (this assumes we can only have one)
+    if os.path.isfile('savegame.json'):
+        os.remove('savegame.json')
+
+def generate_player():
+    container_com1 = components.com_Container()
+    player_array = generators.generate_stats("heroic")
+
+    player_com1 = components.com_Player()
+    creature_com1 = components.com_Creature("Player", hp=20,
+                                            base_str=player_array[0], base_dex=player_array[1],
+                                            base_con=player_array[2],
+                                            base_int=player_array[3], base_wis=player_array[4],
+                                            base_cha=player_array[5],
+                                            player=player_com1, faction="player", death_function=death_player)
+
+    # body parts
+    creature_com1.set_body_parts(generators.generate_body_types())
+
+    # check that x,y isn't taken
+    x, y = game_vars.level.player_start_x, game_vars.level.player_start_y
+    taken = map_check_for_creature(x, y)
+    if taken is not None:
+        print("Looking for grid in range")
+        grids = find_free_grid_in_range(3, x, y)
+        # grids = find_grid_in_range(3, x,y)
+        if grids is not None:
+            x, y = grids[0]
+        else:
+            print("No grids found")
+    else:
+        print("No creature at " + str(x) + " " + str(y))
+
+    player = components.obj_Actor(x, y, "@", "Player", creature=creature_com1,
+                                  container=container_com1)
+
+    # give starting equipment
+    start_equip = generators.generate_item("longsword", x, y)
+    start_equip.item.pick_up(player)
+    start_equip.equipment.equip(player)
+    start_equip = generators.generate_item("leather armor", x, y)
+    start_equip.item.pick_up(player)
+    start_equip.equipment.equip(player)
+    start_equip = generators.generate_item("torch", x, y)
+    start_equip.item.pick_up(player)
+
+    return player
+
+def start_new_game(seed):
+    # in case we want to visualize the first level as it's generated
+    cam = camera.obj_Camera()
+    # init camera for renderer
+    #renderer.initialize_camera(cam)
+    game_vars.camera = cam
+
+    game_obj = game.obj_Game(False, seed)
+
+    # init factions
+    game_obj.add_faction(("player", "enemy", -100))
+    game_obj.add_faction(("player", "neutral", 0))
+
+    # spawn player
+    player = generate_player()
+
+    # handle input needs player
+    handle_input.initialize_player(player)
+
+    hud.initialize_player(player)
+
+    # adjust camera position so that player is centered
+    cam.start_update(player)
+
+    game_vars.game_obj = game_obj
+
+    # put player last
+    game_vars.player = player
+    game_vars.level.current_entities.append(player)
+
+    # test
+    generators.get_random_item()
+
+    return game_obj, player, cam
+
+
+def main_menu_outer():
+    ret = main_menu()
     while ret is False:
-        ret = main_menu(start_new_game)
+        ret = main_menu()
 
     return ret
 
-def main_menu(start_new_game):
+def main_menu():
     blt.put(10, 0, 0xE100)
     action = gui_menus.main_menu()
 
