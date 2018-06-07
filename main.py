@@ -39,13 +39,14 @@ def draw_game():
         width_end = CAMERA.get_width_end(game_vars.level.current_map)
         height_start = CAMERA.get_height_start()
         height_end = CAMERA.get_height_end(game_vars.level.current_map)
+        offset = CAMERA.offset
 
         labels = game_vars.labels
 
         for ent in game_vars.level.current_entities:
             if ent.x >= width_start and ent.x < width_end:
                 if ent.y >= height_start and ent.y < height_end:
-                    ent.draw(fov_map=game_vars.fov_map)
+                    ent.draw(fov_map=game_vars.fov_map, offset=offset)
 
                     if labels:
                         ent.draw_label()
@@ -130,6 +131,7 @@ def game_main_loop():
             width_end = CAMERA.get_width_end(game_vars.level.current_map)
             height_start = CAMERA.get_height_start()
             height_end = CAMERA.get_height_end(game_vars.level.current_map)
+            offset = CAMERA.offset
 
             for ef in game_vars.level.current_effects:
 
@@ -146,7 +148,7 @@ def game_main_loop():
             renderer.draw_messages(game_vars.message_history)
 
             blt.layer(1)
-            renderer.draw_mouseover(pix_x, pix_y)
+            renderer.draw_mouseover(pix_x, pix_y, offset)
             blt.color(4294967295)
 
             hud.draw_hud(pix_x, pix_y)

@@ -28,8 +28,14 @@ def roll(dice, sides):
     return result
 
 
+def draw_iso(x,y,pos):
+    cam = game_vars.camera
+
+    tile_x, tile_y = pos[x][y]
+    return tile_x + cam.offset[0], tile_y + cam.offset[1]
+
 # based on STI library for LOVE2D
-def draw_iso(x,y, pos):
+def draw_iso_offset(x,y, pos, offset):
     # moved to constants for precalculating
     # isometric
     # offset_x = constants.CAMERA_OFFSET
@@ -37,11 +43,12 @@ def draw_iso(x,y, pos):
     # hh = constants.HALF_TILE_HEIGHT
     # tile_x = (x - y) * constants.HALF_TILE_WIDTH + offset_x
     # tile_y = (x + y) * constants.HALF_TILE_HEIGHT
-    cam = game_vars.camera
+
+    #cam = game_vars.camera
 
     tile_x, tile_y = pos[x][y]
-
-    return tile_x + cam.offset[0], tile_y + cam.offset[1]
+    return tile_x + offset[0], tile_y + offset[1]
+    #return tile_x + cam.offset[0], tile_y + cam.offset[1]
 
 def cell_to_pix(val, width):
     if width:
@@ -76,6 +83,7 @@ def draw_map(map_draw, map_explored, fov_map, debug=False):
     height_start = cam.get_height_start()
     height_end = cam.get_height_end(map_draw)
     render_pos = constants.RENDER_POSITIONS
+    offset = cam.offset
 
     #for x in range(width_start, width_end):
     #    for y in range(height_start, height_end):
@@ -95,7 +103,7 @@ def draw_map(map_draw, map_explored, fov_map, debug=False):
                 # tile_x = x * constants.TILE_WIDTH
                 # tile_y = y * constants.TILE_HEIGHT
 
-                tile_x, tile_y = draw_iso(x, y,render_pos)
+                tile_x, tile_y = draw_iso_offset(x, y,render_pos, offset)
 
                 blt.put(tile_x, tile_y, get_char(map_draw[x][y]))
 
@@ -116,7 +124,7 @@ def draw_map(map_draw, map_explored, fov_map, debug=False):
             # tile_x = x*constants.TILE_WIDTH
             # tile_y = y*constants.TILE_HEIGHT
 
-            tile_x, tile_y = draw_iso(x, y, render_pos)
+            tile_x, tile_y = draw_iso_offset(x, y, render_pos, offset)
 
             blt.put(tile_x, tile_y, get_char(map_draw[x][y]))
         #elif map_explored[x][y]:  # map_draw[x][y].explored:
@@ -143,10 +151,10 @@ def dimmer(x,y, color):
         #return blt.color_from_argb(a=255, r=color[0], g=color[1], b=color[2])
 
 
-def draw_mouseover(x,y):
+def draw_mouseover(x,y, offset):
     tile_x, tile_y = pix_to_iso(x, y)
     if 0 <= tile_x < len(game_vars.level.current_map) and 0 <= tile_y < len(game_vars.level.current_map[0]):
-        draw_x, draw_y = draw_iso(tile_x, tile_y, constants.RENDER_POSITIONS)
+        draw_x, draw_y = draw_iso_offset(tile_x, tile_y, constants.RENDER_POSITIONS, offset)
         blt.color("light yellow")
         blt.put(draw_x, draw_y, 0x2317)
 

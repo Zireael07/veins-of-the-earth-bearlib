@@ -7,7 +7,7 @@ from timeit import default_timer
 import random
 
 from map_common import map_check_for_creature, direction_to, find_free_grid_in_range
-from renderer import draw_iso, draw_floating_text
+from renderer import draw_iso, draw_floating_text, draw_iso_offset
 from gui_menus import dialogue_window
 from tile_lookups import get_block_path
 import calendar
@@ -75,7 +75,7 @@ class obj_Actor(object):
             else:
                 return self.name
 
-    def draw(self, fov_map):
+    def draw(self, fov_map, offset):
         #is_visible = libtcod.map_is_in_fov(fov_map, self.x, self.y)
         is_visible = fov_map.lit(self.x,self.y)
 
@@ -85,7 +85,7 @@ class obj_Actor(object):
 
 
         if self.visible or draw_item:
-            tile_x, tile_y = draw_iso(self.x,self.y, constants.RENDER_POSITIONS) #this is the top(?) corner of our tile
+            tile_x, tile_y = draw_iso_offset(self.x,self.y, constants.RENDER_POSITIONS, offset) #this is the top(?) corner of our tile
             # this works for ASCII mode
             #blt.put_ext(tile_x, tile_y, 0, blt.state(blt.TK_CELL_HEIGHT), self.char)
 
