@@ -663,6 +663,8 @@ class com_Creature(object):
             self.path_moves.insert(0, ((self.owner.x, self.owner.y), direct))
             #self.move_queue.append(direct)
 
+        else:
+            print("Path is empty! No path")
             # x, y = libtcod.path_walk(my_path, True)
             # if x or y:
             #     # Move to next path

@@ -163,6 +163,11 @@ class obj_Game(object):
         print("Move to " + str(stairs_x) + " " + str(stairs_y))
         game_vars.player.creature.move_to_target(stairs_x, stairs_y, game_vars.level.current_map)
 
+        # clear move queue
+        game_vars.player.creature.move_queue = []
+        # switch off a-e
+        game_vars.player.creature.player.autoexplore = False
+
         # force fov recompute
         game_vars.fov_recompute = True
         game_vars.redraw = True

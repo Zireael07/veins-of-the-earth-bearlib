@@ -157,9 +157,6 @@ def game_key_move(key):
 
 
 def game_player_turn_input(key):
-    if not constants.VI_KEYS and key in KEY_TO_DIR or constants.VI_KEYS and key in KEY_TO_DIR_VI:
-        return game_key_move(key)
-
     if blt.check(blt.TK_SHIFT) and key == blt.TK_PERIOD:
         if game_vars.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS):  # .stairs:
             if hasattr(game_vars.level, 'exits'):
@@ -169,7 +166,13 @@ def game_player_turn_input(key):
             else:
                 game_vars.game_obj.next_level()
             return "redraw"
-            #return "player-moved"
+            #return "player-moved"L
+
+
+    if not blt.check(blt.TK_SHIFT) and not constants.VI_KEYS and key in KEY_TO_DIR or constants.VI_KEYS and key in KEY_TO_DIR_VI:
+        return game_key_move(key)
+
+
 
     if blt.check(blt.TK_SHIFT) and key == blt.TK_COMMA:
         if game_vars.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS_UP):
