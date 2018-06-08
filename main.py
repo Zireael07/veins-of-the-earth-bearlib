@@ -22,46 +22,6 @@ import handle_input
 from game_states import GameStates
 
 
-# the core drawing function
-def draw_game():
-    # don't draw map and NPCs if sleeping
-    if not PLAYER.creature.player.resting:
-        blt.layer(0)
-        renderer.draw_map(game_vars.level.current_map, game_vars.level.current_explored, game_vars.fov_map, constants.DEBUG)
-
-        # moved outside since it has to be redrawn always
-        #renderer.draw_mouseover(x, y)
-
-        #blt.color("white")
-        blt.color(4294967295)
-        blt.layer(2)
-        width_start = CAMERA.get_width_start()
-        width_end = CAMERA.get_width_end(game_vars.level.current_map)
-        height_start = CAMERA.get_height_start()
-        height_end = CAMERA.get_height_end(game_vars.level.current_map)
-        offset = CAMERA.offset
-
-        labels = game_vars.labels
-
-        for ent in game_vars.level.current_entities:
-            if ent.x >= width_start and ent.x < width_end:
-                if ent.y >= height_start and ent.y < height_end:
-                    ent.draw(fov_map=game_vars.fov_map, offset=offset)
-
-                    if labels:
-                        ent.draw_label()
-
-    else:
-        blt.puts(80,20, "SLEEPING...")
-
-
-
-    blt.color(4294967295)
-
-    if game_vars.game_state == GameStates.PLAYER_DEAD:
-        blt.puts(80, 20, "You are dead!")
-
-
 def cell_to_iso(x,y):
     offset_x = constants.MAP_WIDTH * 4
     iso_x = y / constants.TILE_HEIGHT + (x - offset_x) / constants.TILE_WIDTH
@@ -124,31 +84,15 @@ def game_main_loop():
                 if game_vars.labels:
                     blt.layer(4)
                     blt.clear_area(0, 0, blt.state(blt.TK_WIDTH, blt.state(blt.TK_HEIGHT)))
-                draw_game()
+                renderer.draw_game()
 
-            # effects
-            width_start = CAMERA.get_width_start()
-            width_end = CAMERA.get_width_end(game_vars.level.current_map)
-            height_start = CAMERA.get_height_start()
-            height_end = CAMERA.get_height_end(game_vars.level.current_map)
-            offset = CAMERA.offset
-
-            for ef in game_vars.level.current_effects:
-
-                ef.update()
-                if not ef.render:
-                    game_vars.level.current_effects.remove(ef)
-
-                if ef.x >= width_start and ef.x < width_end:
-                    if ef.y >= height_start and ef.y < height_end:
-                        ef.draw()
 
             # on top of map
             blt.layer(1)
             renderer.draw_messages(game_vars.message_history)
 
             blt.layer(1)
-            renderer.draw_mouseover(pix_x, pix_y, offset)
+            renderer.draw_mouseover(pix_x, pix_y)
             blt.color(4294967295)
 
             hud.draw_hud(pix_x, pix_y)

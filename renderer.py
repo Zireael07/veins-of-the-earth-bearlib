@@ -11,6 +11,8 @@ from map_common import tiles_distance_to
 
 import constants
 import game_vars
+from game_states import GameStates
+
 import colors
 
 
@@ -68,18 +70,73 @@ def pix_to_iso(x,y):
     return int(iso_x), int(iso_y)
 
 
-def draw_map(map_draw, map_explored, fov_map, debug=False):
-    #width = constants.MAP_WIDTH
-    #height = constants.MAP_HEIGHT
-    #debug = constants.DEBUG
-    cam = game_vars.camera
+# the core drawing function
+def draw_game():
+    # don't draw map and NPCs if sleeping
+    if not game_vars.player.creature.player.resting:
+        cam = game_vars.camera
+        width_start = cam.get_width_start()
+        width_end = cam.get_width_end(game_vars.level.current_map)
+        height_start = cam.get_height_start()
+        height_end = cam.get_height_end(game_vars.level.current_map)
+        offset = cam.offset
 
-    width_start = cam.get_width_start()
-    width_end = cam.get_width_end(map_draw)
-    height_start = cam.get_height_start()
-    height_end = cam.get_height_end(map_draw)
+
+        blt.layer(0)
+        draw_map(game_vars.level.current_map, game_vars.level.current_explored, game_vars.fov_map,
+                 width_start, width_end, height_start, height_end, offset,
+                 constants.DEBUG)
+
+        # moved outside since it has to be redrawn always
+        #renderer.draw_mouseover(x, y)
+
+        #blt.color("white")
+        blt.color(4294967295)
+        blt.layer(2)
+
+        labels = game_vars.labels
+
+        for ent in game_vars.level.current_entities:
+            if ent.x >= width_start and ent.x < width_end:
+                if ent.y >= height_start and ent.y < height_end:
+                    ent.draw(fov_map=game_vars.fov_map, offset=offset)
+
+                    if labels:
+                        ent.draw_label()
+
+        # effects
+        for ef in game_vars.level.current_effects:
+            ef.update()
+            if not ef.render:
+                game_vars.level.current_effects.remove(ef)
+
+            if ef.x >= width_start and ef.x < width_end:
+                if ef.y >= height_start and ef.y < height_end:
+                    ef.draw()
+
+    else:
+        blt.puts(80,20, "SLEEPING...")
+
+
+
+    blt.color(4294967295)
+
+    if game_vars.game_state == GameStates.PLAYER_DEAD:
+        blt.puts(80, 20, "You are dead!")
+
+
+
+def draw_map(map_draw, map_explored, fov_map,
+             width_start, width_end, height_start, height_end, offset,
+             debug=False):
+    # cam = game_vars.camera
+    #
+    # width_start = cam.get_width_start()
+    # width_end = cam.get_width_end(map_draw)
+    # height_start = cam.get_height_start()
+    # height_end = cam.get_height_end(map_draw)
     render_pos = constants.RENDER_POSITIONS
-    offset = cam.offset
+    #offset = cam.offset
 
     #for x in range(width_start, width_end):
     #    for y in range(height_start, height_end):
@@ -125,6 +182,50 @@ def draw_map(map_draw, map_explored, fov_map, debug=False):
             blt.put(tile_x, tile_y, get_char(map_draw[x][y]))
         #elif map_explored[x][y]:  # map_draw[x][y].explored:
 
+# basically a copy of draw_map() but without the optimizations (to avoid having to pass camera parameters)
+def draw_map_stub(map_draw, map_explored, fov_map,debug=False):
+    cam = game_vars.camera
+
+    width_start = cam.get_width_start()
+    width_end = cam.get_width_end(map_draw)
+    height_start = cam.get_height_start()
+    height_end = cam.get_height_end(map_draw)
+    render_pos = constants.RENDER_POSITIONS
+    offset = cam.offset
+
+    for x,y in itertools.product(range(width_start, width_end), range(height_start, height_end)):
+        if debug:
+            is_visible = True
+        else:
+            #is_visible = libtcod.map_is_in_fov(fov_map, x, y)
+            is_visible = fov_map.lit(x,y)
+
+        if not is_visible:
+
+            if map_explored[x][y]:
+                blt.color(4286545791) # gray
+
+                tile_x, tile_y = draw_iso_offset(x, y,render_pos, offset)
+
+                blt.put(tile_x, tile_y, get_char(map_draw[x][y]))
+
+        else:
+            # tint light for the player
+            if game_vars.player is not None and game_vars.player.creature.get_light_radius() > 1:
+                #blt.color("white")
+                #print(str(blt.color_from_argb(165, 255, 255, 127)))
+                blt.color(dimmer(x,y, (255, 255, 127)))
+            #blt.color(4294967295) #white
+            else:
+                blt.color("white")
+
+            map_explored[x][y] = True
+
+            tile_x, tile_y = draw_iso_offset(x, y, render_pos, offset)
+
+            blt.put(tile_x, tile_y, get_char(map_draw[x][y]))
+
+# used by the player light tinting code
 dist_to_alpha = { 0: 0, 1:0, 2: 25, 3: 50, 4: 75, 5:90}
 
 dist_to_color = { 0: colors.light_yellow, 1: colors.light_yellow, 2: colors.light_yellow_dim1, 3: colors.light_yellow_dim2,
@@ -147,10 +248,10 @@ def dimmer(x,y, color):
         #return blt.color_from_argb(a=255, r=color[0], g=color[1], b=color[2])
 
 
-def draw_mouseover(x,y, offset):
+def draw_mouseover(x,y):
     tile_x, tile_y = pix_to_iso(x, y)
     if 0 <= tile_x < len(game_vars.level.current_map) and 0 <= tile_y < len(game_vars.level.current_map[0]):
-        draw_x, draw_y = draw_iso_offset(tile_x, tile_y, constants.RENDER_POSITIONS, offset)
+        draw_x, draw_y = draw_iso(tile_x, tile_y, constants.RENDER_POSITIONS)
         blt.color("light yellow")
         blt.put(draw_x, draw_y, 0x2317)
 

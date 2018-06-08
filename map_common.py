@@ -489,7 +489,7 @@ def debug_pause(mapgen):
         # stub out the renderer
         # to prevent import loop
         import renderer
-        renderer.draw_map(mapgen._map, [[False for _ in range(0, len(mapgen._map[0]))] for _ in range(0, len(mapgen._map))], [], True)
+        renderer.draw_map_stub(mapgen._map, [[False for _ in range(0, len(mapgen._map[0]))] for _ in range(0, len(mapgen._map))], [], True)
 
         # redraw and wait for input
         blt.refresh()
