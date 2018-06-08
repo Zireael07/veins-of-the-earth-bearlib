@@ -6,14 +6,14 @@ from bearlibterminal import terminal as blt
 import constants
 from map_common import get_map_string
 from generators import roll
-import renderer
+import gui_renderer
 
 import game_vars
 
 
 def main_menu():
 
-    key = renderer.menu_colored("MAIN MENU", [("(S)tart new game", "white"), ("(L)oad game", "white"),
+    key = gui_renderer.menu_colored("MAIN MENU", [("(S)tart new game", "white"), ("(L)oad game", "white"),
                                               ("(O)ptions", "white"),
                                               ("(E)xit game", "white")],
                        50, menu_x = int((180 - 50) / 2), border=False)
@@ -44,7 +44,7 @@ def options_menu_outer():
 def options_menu():
     opts = [("(V)i keys: %s " % (str(constants.VI_KEYS)), "white")]
 
-    key = renderer.menu_colored("OPTIONS", opts, 50, menu_x = int((180 - 50)/2), border=False)
+    key = gui_renderer.menu_colored("OPTIONS", opts, 50, menu_x = int((180 - 50)/2), border=False)
 
     if key == blt.TK_V or key == 0:
         return 1
@@ -76,7 +76,7 @@ def character_sheet_menu(header, player):
         options.append(("", "white"))
         options.append((ef.name, "green"))
 
-    index = renderer.menu_colored(header + ": " + player.creature.name_instance, options, 50, 'CHARACTER SHEET')
+    index = gui_renderer.menu_colored(header + ": " + player.creature.name_instance, options, 50, 'CHARACTER SHEET')
 
     if index is None:
         return None
@@ -85,7 +85,7 @@ def character_sheet_menu(header, player):
 def log_menu_inner(header, begin, end):
     options = game_vars.message_history
 
-    scroll = renderer.menu_colored_scrolled(header, options, 50, begin, end, 'LOG HISTORY')
+    scroll = gui_renderer.menu_colored_scrolled(header, options, 50, begin, end, 'LOG HISTORY')
 
     return scroll
 
@@ -121,7 +121,7 @@ def dmg_menu(header, opt):
     for o in flat_list:
         options.append(str(o))
 
-    index = renderer.options_menu(header, options, 30)
+    index = gui_renderer.options_menu(header, options, 30)
 
     if index is None:
         return None
@@ -141,7 +141,7 @@ def display_dmg_window(index):
 
 def dialogue_window(creature, player, items):
     blt.layer(1)
-    index = renderer.dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat['chat'], creature.chat['answer'])
+    index = gui_renderer.dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat['chat'], creature.chat['answer'])
 
     if index is not None and creature.chat['answer'][index]:
         #print("Index " + str(index) + " " + str(creature.chat['answer'][index]['reply']))
@@ -150,7 +150,7 @@ def dialogue_window(creature, player, items):
         print("Action is: " + str(action))
 
         # this resets the index!
-        index = renderer.dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat[reply], [])
+        index = gui_renderer.dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat[reply], [])
 
         # TODO: move individual action code out of here
         if action == "shop":
@@ -191,7 +191,7 @@ def shop_window(player, creature, items):
     columns = [player_inv, shop_inv]
 
     # we want one item selected (for now)
-    index = renderer.multicolumn_menu("SHOP", columns, 80, 50)
+    index = gui_renderer.multicolumn_menu("SHOP", columns, 80, 50)
     print("Ind: " + str(index))
 
 
@@ -217,7 +217,7 @@ def help_menu():
         help_t = help_f.read()
     # make possible drawing the >
     blt.set("0x003E: none")
-    renderer.text_menu("Keybindings", 70, "HELP",
+    gui_renderer.text_menu("Keybindings", 70, "HELP",
                 help_t)
     # restore drawing
     blt.set("0x003E: gfx/stairs_down.png, align=center")
@@ -227,7 +227,7 @@ def debug_menu(player):
 
     options = ["Reveal map", "Map overview", "Creatures list", "Spawn creature", "Spawn item", "Items list", "Change level"]
 
-    key = renderer.options_menu("DEBUG", options, 50, "Debug menu")
+    key = gui_renderer.options_menu("DEBUG", options, 50, "Debug menu")
 
     print("key: " + str(key))
 
@@ -244,7 +244,7 @@ def debug_menu(player):
         blt.set("0x3002: none")
         blt.set("0x23: none")
 
-        renderer.text_menu("Map", 50, "MAP OVERVIEW", get_map_string(game_vars.level.current_map))
+        gui_renderer.text_menu("Map", 50, "MAP OVERVIEW", get_map_string(game_vars.level.current_map))
 
         # restore drawing
         blt.set("0x003E: gfx/stairs_down.png, align=center")
@@ -261,7 +261,7 @@ def debug_menu(player):
             if ent.creature:
                 opt.append(ent.creature.name_instance + " X: " + str(ent.x) + " Y: " + str(ent.y))
 
-        renderer.options_menu("Creature list", opt, 50, "List")
+        gui_renderer.options_menu("Creature list", opt, 50, "List")
 
     if key == 3:
         import generators
@@ -274,7 +274,7 @@ def debug_menu(player):
         for m_id in generators.monster_data:
             opt.append(m_id)
 
-        sel = renderer.options_menu("Spawn creature:", opt, 50, "List")
+        sel = gui_renderer.options_menu("Spawn creature:", opt, 50, "List")
 
         if sel is not None:
             game_vars.level.add_entity(generators.generate_monster(opt[sel], player.x, player.y))
@@ -288,7 +288,7 @@ def debug_menu(player):
         for i_id in generators.items_data:
             opt.append(i_id)
 
-        sel = renderer.options_menu("Spawn item:", opt, 50, "List")
+        sel = gui_renderer.options_menu("Spawn item:", opt, 50, "List")
 
         if sel is not None:
             item = generators.generate_item(opt[sel], player.x, player.y)
@@ -304,7 +304,7 @@ def debug_menu(player):
             if not ent.creature:
                 opt.append(ent.name + " X: " + str(ent.x) + " Y: " + str(ent.y))
 
-        renderer.options_menu("Item list", opt, 50, "List")
+        gui_renderer.options_menu("Item list", opt, 50, "List")
 
     if key == 6:
         import level
@@ -313,7 +313,7 @@ def debug_menu(player):
         for l in level.levels_data:
             opt.append(l)
 
-        sel = renderer.options_menu("Go to level:", opt, 50, "List")
+        sel = gui_renderer.options_menu("Go to level:", opt, 50, "List")
 
         if sel is not None:
             print("Selected: " + str(opt[sel]))
@@ -335,7 +335,7 @@ def character_stats_menu(player):
                ("WIS: " + str(player.creature.wisdom), "white"), ("CHA: " + str(player.creature.charisma), "white"),
                ("(R)eroll!", "yellow"), ("(P)roceed", "white")]
 
-    key = renderer.menu_colored("STATS", options, 50, 'CHARACTER CREATION II')
+    key = gui_renderer.menu_colored("STATS", options, 50, 'CHARACTER CREATION II')
 
     if key == blt.TK_R:
         # reroll
@@ -361,7 +361,7 @@ def character_creation_menu(player):
 
     tiles = ["gfx/human_m.png", "gfx/drow_m.png", "gfx/human_f.png", "gfx/drow_f.png"]
 
-    key = renderer.multicolumn_menu("CHARACTER CREATION", columns, 80, 10, 2)
+    key = gui_renderer.multicolumn_menu("CHARACTER CREATION", columns, 80, 10, 2)
 
     if key is not None:
         if 0 in key and 2 in key:
@@ -400,7 +400,7 @@ def character_creation_menu(player):
         with open("data/welcome.txt") as welcome_f:
             welcome = welcome_f.read()
 
-        renderer.text_menu("", 70, "Welcome to Veins of the Earth",
+        gui_renderer.text_menu("", 70, "Welcome to Veins of the Earth",
                   welcome)
 
     # pressed ESC while in character creation I
@@ -410,12 +410,12 @@ def character_creation_menu(player):
         sys.exit()
 
 def character_name_input():
-    name = renderer.input_menu("Character name: ", 50, "Name", "Zir", False)
+    name = gui_renderer.input_menu("Character name: ", 50, "Name", "Zir", False)
     print("Inputed name: " + str(name))
     return str(name[1])
 
 def inventory_menu(header, player):
-    index = renderer.inventory_menu_test(header, 50, 'INVENTORY', player.container.equipped_items, player.container.inventory)
+    index = gui_renderer.inventory_menu_test(header, 50, 'INVENTORY', player.container.equipped_items, player.container.inventory)
 
     #if an item was chosen, return it
     if index is None or len(player.container.inventory) == 0:
@@ -426,7 +426,7 @@ def inventory_menu(header, player):
 def item_actions_menu(item):
     options = ["Use/wear", "Drop"]
 
-    index = renderer.options_menu(item.display_name(), options, 20, "Item actions", 5)
+    index = gui_renderer.options_menu(item.display_name(), options, 20, "Item actions", 5)
 
     if index is None:
         return None
@@ -439,14 +439,14 @@ def drop_menu(player):
     else:
         options = [item.display_name() for item in player.container.inventory]
 
-    index = renderer.options_menu("Drop item", options, 50, "DROP")
+    index = gui_renderer.options_menu("Drop item", options, 50, "DROP")
 
     return index
 
 def pickup_menu(entities):
     options = [ent.name for ent in entities]
 
-    index = renderer.options_menu("Pick item", options, 50, "Pick up")
+    index = gui_renderer.options_menu("Pick item", options, 50, "Pick up")
 
     if index is None:
         return None
@@ -454,6 +454,6 @@ def pickup_menu(entities):
         return entities[index]
 
 def seed_input_menu():
-    seed = renderer.input_menu("Seed", 50, "Seed (numbers only):", 2)
+    seed = gui_renderer.input_menu("Seed", 50, "Seed (numbers only):", 2)
     print("Inputed seed: " + str(seed))
     return int(seed[1])
