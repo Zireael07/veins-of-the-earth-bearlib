@@ -108,18 +108,21 @@ KEY_TO_DIR = {
         blt.TK_LEFT: Directions.SOUTHWEST, blt.TK_RIGHT: Directions.NORTHEAST,
         blt.TK_HOME: Directions.WEST, blt.TK_PAGEUP: Directions.NORTH,
         blt.TK_PAGEDOWN: Directions.SOUTH, blt.TK_END: Directions.EAST,
+        blt.TK_PERIOD: Directions.CENTER,
     # numpad
         blt.TK_KP_8: Directions.NORTHWEST, blt.TK_KP_2: Directions.SOUTHEAST,
         blt.TK_KP_4: Directions.SOUTHWEST, blt.TK_KP_6: Directions.NORTHEAST,
         blt.TK_KP_7: Directions.WEST, blt.TK_KP_9: Directions.NORTH,
-        blt.TK_KP_1: Directions.SOUTH, blt.TK_KP_3: Directions.EAST
+        blt.TK_KP_1: Directions.SOUTH, blt.TK_KP_3: Directions.EAST,
+        blt.TK_KP_ENTER: Directions.CENTER
     }
 
 KEY_TO_DIR_VI = {
         blt.TK_K: Directions.NORTHWEST, blt.TK_J: Directions.SOUTHEAST,
         blt.TK_H: Directions.SOUTHWEST, blt.TK_L: Directions.NORTHEAST,
         blt.TK_Y: Directions.WEST, blt.TK_U: Directions.NORTH,
-        blt.TK_B: Directions.SOUTH, blt.TK_N: Directions.EAST
+        blt.TK_B: Directions.SOUTH, blt.TK_N: Directions.EAST,
+        blt.TK_PERIOD: Directions.CENTER,
 }
 
 def get_up_key():
@@ -134,7 +137,7 @@ def get_up_key():
 
 def game_key_move(key):
     src = KEY_TO_DIR if not constants.VI_KEYS else KEY_TO_DIR_VI
-    if PLAYER.creature.move(src[key][0], src[key][1], game_vars.level.current_map):
+    if src[key] != Directions.CENTER and PLAYER.creature.move(src[key][0], src[key][1], game_vars.level.current_map):
         game_vars.camera.move(src[key][0], src[key][1])
         game_vars.fov_recompute = True
 
@@ -143,7 +146,15 @@ def game_key_move(key):
         # switch off a-e
         PLAYER.creature.player.autoexplore = False
 
+    elif src[key] == Directions.CENTER:
+        #print("Pass turn")
+        # clear move queue
+        PLAYER.creature.move_queue = []
+        # switch off a-e
+        PLAYER.creature.player.autoexplore = False
+
     return "player-moved"
+
 
 def game_player_turn_input(key):
     if not constants.VI_KEYS and key in KEY_TO_DIR or constants.VI_KEYS and key in KEY_TO_DIR_VI:
@@ -255,6 +266,9 @@ def game_player_turn_input(key):
 
             return "player-moved"
 
+    # test
+    if key == blt.TK_M:
+        return "redraw"
 
 def game_handle_keys():
     key = blt.read()
