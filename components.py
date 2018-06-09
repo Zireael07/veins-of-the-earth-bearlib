@@ -454,34 +454,45 @@ class com_Creature(object):
 
         return injured
 
-    def take_damage(self, damage):
+    def take_damage(self, damage, bypass=False):
+        '''
+
+        :param damage: damage taken
+        :param bypass: do we apply defense? (not the case for starvation)
+        :return:
+        '''
         # determine body part hit
         part = self.random_body_part()
-
-        change = damage - part.defense #self.defense
-        print("Defense: " + str(part.defense))
+        if not bypass:
+            change = damage - part.defense #self.defense
+            print("Defense: " + str(part.defense))
+        else:
+            change = damage
         if change < 0:
             change = 0
         #self.hp -= change
         part.hp -= change
 
         if self.owner.visible:
-            #if self.defense > 0:
-            if part.defense > 0:
+            if not bypass:
+                #if self.defense > 0:
+                if part.defense > 0:
+                    events.notify(events.GameEvent("MESSAGE",
+                                                (self.name_instance + " blocks " + str(part.defense) + " damage", "gray")))
+
+                splatter = com_VisualEffect(self.owner.x, self.owner.y)
+                splatter.tiles.append((0x2BC1, "red"))
+                for l in str(damage):
+                    splatter.tiles.append((l, "white"))
+
+                game_vars.level.current_effects.append(splatter)
+
                 events.notify(events.GameEvent("MESSAGE",
-                                            (self.name_instance + " blocks " + str(part.defense) + " damage", "gray")))
-            #tile_x, tile_y = draw_iso(self.owner.x, self.owner.y, constants.RENDER_POSITIONS)
-            #draw_blood_splatter(tile_x, tile_y, change)
+                                    (self.name_instance + "'s " + str(part.name) + " hp is " + str(part.hp) + "/" + str(part.max_hp), "white")))
 
-            splatter = com_VisualEffect(self.owner.x, self.owner.y)
-            splatter.tiles.append((0x2BC1, "red"))
-            for l in str(damage):
-                splatter.tiles.append((l, "white"))
+            else:
+                events.notify(events.GameEvent("MESSAGE", (self.name_instance + " is STARVING!", "red")))
 
-            game_vars.level.current_effects.append(splatter)
-
-            events.notify(events.GameEvent("MESSAGE",
-                                (self.name_instance + "'s " + str(part.name) + " hp is " + str(part.hp) + "/" + str(part.max_hp), "white")))
 
         #if self.hp <= 0:
         if (part.name == "torso" or part.name == "head") and part.hp <= 0:
@@ -904,6 +915,10 @@ class com_Player(object):
         else:
             self.nutrition -= 1
             self.thirst -= 1
+
+        # starve/thirst
+        if self.nutrition <= 0 or self.thirst <= 0:
+            self.owner.take_damage(1, True)
 
         # general stuff
         # count down effects
