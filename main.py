@@ -97,6 +97,12 @@ def game_main_loop():
 
             hud.draw_hud(pix_x, pix_y)
 
+            # effects
+            for ef in game_vars.level.current_effects:
+                ef.update()
+                if not ef.render:
+                     game_vars.level.current_effects.remove(ef)
+
         # refresh term
         blt.refresh()
 

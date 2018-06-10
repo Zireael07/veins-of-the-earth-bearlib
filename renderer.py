@@ -106,9 +106,9 @@ def draw_game():
 
         # effects
         for ef in game_vars.level.current_effects:
-            ef.update()
+            # ef.update()
             if not ef.render:
-                game_vars.level.current_effects.remove(ef)
+                 game_vars.level.current_effects.remove(ef)
 
             if ef.x >= width_start and ef.x < width_end:
                 if ef.y >= height_start and ef.y < height_end:
