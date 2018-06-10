@@ -423,7 +423,7 @@ class com_Creature(object):
                 target.creature.take_damage(damage)
         else:
             if self.owner.visible:
-                shield = com_VisualEffect(target.x, target.y)
+                shield = com_VisualEffect(target.x, target.y, owner=target)
                 shield.tiles.append((0x2BC2, "white"))
                 game_vars.level.current_effects.append(shield)
 
@@ -480,7 +480,7 @@ class com_Creature(object):
                     events.notify(events.GameEvent("MESSAGE",
                                                 (self.name_instance + " blocks " + str(part.defense) + " damage", "gray")))
 
-                splatter = com_VisualEffect(self.owner.x, self.owner.y)
+                splatter = com_VisualEffect(self.owner.x, self.owner.y, owner=self.owner)
                 splatter.tiles.append((0x2BC1, "red"))
                 for l in str(damage):
                     splatter.tiles.append((l, "white"))
@@ -858,7 +858,7 @@ class Effect(object):
 
 
 class com_VisualEffect(object):
-    def __init__(self, x, y, duration=3, tiles=None):
+    def __init__(self, x, y, duration=3, tiles=None, owner=None):
         self.x = x
         self.y = y
         if tiles is None:
@@ -867,6 +867,9 @@ class com_VisualEffect(object):
         self.tiles = tiles
         self.duration = duration
         self.start_time = default_timer()
+        self.render = True
+        if owner:
+            self.owner = owner
 
 
     def set_tiles(self, tiles):
@@ -883,8 +886,13 @@ class com_VisualEffect(object):
     def update(self):
         # check duration
         if default_timer() - self.start_time > self.duration:
+            #print("Time to cancel..")
             self.render = False
+        elif hasattr(self, 'owner') and not self.owner in game_vars.level.current_entities:
+            #print("Owner dead, shorten duration")
+            self.duration = 1 # so that the effects do not stay around too long if the owner is dead
         else:
+            #print(str(self.duration))
             self.render = True
 
 
