@@ -318,6 +318,8 @@ def debug_menu(player):
         if sel is not None:
             print("Selected: " + str(opt[sel]))
             game_vars.game_obj.next_level(opt[sel])
+            # force redraw
+            return "redraw"
 
 def character_stats_menu_outer(player):
     ret = character_stats_menu(player)
