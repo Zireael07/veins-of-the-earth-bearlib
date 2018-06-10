@@ -31,6 +31,18 @@ class obj_Camera(object):
         # update rect
         # self.rectangle.update(self.top_x, self.top_y, self.width, self.height)
 
+    def debug_update(self):
+        self.top_x, self.top_y = self.x - self.width / 2, self.y - self.height / 2
+
+    def debug_move(self, x, y):
+        self.x, self.y = x,y
+        self.debug_update()
+        target_pos = (80, 20)
+        cur_pos_x, cur_pos_y = iso_pos(x, y)
+        #print("Cur:" + str(cur_pos_x) + " " + str(cur_pos_y))
+        self.offset = (target_pos[0] - cur_pos_x, target_pos[1] - cur_pos_y)
+        #print("Offset: " + str(self.offset))
+
     def move(self, dx, dy):
         # print("Moving the camera by " + str(dx) + ", " + str(dy))
         # if we increase map x by 1, draw coordinates increase by 1/2 tile width, 1/2 tile height

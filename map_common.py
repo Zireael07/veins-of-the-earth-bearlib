@@ -483,6 +483,13 @@ def random_tile_with_desc(desc_map, desc):
 #debugging
 def debug_pause(mapgen):
     if mapgen.debug:
+
+        #print(str(game_vars.camera.x) + " " + str(game_vars.camera.y))
+        # recenter camera
+        game_vars.camera.debug_move(int(len(mapgen._map[0])/2), int(len(mapgen._map)/2))
+        #game_vars.camera.debug_move(15,15)
+        #print(str(game_vars.camera.x) + " " + str(game_vars.camera.y))
+
         blt.clear()
         unpaused = True
 
