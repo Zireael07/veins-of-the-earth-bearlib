@@ -165,6 +165,8 @@ def game_main_loop():
                     #print(GAME.calendar.get_time_date(GAME.calendar.turn))
 
             if game_vars.game_state == GameStates.PLAYER_DEAD:
+                # force redraw
+                game_vars.redraw = True
                 print("PLAYER DEAD")
             #if GAME.game_state == GameStates.PLAYER_TURN:
             #    print("PLAYER TURN")
