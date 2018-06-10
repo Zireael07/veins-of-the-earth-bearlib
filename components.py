@@ -490,6 +490,13 @@ class com_Creature(object):
                 events.notify(events.GameEvent("MESSAGE",
                                     (self.name_instance + "'s " + str(part.name) + " hp is " + str(part.hp) + "/" + str(part.max_hp), "white")))
 
+                # wake player if he's sleeping
+                if self.player is not None and self.player.resting:
+                    print("Wake up player")
+                    self.player.resting = False
+                    # redraw
+                    game_vars.redraw = True
+
             else:
                 events.notify(events.GameEvent("MESSAGE", (self.name_instance + " is STARVING!", "red")))
 
@@ -549,6 +556,8 @@ class com_Creature(object):
                     # wake player if he's sleeping
                     if target.creature.player is not None and target.creature.player.resting:
                         target.creature.player.resting = False
+                        # redraw
+                        game_vars.redraw = True
 
                 if target.creature.text is not None and target.visible and self.player:
                     tile_x, tile_y = draw_iso(target.x, target.y, constants.RENDER_POSITIONS)
