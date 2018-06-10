@@ -117,7 +117,7 @@ def draw_hud(pix_x, pix_y):
     # debug
     # on top of map
     blt.layer(1)
-    blt.puts(2, 2, "[color=red] player position: %d %d" % (PLAYER.x, PLAYER.y))
+    blt.puts(2, 4, "[color=red] player position: %d %d" % (PLAYER.x, PLAYER.y))
     blt.puts(2, 5, "[color=red] camera offset: %d %d" % (game_vars.camera.offset[0], game_vars.camera.offset[1]))
     blt.puts(2, 6, "[color=red] vi keys: %s " % (str(constants.VI_KEYS)))
 

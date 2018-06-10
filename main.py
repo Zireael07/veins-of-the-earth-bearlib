@@ -69,6 +69,9 @@ def game_main_loop():
             blt.layer(1)
             blt.puts(2,1, "[color=white]FPS: %d ms %.3f" % (fps_value, 1000/(fps_value * 1.0) if fps_value else 0) )
 
+            # debug
+            blt.puts(2,2, "Redraw: %s" % str(game_vars.redraw))
+
             #mouse
             pix_x, pix_y, _, _ = game_handle_mouse()
 
@@ -186,7 +189,7 @@ def game_handle_mouse():
     # mouse test
     blt.layer(1)
     blt.puts(
-        3, 4,
+        3, 7,
         "Cursor: [color=orange]%d:%d[/color] [color=dark gray]cells[/color]"
         ", [color=orange]%d:%d[/color] [color=dark gray]pixels[/color]" % (
             m_x,
