@@ -314,3 +314,18 @@ def game_handle_keys():
 
 
     return "no-action"
+
+global ACT
+ACT = None
+
+
+def get_fake_action():
+    return ACT
+
+def fake_action(action):
+    global ACT
+    ACT = action
+
+def reset_fake_action():
+    global ACT
+    ACT = None

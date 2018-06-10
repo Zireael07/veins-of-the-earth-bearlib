@@ -122,6 +122,10 @@ def game_main_loop():
         while not game_quit and blt.has_input():
 
             player_action = handle_input.game_handle_keys()
+            if handle_input.get_fake_action() is not None:
+                print("Faking an action")
+                player_action = handle_input.get_fake_action()
+                handle_input.reset_fake_action()
             #print player_action
 
             if player_action == "QUIT":
