@@ -282,35 +282,37 @@ def game_handle_keys():
         if key not in (blt.TK_S, blt.TK_L):
             return "QUIT"
 
-    if not constants.VI_KEYS and key == blt.TK_L or constants.VI_KEYS and blt.check(blt.TK_SHIFT) and key == blt.TK_M:
-        gui_menus.log_menu("Log history", 0, 26)
+    # don't handle keys at all if resting
+    if not game_vars.player.creature.player.resting:
+        if not constants.VI_KEYS and key == blt.TK_L or constants.VI_KEYS and blt.check(blt.TK_SHIFT) and key == blt.TK_M:
+            gui_menus.log_menu("Log history", 0, 26)
 
-    if blt.check(blt.TK_SHIFT) and key == blt.TK_SLASH:
-        gui_menus.help_menu()
+        if blt.check(blt.TK_SHIFT) and key == blt.TK_SLASH:
+            gui_menus.help_menu()
 
-    # Debugging
-    if blt.check(blt.TK_SHIFT) and key == blt.TK_GRAVE:
-        # print("Debug mode on")
-        # constants.DEBUG = True
-        return gui_menus.debug_menu(PLAYER)
+        # Debugging
+        if blt.check(blt.TK_SHIFT) and key == blt.TK_GRAVE:
+            # print("Debug mode on")
+            # constants.DEBUG = True
+            return gui_menus.debug_menu(PLAYER)
 
-    # Toggle labels
-    if key == blt.TK_TAB:
-        #print("Toggle labels")
-        game_vars.labels = not game_vars.labels
-        print("Labels: " + " " + str(game_vars.labels))
-        blt.layer(4)
-        blt.clear_area(0, 0, blt.state(blt.TK_WIDTH, blt.state(blt.TK_HEIGHT)))
-        if game_vars.labels:
-            return "redraw"
+        # Toggle labels
+        if key == blt.TK_TAB:
+            #print("Toggle labels")
+            game_vars.labels = not game_vars.labels
+            print("Labels: " + " " + str(game_vars.labels))
+            blt.layer(4)
+            blt.clear_area(0, 0, blt.state(blt.TK_WIDTH, blt.state(blt.TK_HEIGHT)))
+            if game_vars.labels:
+                return "redraw"
 
-    if key == blt.TK_MOUSE_LEFT or key == blt.TK_MOUSE_RIGHT:
-        #print("Mouse input")
-        return game_handle_mouse_input(key)
+        if key == blt.TK_MOUSE_LEFT or key == blt.TK_MOUSE_RIGHT:
+            #print("Mouse input")
+            return game_handle_mouse_input(key)
 
-    if game_vars.game_state == GameStates.PLAYER_TURN:
-        #print (game_player_turn_input(key))
-        return game_player_turn_input(key)
+        if game_vars.game_state == GameStates.PLAYER_TURN:
+            #print (game_player_turn_input(key))
+            return game_player_turn_input(key)
 
 
     return "no-action"
