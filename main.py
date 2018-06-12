@@ -119,61 +119,65 @@ def game_main_loop():
                 fps_update_time = tm
 
         # avoid blocking the game with blt.read
-        while not game_quit and blt.has_input():
+        key = None
+        if blt.has_input():
+            key = blt.read()
 
-            player_action = handle_input.game_handle_keys()
-            if handle_input.get_fake_action() is not None:
-                print("Faking an action")
-                player_action = handle_input.get_fake_action()
-                handle_input.reset_fake_action()
+
+        player_action = handle_input.game_handle_keys(key)
+
+        if handle_input.get_fake_action() is not None:
+            print("Faking an action")
+            player_action = handle_input.get_fake_action()
+            handle_input.reset_fake_action()
             #print player_action
 
-            if player_action == "QUIT":
-                game_quit = True
-                break
-            else:
-                GAME.map_calculate_fov()
+        if player_action == "QUIT":
+            game_quit = True
+            break
+        else:
+            GAME.map_calculate_fov()
 
 
-            if player_action == "mouse_click":
-                print "Click"
+        if player_action == "mouse_click":
+            print "Click"
 
-            if player_action is not None and player_action not in ["no-action", "mouse_click", "redraw"]:
-                game_vars.redraw = True
-               # print("Advancing time")
-                # advance time
-                game_vars.calendar_game.turn += 1
+        if player_action is not None and player_action not in ["no-action", "mouse_click", "redraw"]:
+            game_vars.redraw = True
+           # print("Advancing time")
+            # advance time
+            game_vars.calendar_game.turn += 1
 
-                #toggle game state to enemy turn
-                game_vars.game_state = GameStates.ENEMY_TURN
-            elif player_action == "redraw":
-                game_vars.redraw = True
-            else:
-                game_vars.redraw = False
+            #toggle game state to enemy turn
+            game_vars.game_state = GameStates.ENEMY_TURN
+        elif player_action == "redraw":
+            game_vars.redraw = True
+        else:
+            game_vars.redraw = False
 
-            # enemy turn
-            if game_vars.game_state == GameStates.ENEMY_TURN:
-                for ent in game_vars.level.current_entities:
-                    if ent.ai:
-                        ent.ai.take_turn(PLAYER, game_vars.ai_fov_map)
+        # enemy turn
+        if game_vars.game_state == GameStates.ENEMY_TURN:
+            for ent in game_vars.level.current_entities:
+                if ent.ai:
+                    ent.ai.take_turn(PLAYER, game_vars.ai_fov_map)
 
-                        if game_vars.game_state == GameStates.PLAYER_DEAD:
-                            print("Player's dead, breaking the loop")
-                            break
+                    if game_vars.game_state == GameStates.PLAYER_DEAD:
+                        print("Player's dead, breaking the loop")
+                        break
 
-                if not game_vars.game_state == GameStates.PLAYER_DEAD:
-                    game_vars.game_state = GameStates.PLAYER_TURN
-                    # resting (potentially other stuff)
-                    PLAYER.creature.player.act()
-                    # test passage of time
-                    #print(GAME.calendar.get_time_date(GAME.calendar.turn))
+            if not game_vars.game_state == GameStates.PLAYER_DEAD:
+                game_vars.game_state = GameStates.PLAYER_TURN
+                # resting (potentially other stuff)
+                PLAYER.creature.player.act()
+                # test passage of time
+                #print(GAME.calendar.get_time_date(GAME.calendar.turn))
 
-            if game_vars.game_state == GameStates.PLAYER_DEAD:
-                # force redraw
-                game_vars.redraw = True
-                print("PLAYER DEAD")
-            #if GAME.game_state == GameStates.PLAYER_TURN:
-            #    print("PLAYER TURN")
+        if game_vars.game_state == GameStates.PLAYER_DEAD:
+            # force redraw
+            game_vars.redraw = True
+            print("PLAYER DEAD")
+        #if GAME.game_state == GameStates.PLAYER_TURN:
+        #    print("PLAYER TURN")
 
     #save if not dead
     if not game_vars.game_state == GameStates.PLAYER_DEAD and not game_vars.game_state == GameStates.MAIN_MENU:

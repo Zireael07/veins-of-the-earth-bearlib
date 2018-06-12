@@ -273,8 +273,8 @@ def game_player_turn_input(key):
     if key == blt.TK_M:
         return "redraw"
 
-def game_handle_keys():
-    key = blt.read()
+def game_handle_keys(key):
+    #key = blt.read()
     if key in (blt.TK_ESCAPE, blt.TK_CLOSE):
         return "QUIT"
 
