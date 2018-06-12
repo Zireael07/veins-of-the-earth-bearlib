@@ -54,7 +54,7 @@ def game_main_loop():
         # hud layer
         blt.layer(1)
         blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
-        # used by some menus and by effects
+        # used by menus
         blt.layer(3)
         blt.clear_area(0, 0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
 
@@ -84,9 +84,10 @@ def game_main_loop():
                 blt.clear_area(0,0, blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
                 blt.layer(2)
                 blt.clear_area(0,0,blt.state(blt.TK_WIDTH), blt.state(blt.TK_HEIGHT))
-                if game_vars.labels:
-                    blt.layer(4)
-                    blt.clear_area(0, 0, blt.state(blt.TK_WIDTH, blt.state(blt.TK_HEIGHT)))
+                #if game_vars.labels:
+                # redraw this layer since it has effects now
+                blt.layer(4)
+                blt.clear_area(0, 0, blt.state(blt.TK_WIDTH, blt.state(blt.TK_HEIGHT)))
                 renderer.draw_game()
 
 

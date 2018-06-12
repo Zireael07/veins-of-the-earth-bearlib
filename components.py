@@ -886,7 +886,8 @@ class com_VisualEffect(object):
 
     def draw(self):
         tile_x, tile_y = draw_iso(self.x, self.y, constants.RENDER_POSITIONS)
-        blt.layer(3)
+        # changed because 3 was getting cleared too much
+        blt.layer(4)
         for tile, color in self.tiles:
             blt.color(color)
 
@@ -901,7 +902,7 @@ class com_VisualEffect(object):
             #print("Owner dead, shorten duration")
             self.duration = 1 # so that the effects do not stay around too long if the owner is dead
         else:
-            #print(str(self.duration))
+            #print("Effect dur: " + str(self.duration))
             self.render = True
 
 
@@ -922,6 +923,7 @@ class com_Player(object):
 
     def act(self):
         if self.resting:
+            #print("Resting...")
             self.resting_step()
 
         # count down nutrition/thirst
@@ -945,6 +947,7 @@ class com_Player(object):
 
     # resting
     def rest_start(self, turns):
+        print("Rest start...")
         self.rest_cnt = 0
         self.resting = True
         self.rest_turns = turns
@@ -953,8 +956,11 @@ class com_Player(object):
         if self.resting and self.rest_cnt >= turns:
             self.rest_stop()
         else:
+            import handle_input
+            handle_input.fake_action("player-moved")
+
             # toggle game state to enemy turn
-            events.notify(events.GameEvent("END_TURN", None))
+            #events.notify(events.GameEvent("END_TURN", None))
             #GAME.end_player_turn()
             self.rest_cnt += 1
 
@@ -974,11 +980,13 @@ class com_Player(object):
 
                 #self.owner.hp = int(min(self.owner.max_hp, self.owner.hp+heal))
 
-
+            import handle_input
+            handle_input.fake_action("player-moved")
             # toggle game state to enemy turn
-            events.notify(events.GameEvent("END_TURN", None))
+            #events.notify(events.GameEvent("END_TURN", None))
             #GAME.end_player_turn()
             self.rest_cnt += 1
+            print("Rest step..." + str(self.rest_cnt))
 
     def rest_stop(self):
         self.resting = False
