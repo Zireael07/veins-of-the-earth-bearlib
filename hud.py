@@ -8,9 +8,9 @@ import constants
 import handle_input
 
 # need the refs
-def initialize_player(player):
-    global PLAYER
-    PLAYER = player
+#def initialize_player(player):
+#    global PLAYER
+#    PLAYER = player
 
 
 # debugging rooms
@@ -18,7 +18,7 @@ def get_room_index():
     room_index = -1
     for r in game_vars.level.rooms:
 
-        if r.contains((PLAYER.x, PLAYER.y)):
+        if r.contains((game_vars.player.x, game_vars.player.y)):
             room_index = game_vars.level.rooms.index(r)
             break
 
@@ -59,7 +59,7 @@ def show_npc_desc(pix_x, pix_y):
         blt.puts(w, h, u"%c  %s" % (taken.char, taken.creature.name_instance) )
         blt.puts(w,h+2, "Enemy hp: " + str(taken.creature.hp) + " " + str(hp_perc) + "%")
         # chance to hit
-        melee = PLAYER.creature.melee*1.0/100.0
+        melee = game_vars.player.creature.melee*1.0/100.0
         not_dodged = (100-taken.creature.dodge)*1.0/100.0
         blt.puts(w, h+3, "Chance to hit: %.2f + %.2f = %.2f " % (melee, not_dodged, melee*not_dodged) )
         blt.layer(0)
@@ -71,8 +71,8 @@ def show_tile_desc(pix_x, pix_y, fov_map):
     h = 8
     iso_x, iso_y = renderer.pix_to_iso(pix_x, pix_y)
 
-    dist = round(distance_to((iso_x, iso_y), (PLAYER.x, PLAYER.y)), 2)
-    tiles_dist = tiles_distance_to((iso_x, iso_y), (PLAYER.x, PLAYER.y))
+    dist = round(distance_to((iso_x, iso_y), (game_vars.player.x, game_vars.player.y)), 2)
+    tiles_dist = tiles_distance_to((iso_x, iso_y), (game_vars.player.x, game_vars.player.y))
 
     blt.layer(1)
     blt.puts(w,h+1, "Dist: real:" + str(dist) + " tiles: " + str(tiles_dist) + " ft: " + str(tiles_dist*5) + " ft.")
@@ -100,14 +100,14 @@ def draw_hud(pix_x, pix_y):
     blt.layer(1)
     # draw body parts' hp
     x = 2
-    for p in PLAYER.creature.body_parts:
+    for p in game_vars.player.creature.body_parts:
         renderer.draw_bar(x,15,p.max_hp, str(p.name), p.hp, p.max_hp, "red", "darker red")
         x += p.max_hp+1
 
-    #renderer.draw_bar(2, 15, 20, "HP", PLAYER.creature.hp, PLAYER.creature.max_hp, "red", "darker red",
-    #                  str(PLAYER.creature.hp))
-    renderer.draw_bar(2, 17, 20, "Nutrition", PLAYER.creature.player.nutrition, 500, "green", "darker green")
-    renderer.draw_bar(2, 19, 20, "Thirst", PLAYER.creature.player.thirst, 300, "blue", "darker blue")
+    #renderer.draw_bar(2, 15, 20, "HP", game_vars.player.creature.hp, game_vars.player.creature.max_hp, "red", "darker red",
+    #                  str(game_vars.player.creature.hp))
+    renderer.draw_bar(2, 17, 20, "Nutrition", game_vars.player.creature.player.nutrition, 500, "green", "darker green")
+    renderer.draw_bar(2, 19, 20, "Thirst", game_vars.player.creature.player.thirst, 300, "blue", "darker blue")
 
     blt.color(4294967295)
 
@@ -117,7 +117,7 @@ def draw_hud(pix_x, pix_y):
     # debug
     # on top of map
     blt.layer(1)
-    blt.puts(2, 4, "[color=red] player position: %d %d" % (PLAYER.x, PLAYER.y))
+    blt.puts(2, 4, "[color=red] player position: %d %d" % (game_vars.player.x, game_vars.player.y))
     blt.puts(2, 5, "[color=red] camera offset: %d %d" % (game_vars.camera.offset[0], game_vars.camera.offset[1]))
     blt.puts(2, 6, "[color=red] vi keys: %s " % (str(constants.VI_KEYS)))
 
@@ -125,8 +125,8 @@ def draw_hud(pix_x, pix_y):
     # queue
     x = 25
     y = 1
-    for i in range (len(PLAYER.creature.move_queue)-1):
-        m = PLAYER.creature.move_queue[i]
+    for i in range (len(game_vars.player.creature.move_queue)-1):
+        m = game_vars.player.creature.move_queue[i]
         blt.puts(x, y, DIR_TO_ARROW[m])  #str(m))
 
         x += 2
@@ -138,8 +138,8 @@ def draw_hud(pix_x, pix_y):
     blt.layer(3)
     render_pos = constants.RENDER_POSITIONS
     from renderer import draw_iso
-    for i in range(len(PLAYER.creature.path_moves)-1):
-        p, m = PLAYER.creature.path_moves[i]
+    for i in range(len(game_vars.player.creature.path_moves)-1):
+        p, m = game_vars.player.creature.path_moves[i]
         x,y = p
         x,y = draw_iso(x, y, render_pos)
         blt.puts(x,y, DIR_TO_ARROW[m])

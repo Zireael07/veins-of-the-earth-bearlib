@@ -160,7 +160,7 @@ def game_main_loop():
         if game_vars.game_state == GameStates.ENEMY_TURN:
             for ent in game_vars.level.current_entities:
                 if ent.ai:
-                    ent.ai.take_turn(PLAYER, game_vars.ai_fov_map)
+                    ent.ai.take_turn(game_vars.player, game_vars.ai_fov_map)
 
                     if game_vars.game_state == GameStates.PLAYER_DEAD:
                         print("Player's dead, breaking the loop")
@@ -169,21 +169,21 @@ def game_main_loop():
             if not game_vars.game_state == GameStates.PLAYER_DEAD:
                 game_vars.game_state = GameStates.PLAYER_TURN
                 # resting (potentially other stuff)
-                PLAYER.creature.player.act()
+                game_vars.player.creature.player.act()
                 # test passage of time
                 #print(GAME.calendar.get_time_date(GAME.calendar.turn))
 
         if game_vars.game_state == GameStates.PLAYER_DEAD:
             # force redraw
             game_vars.redraw = True
-            print("PLAYER DEAD")
+            #print("PLAYER DEAD")
         #if GAME.game_state == GameStates.PLAYER_TURN:
         #    print("PLAYER TURN")
 
     #save if not dead
     if not game_vars.game_state == GameStates.PLAYER_DEAD and not game_vars.game_state == GameStates.MAIN_MENU:
         #print(str(GAME.game_state) + " we should save game")
-        game_loaders.save_game(GAME, CAMERA, PLAYER)
+        game_loaders.save_game(GAME, CAMERA, game_vars.player)
 
     # quit the game
     blt.close()

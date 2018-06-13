@@ -90,11 +90,6 @@ def start_new_game(seed):
     # spawn player
     player = generate_player()
 
-    # handle input needs player
-    handle_input.initialize_player(player)
-
-    hud.initialize_player(player)
-
     # adjust camera position so that player is centered
     cam.start_update(player)
 
@@ -132,10 +127,10 @@ def main_menu():
         game_vars.ai_fov_map = map_make_fov(game_vars.level.current_map, True)
 
         # patch in required stuff
-        hud.initialize_player(PLAYER)
+        #hud.initialize_player(PLAYER)
 
         # handle input needs player
-        handle_input.initialize_player(PLAYER)
+        #handle_input.initialize_player(PLAYER)
 
         # we don't have to reset camera position because it's loaded from the file
         # CAMERA.start_update(PLAYER)

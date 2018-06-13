@@ -9,9 +9,9 @@ from tile_lookups import TileTypes, get_index
 
 import game_vars
 
-def initialize_player(player):
-    global PLAYER
-    PLAYER = player
+#def initialize_player(player):
+#    global PLAYER
+#    PLAYER = player
 
 # nowhere else to put it?
 def get_top_log_string_index():
@@ -86,8 +86,8 @@ def game_handle_mouse_input(key):
                 if click_y >= 0 and click_y < len(game_vars.level.current_map[0]):
                     print "Clicked on tile " + str(click_x) + " " + str(click_y)
 
-                    if click_x != PLAYER.x or click_y != PLAYER.y:
-                        moved = PLAYER.creature.move_towards(click_x, click_y, game_vars.level.current_map)
+                    if click_x != game_vars.player.x or click_y != game_vars.player.y:
+                        moved = game_vars.player.creature.move_towards(click_x, click_y, game_vars.level.current_map)
                         if (moved[0]):
                             game_vars.camera.move(moved[1], moved[2])
                             game_vars.fov_recompute = True
@@ -137,30 +137,30 @@ def get_up_key():
 
 def game_key_move(key):
     src = KEY_TO_DIR if not constants.VI_KEYS else KEY_TO_DIR_VI
-    if src[key] != Directions.CENTER and PLAYER.creature.move(src[key][0], src[key][1], game_vars.level.current_map):
+    if src[key] != Directions.CENTER and game_vars.player.creature.move(src[key][0], src[key][1], game_vars.level.current_map):
         game_vars.camera.move(src[key][0], src[key][1])
         game_vars.fov_recompute = True
 
         # clear move queue
-        PLAYER.creature.move_queue = []
+        game_vars.player.creature.move_queue = []
         # switch off a-e
-        PLAYER.creature.player.autoexplore = False
+        game_vars.player.creature.player.autoexplore = False
 
     elif src[key] == Directions.CENTER:
         #print("Pass turn")
         # clear move queue
-        PLAYER.creature.move_queue = []
+        game_vars.player.creature.move_queue = []
         # switch off a-e
-        PLAYER.creature.player.autoexplore = False
+        game_vars.player.creature.player.autoexplore = False
 
     return "player-moved"
 
 
 def game_player_turn_input(key):
     if blt.check(blt.TK_SHIFT) and key == blt.TK_PERIOD:
-        if game_vars.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS):  # .stairs:
+        if game_vars.level.current_map[game_vars.player.x][game_vars.player.y] == get_index(TileTypes.STAIRS):  # .stairs:
             if hasattr(game_vars.level, 'exits'):
-                dest = find_exit_for_pos(PLAYER.x, PLAYER.y)
+                dest = find_exit_for_pos(game_vars.player.x, game_vars.player.y)
 
                 game_vars.game_obj.next_level(dest)
             else:
@@ -175,32 +175,32 @@ def game_player_turn_input(key):
 
 
     if blt.check(blt.TK_SHIFT) and key == blt.TK_COMMA:
-        if game_vars.level.current_map[PLAYER.x][PLAYER.y] == get_index(TileTypes.STAIRS_UP):
+        if game_vars.level.current_map[game_vars.player.x][game_vars.player.y] == get_index(TileTypes.STAIRS_UP):
             game_vars.game_obj.previous_level(game_vars.level.gen_type)
             return "redraw"
             #return "player-moved"
 
     # items
     if key == blt.TK_G:
-        ents = map_check_for_items(PLAYER.x, PLAYER.y, game_vars.level.current_entities)
+        ents = map_check_for_items(game_vars.player.x, game_vars.player.y, game_vars.level.current_entities)
         if ents is not None:
             if len(ents) > 1:
                 chosen_item = gui_menus.pickup_menu(ents)
                 if chosen_item is not None:
-                    chosen_item.item.pick_up(PLAYER)
+                    chosen_item.item.pick_up(game_vars.player)
                     return "player-moved"
             else:
-                ents[0].item.pick_up(PLAYER)
+                ents[0].item.pick_up(game_vars.player)
                 return "player-moved"
 
     if key == blt.TK_D:
-        chosen_item = gui_menus.drop_menu(PLAYER)
+        chosen_item = gui_menus.drop_menu(game_vars.player)
         if chosen_item is not None:
-            PLAYER.container.inventory[chosen_item].item.drop(PLAYER)
+            game_vars.player.container.inventory[chosen_item].item.drop(game_vars.player)
             return "player-moved"
 
     if key == blt.TK_I:
-        chosen_item = gui_menus.inventory_menu("Inventory", PLAYER)
+        chosen_item = gui_menus.inventory_menu("Inventory", game_vars.player)
         if chosen_item is not None:
             if chosen_item.item:
                 action = gui_menus.item_actions_menu(chosen_item)
@@ -208,27 +208,27 @@ def game_player_turn_input(key):
                     return
                 # actions
                 if action == 0:
-                    chosen_item.item.use(PLAYER)
+                    chosen_item.item.use(game_vars.player)
                     return "player-moved"
                 elif action == 1:
-                    chosen_item.item.drop(PLAYER)
+                    chosen_item.item.drop(game_vars.player)
                     return "player-moved"
 
     if key == blt.TK_C:
-        gui_menus.character_sheet_menu("Character sheet", PLAYER)
+        gui_menus.character_sheet_menu("Character sheet", game_vars.player)
 
     if key == blt.TK_R:
-        PLAYER.creature.player.rest_start(30)
+        game_vars.player.creature.player.rest_start(30)
         return "player-moved"
 
     # # testing
     # if key == blt.TK_M:
-    #     if PLAYER.creature.player.autoexplore:
+    #     if game_vars.player.creature.player.autoexplore:
     #
     #         # do we have a queue?
-    #         if len(PLAYER.creature.player.move_queue) > 1:
+    #         if len(game_vars.player.creature.player.move_queue) > 1:
     #             print("We have a queue")
-    #             moved = PLAYER.creature.player.moves_from_queue()
+    #             moved = game_vars.player.creature.player.moves_from_queue()
     #
     #             if (moved[0]):
     #                 game_vars.camera.move(moved[1], moved[2])
@@ -243,25 +243,25 @@ def game_player_turn_input(key):
 
     if key == blt.TK_E:
         # toggle
-        if not PLAYER.creature.player.autoexplore:
-            PLAYER.creature.player.autoexplore = True
+        if not game_vars.player.creature.player.autoexplore:
+            game_vars.player.creature.player.autoexplore = True
         else:
-            PLAYER.creature.player.autoexplore = False
+            game_vars.player.creature.player.autoexplore = False
 
-        if PLAYER.creature.player.autoexplore:
+        if game_vars.player.creature.player.autoexplore:
 
             # do we have a queue?
-            if len(PLAYER.creature.move_queue) > 1:
+            if len(game_vars.player.creature.move_queue) > 1:
                 print("We have a queue")
-                moved = PLAYER.creature.moves_from_queue()
+                moved = game_vars.player.creature.moves_from_queue()
 
             else:
-                x, y = find_unexplored_closest(PLAYER.x, PLAYER.y, game_vars.level.current_map,
+                x, y = find_unexplored_closest(game_vars.player.x, game_vars.player.y, game_vars.level.current_map,
                                                game_vars.level.current_explored)
                 print("Closest unexplored is " + str(x) + " " + str(y))
-                PLAYER.creature.move_towards_path_queue(x, y, game_vars.level.current_map)
+                game_vars.player.creature.move_towards_path_queue(x, y, game_vars.level.current_map)
 
-                moved = PLAYER.creature.moves_from_queue()
+                moved = game_vars.player.creature.moves_from_queue()
 
             if moved is not None and moved[0]:
                 game_vars.camera.move(moved[1], moved[2])
@@ -294,7 +294,7 @@ def game_handle_keys(key):
         if blt.check(blt.TK_SHIFT) and key == blt.TK_GRAVE:
             # print("Debug mode on")
             # constants.DEBUG = True
-            return gui_menus.debug_menu(PLAYER)
+            return gui_menus.debug_menu(game_vars.player)
 
         # Toggle labels
         if key == blt.TK_TAB:
