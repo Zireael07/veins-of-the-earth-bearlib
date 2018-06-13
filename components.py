@@ -1103,3 +1103,24 @@ class com_Player(object):
             print("Spawned a kid " + str(kid.name))
             # append to list
             game_vars.player.creature.player.kids.append(kid)
+
+    # TODO: figure out a better place for this
+    @staticmethod
+    def switch_to_kid(kid):
+        print("Making the switch")
+        # remove AI
+        kid.ai = None
+
+        # switch control to kid
+        player_new_com = com_Player()
+        kid.creature.player = player_new_com
+        player_new_com.owner = kid.creature
+
+        game_vars.player = kid
+        game_vars.camera.start_update(game_vars.player)
+
+        # force fov recompute
+        game_vars.fov_recompute = True
+
+        # force redraw
+        game_vars.redraw = True

@@ -25,11 +25,16 @@ def death_player(player):
     game_vars.level.current_entities.remove(player)
     # show death screen
     kid = gui_menus.death_menu(player)
-    # set game state to player dead
-    game_vars.game_state = GameStates.PLAYER_DEAD
-    #delete savegame (this assumes we can only have one)
-    if os.path.isfile('savegame.json'):
-        os.remove('savegame.json')
+    if kid:
+        #and kid in game_vars.level.current_entities:
+        print("Should be switching control to kid!!!")
+        player.creature.player.switch_to_kid(kid)
+    else:
+        # set game state to player dead
+        game_vars.game_state = GameStates.PLAYER_DEAD
+        #delete savegame (this assumes we can only have one)
+        if os.path.isfile('savegame.json'):
+            os.remove('savegame.json')
 
 def generate_player():
     container_com1 = components.com_Container()
