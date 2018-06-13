@@ -23,6 +23,8 @@ def death_player(player):
     events.notify(events.GameEvent("MESSAGE", (player.creature.name_instance + " is dead!", "dark red")))
     # remove from map
     game_vars.level.current_entities.remove(player)
+    # show death screen
+    kid = gui_menus.death_menu(player)
     # set game state to player dead
     game_vars.game_state = GameStates.PLAYER_DEAD
     #delete savegame (this assumes we can only have one)

@@ -937,6 +937,8 @@ class com_Player(object):
                        ["gold", 0],
                        ["platinum", 0]]
 
+        self.kids = []
+
     def act(self):
         if self.resting:
             #print("Resting...")
@@ -1099,3 +1101,5 @@ class com_Player(object):
         if kid is not None:
             game_vars.level.current_entities.append(kid)
             print("Spawned a kid " + str(kid.name))
+            # append to list
+            game_vars.player.creature.player.kids.append(kid)

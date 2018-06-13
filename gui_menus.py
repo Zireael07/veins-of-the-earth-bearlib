@@ -461,3 +461,16 @@ def seed_input_menu():
     seed = gui_renderer.input_menu("Seed", 50, "Seed (numbers only):", 2)
     print("Inputed seed: " + str(seed))
     return int(seed[1])
+
+def death_menu(player):
+    if len(player.creature.player.kids) == 0:
+        options = ['No children']
+    else:
+        options = [ent.name for ent in player.creature.player.kids]
+
+    index = gui_renderer.options_menu("Choose child", options, 50, "You are DEAD!")
+
+    if len(player.creature.player.kids) == 0:
+        return None
+    else:
+        return player.creature.player.kids[index]
