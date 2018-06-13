@@ -370,6 +370,22 @@ class com_Creature(object):
                     print("Increasing stat " + str(STAT_NAME_TO_PROP[b[0]]) + " by " + str(b[1]))
                     setattr(self, STAT_NAME_TO_PROP[b[0]], getattr(self, STAT_NAME_TO_PROP[b[0]]) + b[1])
 
+    def display_stat_bonus(self, stat):
+        import generators
+        ret = None
+
+        if self.owner.name in generators.races_data:
+            if 'stat_bonuses' in generators.races_data[self.owner.name]:
+                print(generators.races_data[self.owner.name]['stat_bonuses'])
+                for b in generators.races_data[self.owner.name]['stat_bonuses']:
+                    if STAT_NAME_TO_PROP[b[0]] == stat:
+                        ret = b[1]
+
+        if ret is not None:
+            return " + " + str(ret)
+        else:
+            return ''
+
     # d100 roll under
     def skill_test(self, skill):
         if self.owner.visible:

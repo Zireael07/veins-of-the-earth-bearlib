@@ -331,10 +331,12 @@ def character_stats_menu_outer(player):
         return ret
 
 def character_stats_menu(player):
-    options = [("STR: " + str(player.creature.strength), "white"), ("DEX: " + str(player.creature.dexterity), "white"),
-               ("CON: " + str(player.creature.constitution), "white"),
-               ("INT: " + str(player.creature.intelligence), "white"),
-               ("WIS: " + str(player.creature.wisdom), "white"), ("CHA: " + str(player.creature.charisma), "white"),
+    options = [("STR: " + str(player.creature.strength), "white"),
+               ("DEX: " + str(player.creature.dexterity) + str(player.creature.display_stat_bonus('dexterity')), "white"),
+               ("CON: " + str(player.creature.constitution) + str(player.creature.display_stat_bonus('constitution')), "white"),
+               ("INT: " + str(player.creature.intelligence) + str(player.creature.display_stat_bonus('dexterity')), "white"),
+               ("WIS: " + str(player.creature.wisdom), "white"),
+               ("CHA: " + str(player.creature.charisma), "white"),
                ("(R)eroll!", "yellow"), ("(P)roceed", "white")]
 
     key = gui_renderer.menu_colored("STATS", options, 50, 'CHARACTER CREATION II')
