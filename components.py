@@ -1108,6 +1108,8 @@ class com_Player(object):
     @staticmethod
     def switch_to_kid(kid):
         print("Making the switch")
+        events.notify(events.GameEvent("MESSAGE", ("Your parent is dead, " + str(kid.name) + ". It falls to you to continue his legacy", "green")))
+
         # remove AI
         kid.ai = None
 
@@ -1115,6 +1117,8 @@ class com_Player(object):
         player_new_com = com_Player()
         kid.creature.player = player_new_com
         player_new_com.owner = kid.creature
+        import main_menu
+        kid.creature.death_function = main_menu.death_player
 
         game_vars.player = kid
         game_vars.camera.start_update(game_vars.player)
