@@ -536,6 +536,19 @@ class com_Creature(object):
         if self.owner.visible:
             events.notify(events.GameEvent("MESSAGE", (self.name_instance + "'s " + str(part.name) + " heals!", "lighter red")))
 
+    def speak_same_language(self, target):
+        print("Creature languages: " + str(target.languages) + " player languages " + str(self.languages))
+
+        # basically finding common element in two lists
+        for l in self.languages:
+            if l in target.languages:
+#                print(self.name_instance + " and " + target.name_instance + " know same language")
+                return True
+
+            #print(self.name_instance + " and " + target.name_instance + " don't know same language")
+            return False
+
+
     # basic movement functions
     def move(self, dx, dy, game_map):
         #if self.player:
@@ -605,9 +618,7 @@ class com_Creature(object):
 
                     items.append(item)
 
-                    print("Creature languages: " + str(target.creature.languages) + " player languages " + str(self.languages))
-                    print("Know same languages? " + str(target.creature.languages == self.languages))
-
+                    self.speak_same_language(target.creature)
                     dialogue_window(target.creature, self, items)
 
         tile_is_wall = (get_block_path(game_map[self.owner.x+dx][self.owner.y+dy]) == True)

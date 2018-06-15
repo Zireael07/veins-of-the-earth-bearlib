@@ -141,7 +141,20 @@ def display_dmg_window(index):
 
 def dialogue_window(creature, player, items):
     blt.layer(1)
-    index = gui_renderer.dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat['chat'], creature.chat['answer'])
+
+    if not player.speak_same_language(creature):
+        # debug
+        print(player.name_instance + " and " + creature.name_instance + " don't know same language")
+        # this reportedly doesn't work for Unicode - luckily, no Unicode in our prewritten dialogues!
+        import codecs
+        chat = codecs.encode(creature.chat['chat'], 'rot_13')
+        # don't show any answers
+        answers = []
+    else:
+        chat = creature.chat['chat']
+        answers = creature.chat['answer']
+
+    index = gui_renderer.dialogue_menu(creature.name_instance, 50, "DIALOGUE", chat, answers)
 
     if index is not None and creature.chat['answer'][index]:
         #print("Index " + str(index) + " " + str(creature.chat['answer'][index]['reply']))
@@ -149,8 +162,15 @@ def dialogue_window(creature, player, items):
         action = creature.chat['answer'][index]['action'] if 'action' in creature.chat['answer'][index] else None
         print("Action is: " + str(action))
 
+        # repeated bit
+        if not player.speak_same_language(creature):
+            import codecs
+            chat = codecs.encode(creature.chat[reply], 'rot_13')
+        else:
+            chat = creature.chat[reply]
+
         # this resets the index!
-        index = gui_renderer.dialogue_menu(creature.name_instance, 50, "DIALOGUE", creature.chat[reply], [])
+        index = gui_renderer.dialogue_menu(creature.name_instance, 50, "DIALOGUE", chat, [])
 
         # TODO: move individual action code out of here
         if action == "shop":
