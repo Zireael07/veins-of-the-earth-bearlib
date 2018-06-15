@@ -146,8 +146,23 @@ def dialogue_window(creature, player, items):
         # debug
         print(player.name_instance + " and " + creature.name_instance + " don't know same language")
         # this reportedly doesn't work for Unicode - luckily, no Unicode in our prewritten dialogues!
-        import codecs
-        chat = codecs.encode(creature.chat['chat'], 'rot_13')
+        #import codecs
+        #chat = codecs.encode(creature.chat['chat'], 'rot_13')
+
+        # test
+        print(creature.chat['chat'])
+
+        import languages
+        lang = languages.Language(20)
+
+        import re
+        re_word = re.compile(r'\w+')
+
+        # this preserves punctuation since we just do replacement word-by-word
+        chat = re_word.sub(lang.language_replace, creature.chat['chat'])
+
+        chat = str(chat)
+
         # don't show any answers
         answers = []
     else:
