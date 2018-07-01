@@ -89,26 +89,28 @@ def log_menu_inner(header, begin, end):
 
     return scroll
 
+# TODO: kills performance on the dumpster, investigate
 def log_menu(header, begin, end):
     ret, begin, end = log_menu_inner(header, begin, end)
-    if ret is not None:
+    while ret is not None:
+         print(ret)
         # if we are getting input, keep showing the log
-        while ret is not None:
-            if end + ret > len(game_vars.message_history)-1:
-                # do nothing if we'd scroll past the end
-                end = end
-                begin = begin
-            if begin + ret < 0:
+#        while ret is not None:
+         if end + ret > len(game_vars.message_history)-1:
+            # do nothing if we'd scroll past the end
+            end = end
+            begin = begin
+         if begin + ret < 0:
                 # if we would scroll past 0, do nothing
-                begin = 0
-                end = end
-            if begin + ret >= 0 and end + ret <= len(game_vars.message_history)-1:
+            begin = 0
+            end = end
+         if begin + ret >= 0 and end + ret <= len(game_vars.message_history)-1:
                 # print("Proceed normally")
-                begin = begin + ret
-                end = end + ret
+            begin = begin + ret
+            end = end + ret
 
-            # print("ret " + str(ret) + "Begin " + str(begin) + " end" + str(end))
-            ret, begin, end = log_menu_inner("Log history", begin, end)
+         # print("ret " + str(ret) + "Begin " + str(begin) + " end" + str(end))
+         ret, begin, end = log_menu_inner("Log history", begin, end)
 
 
 def dmg_menu(header, opt):
