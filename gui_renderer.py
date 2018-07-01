@@ -209,6 +209,13 @@ def menu_colored_scrolled(header, options_tuples, width, begin, end, title=None)
 
         blt.puts(menu_x, y, string)
         y += 1
+	
+    #scrollbar
+    y = menu_y+header_height+1
+    max_off = 26
+    offset = (end/((len(game_vars.message_history)-1)*1.0))
+    print("Offset: " + str(offset))
+    blt.put(menu_x+width-1, y+int(offset*26), 0x2588)
 
     blt.refresh()
     # present the root console to the player and wait for a key-press
@@ -216,14 +223,14 @@ def menu_colored_scrolled(header, options_tuples, width, begin, end, title=None)
     while True:
         key = blt.read()
 
-        if key == blt.TK_UP:
-            #print("Pressed up key in scrolling menu")
+        if key == blt.TK_UP or key == blt.TK_K:
+            print("Pressed up key in scrolling menu")
             blt.set('input: filter = [keyboard, mouse+]')
             blt.composition(True)
             return -1, begin, end
 
-        if key == blt.TK_DOWN:
-            #print("Pressed down key in scrolling menu")
+        if key == blt.TK_DOWN or key == blt.TK_J:
+            print("Pressed down key in scrolling menu")
 
             blt.set('input: filter = [keyboard, mouse+]')
             blt.composition(True)
@@ -232,6 +239,7 @@ def menu_colored_scrolled(header, options_tuples, width, begin, end, title=None)
         else:
             blt.set('input: filter = [keyboard, mouse+]')
             blt.composition(True)
+            print("Pressed some other key in scrolling menu")  
             return None, begin, end
 
 
